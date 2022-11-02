@@ -1,0 +1,16 @@
+{
+  "extends": "standard-with-typescript",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "@typescript-eslint/strict-boolean-expressions": "off",
+    "@typescript-eslint/space-before-function-paren": "off",
+    "@typescript-eslint/semi": "off",
+    "semi": "off",
+    "comma-dangle": "off",
+    "@typescript-eslint/member-delimiter-style": "off",
+    "@typescript-eslint/no-misused-promises": "off",
+    "@typescript-eslint/consistent-type-definitions": "off"
+  }
+}
