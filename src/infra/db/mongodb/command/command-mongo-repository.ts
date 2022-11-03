@@ -8,9 +8,10 @@ import { CommandModel } from '@/domain/models/command';
 import { LoadCommandsRepository } from '@/data/protocols/db/command/load-commands-repository';
 import { ObjectId } from 'mongodb';
 import { MongoHelper } from '../helpers/mongo-helper';
+import { LoadCommandByNameRepository } from '@/data/protocols/db/command/load-command-by-name-repository';
 
 export class CommandMongoRepository
-  implements SaveCommandRepository, LoadCommandsRepository, LoadCommandByIdRepository
+  implements SaveCommandRepository, LoadCommandsRepository, LoadCommandByIdRepository, LoadCommandByNameRepository
 {
   async save(commandData: SaveCommandParams): Promise<CommandModel> {
     const commandCollection = await MongoHelper.getCollection('commands');
@@ -46,6 +47,12 @@ export class CommandMongoRepository
   async loadById(id: string): Promise<CommandModel> {
     const commandCollection = await MongoHelper.getCollection('commands');
     const command = await commandCollection.findOne({ _id: new ObjectId(id) });
+    return MongoHelper.format(command);
+  }
+
+  async loadByName(name: string): Promise<CommandModel> {
+    const commandCollection = await MongoHelper.getCollection('commands');
+    const command = await commandCollection.findOne({ command: name });
     return MongoHelper.format(command);
   }
 }

@@ -9,7 +9,7 @@ export class DbSaveCommand implements SaveCommand {
   ) {}
 
   async save(data: SaveCommandParams): Promise<CommandModel> {
-    const command = await this.loadCommandByName.loadByName(data.command);
+    const command = data.id ? null : await this.loadCommandByName.loadByName(data.command);
     if (!command) {
       let commandData = data;
       if (!commandData.command.startsWith(env.commandPrefix)) {

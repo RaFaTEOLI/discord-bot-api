@@ -77,6 +77,30 @@ describe('Command Routes', () => {
         })
         .expect(204);
     });
+
+    test('should return 400 on duplicate command creation with admin accessToken', async () => {
+      const accessToken = await makeAccessToken();
+      await commandCollection.insertOne({
+        command: 'any_command',
+        dispatcher: 'message',
+        type: 'message',
+        description: 'any_description',
+        response: 'any_response',
+        message: 'any_message'
+      });
+      await request(app)
+        .post('/api/commands')
+        .set('x-access-token', accessToken)
+        .send({
+          command: 'any_command',
+          dispatcher: 'message',
+          type: 'message',
+          description: 'any_description',
+          response: 'any_response',
+          message: 'any_message'
+        })
+        .expect(400);
+    });
   });
 
   describe('GET /commands', () => {

@@ -91,4 +91,16 @@ describe('Command Mongo Repository', () => {
       expect(command.command).toBe('any_command');
     });
   });
+
+  describe('loadByName()', () => {
+    test('should load command by name on success', async () => {
+      const createdCommand = mockSaveCommandParams();
+      await commandCollection.insertOne(createdCommand);
+      const sut = makeSut();
+      const command = await sut.loadByName(createdCommand.command);
+      expect(command).toBeTruthy();
+      expect(command.id).toBeTruthy();
+      expect(command.command).toBe(createdCommand.command);
+    });
+  });
 });

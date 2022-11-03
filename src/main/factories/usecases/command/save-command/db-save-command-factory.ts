@@ -4,5 +4,5 @@ import { CommandMongoRepository } from '@/infra/db/mongodb/command/command-mongo
 
 export const makeDbSaveCommand = (): SaveCommand => {
   const commandMongoRepository = new CommandMongoRepository();
-  return new DbSaveCommand(commandMongoRepository);
+  return new DbSaveCommand(commandMongoRepository, commandMongoRepository);
 };
