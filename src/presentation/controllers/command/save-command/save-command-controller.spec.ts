@@ -59,7 +59,7 @@ describe('SaveCommand Controller', () => {
     expect(httpResponse).toEqual(badRequest(new Error()));
   });
 
-  test('should return 403 if save command returns null', async () => {
+  test('should return 400 if save command returns null', async () => {
     const { sut, saveCommandStub } = makeSut();
     jest.spyOn(saveCommandStub, 'save').mockResolvedValueOnce(null);
     const httpRequest = mockRequest();
