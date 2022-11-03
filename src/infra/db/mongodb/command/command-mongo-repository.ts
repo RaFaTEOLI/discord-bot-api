@@ -12,9 +12,9 @@ import { MongoHelper } from '../helpers/mongo-helper';
 export class CommandMongoRepository
   implements SaveCommandRepository, LoadCommandsRepository, LoadCommandByIdRepository
 {
-  async save(commandData: SaveCommandParams): Promise<void> {
+  async save(commandData: SaveCommandParams): Promise<CommandModel> {
     const commandCollection = await MongoHelper.getCollection('commands');
-    await commandCollection.findOneAndUpdate(
+    const result = await commandCollection.findOneAndUpdate(
       {
         _id: new ObjectId(commandData.id)
       },
@@ -33,6 +33,8 @@ export class CommandMongoRepository
         returnDocument: 'after'
       }
     );
+
+    return MongoHelper.format(result.value);
   }
 
   async loadAll(): Promise<CommandModel[]> {

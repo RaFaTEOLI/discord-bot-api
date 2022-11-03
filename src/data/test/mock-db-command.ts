@@ -4,11 +4,12 @@ import { CommandModel } from '@/domain/models/command';
 import { mockCommandModel, mockCommandsData } from '@/domain/test';
 import { LoadCommandsRepository } from '@/data/protocols/db/command/load-commands-repository';
 import { LoadCommandByIdRepository } from '@/data/protocols/db/command/load-command-by-id-repository';
+import { LoadCommandByNameRepository } from '@/data/protocols/db/command/load-command-by-name-repository';
 
 export const mockSaveCommandRepository = (): SaveCommandRepository => {
   class SaveCommandRepositoryStub implements SaveCommandRepository {
-    async save(command: SaveCommandParams): Promise<void> {
-      return await Promise.resolve();
+    async save(command: SaveCommandParams): Promise<CommandModel> {
+      return await Promise.resolve(mockCommandModel());
     }
   }
   return new SaveCommandRepositoryStub();
@@ -30,4 +31,13 @@ export const mockLoadCommandsRepository = (): LoadCommandsRepository => {
     }
   }
   return new LoadCommandsRepositoryStub();
+};
+
+export const mockLoadCommandByNameRepository = (): LoadCommandByNameRepository => {
+  class LoadCommandByNameRepositoryStub implements LoadCommandByNameRepository {
+    async loadByName(name: string): Promise<CommandModel> {
+      return await Promise.resolve(mockCommandModel());
+    }
+  }
+  return new LoadCommandByNameRepositoryStub();
 };

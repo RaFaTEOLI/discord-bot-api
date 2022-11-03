@@ -26,9 +26,9 @@ describe('Command Mongo Repository', () => {
   describe('save()', () => {
     test('should create a command on success if it does not exist already', async () => {
       const sut = makeSut();
-      await sut.save(mockSaveCommandParams());
+      const createdCommand = await sut.save(mockSaveCommandParams());
       const command = await commandCollection.findOne({
-        command: 'any_command'
+        command: createdCommand.command
       });
       expect(command).toBeTruthy();
     });
