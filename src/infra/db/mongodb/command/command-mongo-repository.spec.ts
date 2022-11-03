@@ -49,16 +49,16 @@ describe('Command Mongo Repository', () => {
       await commandCollection.insertMany([
         {
           command: 'any_command',
-          dispatcher: 'any_dispatcher',
-          type: 'any_type',
+          dispatcher: 'message',
+          type: 'message',
           description: 'any_description',
           response: 'any_response',
           message: 'any_message'
         },
         {
           command: 'other_command',
-          dispatcher: 'other_dispatcher',
-          type: 'other_type',
+          dispatcher: 'client',
+          type: 'action',
           description: 'other_description',
           response: 'other_response',
           message: 'other_message'

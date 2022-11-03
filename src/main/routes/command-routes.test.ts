@@ -53,8 +53,8 @@ describe('Command Routes', () => {
         .post('/api/commands')
         .send({
           command: 'any_command',
-          dispatcher: 'any_dispatcher',
-          type: 'any_type',
+          dispatcher: 'message',
+          type: 'message',
           description: 'any_description',
           response: 'any_response',
           message: 'any_message'
@@ -69,8 +69,8 @@ describe('Command Routes', () => {
         .set('x-access-token', accessToken)
         .send({
           command: 'any_command',
-          dispatcher: 'any_dispatcher',
-          type: 'any_type',
+          dispatcher: 'message',
+          type: 'message',
           description: 'any_description',
           response: 'any_response',
           message: 'any_message'
@@ -90,15 +90,15 @@ describe('Command Routes', () => {
       await commandCollection.insertMany([
         {
           command: 'any_command',
-          dispatcher: 'any_dispatcher',
-          type: 'any_type',
+          dispatcher: 'message',
+          type: 'message',
           description: 'any_description',
           response: 'any_response',
           message: 'any_message'
         },
         {
           command: 'any_command_2',
-          dispatcher: 'any_dispatcher_2',
+          dispatcher: 'message_2',
           type: 'any_type_2',
           description: 'any_description_2',
           response: 'any_response_2',
@@ -121,8 +121,8 @@ describe('Command Routes', () => {
         .put('/api/commands/any_id')
         .send({
           command: 'any_command',
-          dispatcher: 'any_dispatcher',
-          type: 'any_type',
+          dispatcher: 'message',
+          type: 'message',
           description: 'any_description',
           response: 'any_response',
           message: 'any_message'
@@ -134,8 +134,8 @@ describe('Command Routes', () => {
       const accessToken = await makeAccessToken();
       const result = await commandCollection.insertOne({
         command: 'any_command',
-        dispatcher: 'any_dispatcher',
-        type: 'any_type',
+        dispatcher: 'message',
+        type: 'message',
         description: 'any_description',
         response: 'any_response',
         message: 'any_message'
@@ -146,8 +146,8 @@ describe('Command Routes', () => {
         .set('x-access-token', accessToken)
         .send({
           command: 'any_command',
-          dispatcher: 'any_dispatcher',
-          type: 'any_type',
+          dispatcher: 'message',
+          type: 'message',
           description: 'any_description',
           response: 'any_response',
           message: 'any_message'
@@ -166,8 +166,8 @@ describe('Command Routes', () => {
 
       const result = await commandCollection.insertOne({
         command: 'any_command',
-        dispatcher: 'any_dispatcher',
-        type: 'any_type',
+        dispatcher: 'message',
+        type: 'message',
         description: 'any_description',
         response: 'any_response',
         message: 'any_message'
