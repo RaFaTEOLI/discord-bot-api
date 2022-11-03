@@ -4,6 +4,7 @@ import { badRequest, noContent, serverError } from '@/presentation/helpers/http/
 import MockDate from 'mockdate';
 import { mockValidation, mockSaveCommand } from '@/presentation/test';
 import { mockSaveCommandParams } from '@/domain/test';
+import { InvalidParamError } from '@/presentation/errors';
 
 const mockRequest = (): HttpRequest => ({
   body: mockSaveCommandParams()
@@ -56,6 +57,14 @@ describe('SaveCommand Controller', () => {
     const httpRequest = mockRequest();
     const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse).toEqual(badRequest(new Error()));
+  });
+
+  test('should return 403 if save command returns null', async () => {
+    const { sut, saveCommandStub } = makeSut();
+    jest.spyOn(saveCommandStub, 'save').mockResolvedValueOnce(null);
+    const httpRequest = mockRequest();
+    const httpResponse = await sut.handle(httpRequest);
+    expect(httpResponse).toEqual(badRequest(new InvalidParamError('command')));
   });
 
   test('should call SaveCommand with correct values', async () => {

@@ -36,7 +36,7 @@ export const mockLoadCommandsRepository = (): LoadCommandsRepository => {
 export const mockLoadCommandByNameRepository = (): LoadCommandByNameRepository => {
   class LoadCommandByNameRepositoryStub implements LoadCommandByNameRepository {
     async loadByName(name: string): Promise<CommandModel> {
-      return await Promise.resolve(mockCommandModel());
+      return await Promise.resolve(null);
     }
   }
   return new LoadCommandByNameRepositoryStub();

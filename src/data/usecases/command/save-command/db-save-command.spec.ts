@@ -1,21 +1,24 @@
-import { SaveCommandRepository } from './db-save-command-protocols';
+import { SaveCommandRepository, LoadCommandByNameRepository } from './db-save-command-protocols';
 import { DbSaveCommand } from './db-save-command';
 import MockDate from 'mockdate';
-import { mockSaveCommandRepository } from '@/data/test';
-import { mockSaveCommandParams } from '@/domain/test';
+import { mockSaveCommandRepository, mockLoadCommandByNameRepository } from '@/data/test';
+import { mockCommandModel, mockSaveCommandParams } from '@/domain/test';
 import env from '@/main/config/env';
 
 interface SutTypes {
   sut: DbSaveCommand;
   saveCommandRepositoryStub: SaveCommandRepository;
+  loadCommandByNameRepositoryStub: LoadCommandByNameRepository;
 }
 
 const makeSut = (): SutTypes => {
   const saveCommandRepositoryStub = mockSaveCommandRepository();
-  const sut = new DbSaveCommand(saveCommandRepositoryStub);
+  const loadCommandByNameRepositoryStub = mockLoadCommandByNameRepository();
+  const sut = new DbSaveCommand(saveCommandRepositoryStub, loadCommandByNameRepositoryStub);
   return {
     sut,
-    saveCommandRepositoryStub
+    saveCommandRepositoryStub,
+    loadCommandByNameRepositoryStub
   };
 };
 
@@ -51,10 +54,25 @@ describe('DdSaveCommand Usecase', () => {
     );
   });
 
+  test('should return a Command if SaveCommandRepository returns a command', async () => {
+    const { sut } = makeSut();
+    const commandData = mockSaveCommandParams();
+    const command = await sut.save(commandData);
+    expect(command).toEqual({ ...commandData, id: command.id });
+  });
+
   test('should throw exception if SaveCommandRepository throws exception', async () => {
     const { sut, saveCommandRepositoryStub } = makeSut();
     jest.spyOn(saveCommandRepositoryStub, 'save').mockRejectedValueOnce(new Error());
     const promise = sut.save(mockSaveCommandParams());
     await expect(promise).rejects.toThrow();
+  });
+
+  test('should return null if LoadCommandByName returns a command and id is not provided', async () => {
+    const { sut, loadCommandByNameRepositoryStub } = makeSut();
+    jest.spyOn(loadCommandByNameRepositoryStub, 'loadByName').mockResolvedValueOnce(mockCommandModel());
+    const commandData = mockSaveCommandParams();
+    const command = await sut.save(commandData);
+    expect(command).toBeNull();
   });
 });

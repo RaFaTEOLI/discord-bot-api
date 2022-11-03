@@ -1,3 +1,4 @@
+import { InvalidParamError } from '@/presentation/errors';
 import { badRequest, noContent, serverError } from '@/presentation/helpers/http/http-helper';
 import {
   Controller,
@@ -28,7 +29,10 @@ export class SaveCommandController implements Controller {
         saveParams = Object.assign({}, saveParams, { id: httpRequest.params.commandId });
       }
 
-      await this.saveCommand.save(saveParams);
+      const command = await this.saveCommand.save(saveParams);
+      if (!command) {
+        return badRequest(new InvalidParamError('command'));
+      }
       return noContent();
     } catch (error) {
       return serverError(error);

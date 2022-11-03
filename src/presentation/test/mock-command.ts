@@ -6,8 +6,8 @@ import { LoadCommandById } from '@/domain/usecases/command/load-command-by-id';
 
 export const mockSaveCommand = (): SaveCommand => {
   class SaveCommandStub implements SaveCommand {
-    async save(data: SaveCommandParams): Promise<void> {
-      return await Promise.resolve();
+    async save(data: SaveCommandParams): Promise<CommandModel> {
+      return await Promise.resolve(mockCommandModel());
     }
   }
   return new SaveCommandStub();
