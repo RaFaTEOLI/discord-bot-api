@@ -8,6 +8,17 @@ export const commandPath = {
     tags: ['Command'],
     summary: 'API to list all commands',
     description: 'This route is only for **authenticated users**',
+    parameters: [
+      {
+        in: 'query',
+        name: 'name',
+        description: 'The name of command to be returned',
+        required: false,
+        schema: {
+          type: 'string'
+        }
+      }
+    ],
     responses: {
       200: {
         description: 'Success',
