@@ -61,7 +61,7 @@ describe('LoadCommands Controller', () => {
   test('should return 200 on success if name query string is provided', async () => {
     const { sut } = makeSut();
     const httpResponse = await sut.handle({
-      params: {
+      query: {
         name: 'any_command'
       }
     });
@@ -73,7 +73,7 @@ describe('LoadCommands Controller', () => {
     const { sut, loadCommandByNameStub } = makeSut();
     jest.spyOn(loadCommandByNameStub, 'loadByName').mockResolvedValue(null);
     const httpResponse = await sut.handle({
-      params: {
+      query: {
         name: 'invalid_command'
       }
     });
@@ -84,7 +84,7 @@ describe('LoadCommands Controller', () => {
     const { sut, loadCommandByNameStub } = makeSut();
     jest.spyOn(loadCommandByNameStub, 'loadByName').mockRejectedValueOnce(new Error());
     const httpResponse = await sut.handle({
-      params: {
+      query: {
         name: 'any_command'
       }
     });
