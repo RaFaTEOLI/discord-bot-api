@@ -2,8 +2,8 @@ import { LoadCommandsController } from './load-commands-controller';
 import { LoadCommands } from './load-commands-protocols';
 import { noContent, serverError, success } from '@/presentation/helpers/http/http-helper';
 import MockDate from 'mockdate';
-import { mockCommandsData } from '@/domain/test';
-import { mockLoadCommands } from '@/presentation/test';
+import { mockCommandModel, mockCommandsData } from '@/domain/test';
+import { mockLoadCommandByName, mockLoadCommands } from '@/presentation/test';
 
 interface SutTypes {
   sut: LoadCommandsController;
@@ -12,7 +12,8 @@ interface SutTypes {
 
 const makeSut = (): SutTypes => {
   const loadCommandsStub = mockLoadCommands();
-  const sut = new LoadCommandsController(loadCommandsStub);
+  const loadCommandByNameStub = mockLoadCommandByName();
+  const sut = new LoadCommandsController(loadCommandsStub, loadCommandByNameStub);
   return {
     sut,
     loadCommandsStub
@@ -53,5 +54,16 @@ describe('LoadCommands Controller', () => {
     jest.spyOn(loadCommandsStub, 'load').mockRejectedValueOnce(new Error());
     const httpResponse = await sut.handle({});
     expect(httpResponse).toEqual(serverError(new Error()));
+  });
+
+  test('should return 200 on success if name param is provided', async () => {
+    const { sut } = makeSut();
+    const httpResponse = await sut.handle({
+      params: {
+        name: 'any_command'
+      }
+    });
+    expect(httpResponse).toEqual(success(mockCommandModel()));
+    expect(httpResponse.body.command).toBe('any_command');
   });
 });
