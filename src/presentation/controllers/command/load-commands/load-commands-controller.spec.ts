@@ -1,5 +1,5 @@
 import { LoadCommandsController } from './load-commands-controller';
-import { LoadCommands } from './load-commands-protocols';
+import { LoadCommands, LoadCommandByName } from './load-commands-protocols';
 import { noContent, serverError, success } from '@/presentation/helpers/http/http-helper';
 import MockDate from 'mockdate';
 import { mockCommandModel, mockCommandsData } from '@/domain/test';
@@ -8,6 +8,7 @@ import { mockLoadCommandByName, mockLoadCommands } from '@/presentation/test';
 interface SutTypes {
   sut: LoadCommandsController;
   loadCommandsStub: LoadCommands;
+  loadCommandByNameStub: LoadCommandByName;
 }
 
 const makeSut = (): SutTypes => {
@@ -16,7 +17,8 @@ const makeSut = (): SutTypes => {
   const sut = new LoadCommandsController(loadCommandsStub, loadCommandByNameStub);
   return {
     sut,
-    loadCommandsStub
+    loadCommandsStub,
+    loadCommandByNameStub
   };
 };
 
@@ -65,5 +67,16 @@ describe('LoadCommands Controller', () => {
     });
     expect(httpResponse).toEqual(success(mockCommandModel()));
     expect(httpResponse.body.command).toBe('any_command');
+  });
+
+  test('should return 500 if LoadCommandByName throws an exception', async () => {
+    const { sut, loadCommandByNameStub } = makeSut();
+    jest.spyOn(loadCommandByNameStub, 'loadByName').mockRejectedValueOnce(new Error());
+    const httpResponse = await sut.handle({
+      params: {
+        name: 'any_command'
+      }
+    });
+    expect(httpResponse).toEqual(serverError(new Error()));
   });
 });
