@@ -139,6 +139,46 @@ describe('Command Routes', () => {
     });
   });
 
+  describe('GET /commands?name={commandName}', () => {
+    test('should return 403 on load command by name without accessToken', async () => {
+      await request(app).get('/api/commands?name=any_command').expect(403);
+    });
+
+    test('should return 200 on load command by name with valid accessToken', async () => {
+      const accessToken = await makeAccessToken();
+
+      await commandCollection.insertMany([
+        {
+          command: 'any_command',
+          dispatcher: 'message',
+          type: 'message',
+          description: 'any_description',
+          response: 'any_response',
+          message: 'any_message'
+        },
+        {
+          command: 'any_command_2',
+          dispatcher: 'message_2',
+          type: 'any_type_2',
+          description: 'any_description_2',
+          response: 'any_response_2',
+          message: 'any_message_2'
+        }
+      ]);
+
+      const response = await request(app)
+        .get('/api/commands?name=any_command')
+        .set('x-access-token', accessToken)
+        .expect(200);
+      response.body.command = 'any_command';
+    });
+
+    test('should return 204 on empty load command by name with valid accessToken', async () => {
+      const accessToken = await makeAccessToken();
+      await request(app).get('/api/commands?name=invalid_command').set('x-access-token', accessToken).expect(204);
+    });
+  });
+
   describe('PUT /commands/{commandId}', () => {
     test('should return 403 on command update without accessToken', async () => {
       await request(app)
