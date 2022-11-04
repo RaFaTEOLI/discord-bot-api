@@ -3,7 +3,6 @@ import { DbSaveCommand } from './db-save-command';
 import MockDate from 'mockdate';
 import { mockSaveCommandRepository, mockLoadCommandByNameRepository } from '@/data/test';
 import { mockCommandModel, mockSaveCommandParams } from '@/domain/test';
-import env from '@/main/config/env';
 
 interface SutTypes {
   sut: DbSaveCommand;
@@ -36,22 +35,7 @@ describe('DdSaveCommand Usecase', () => {
     const saveSpy = jest.spyOn(saveCommandRepositoryStub, 'save');
     const commandData = mockSaveCommandParams();
     await sut.save(commandData);
-    expect(saveSpy).toHaveBeenCalledWith(
-      Object.assign({}, commandData, { command: `${env.commandPrefix}${commandData.command}` })
-    );
-  });
-
-  test('should call SaveCommandRepository with correct values with prefix', async () => {
-    const { sut, saveCommandRepositoryStub } = makeSut();
-    const saveSpy = jest.spyOn(saveCommandRepositoryStub, 'save');
-    const commandData = mockSaveCommandParams();
-    const commandDataWithPrefix = Object.assign({}, commandData, {
-      command: `${env.commandPrefix}${commandData.command}`
-    });
-    await sut.save(commandDataWithPrefix);
-    expect(saveSpy).toHaveBeenCalledWith(
-      Object.assign({}, commandData, { command: `${env.commandPrefix}${commandData.command}` })
-    );
+    expect(saveSpy).toHaveBeenCalledWith(commandData);
   });
 
   test('should return a Command if SaveCommandRepository returns a command', async () => {
