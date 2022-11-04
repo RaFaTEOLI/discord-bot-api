@@ -58,7 +58,7 @@ describe('LoadCommands Controller', () => {
     expect(httpResponse).toEqual(serverError(new Error()));
   });
 
-  test('should return 200 on success if name param is provided', async () => {
+  test('should return 200 on success if name query string is provided', async () => {
     const { sut } = makeSut();
     const httpResponse = await sut.handle({
       params: {
@@ -67,6 +67,17 @@ describe('LoadCommands Controller', () => {
     });
     expect(httpResponse).toEqual(success(mockCommandModel()));
     expect(httpResponse.body.command).toBe('any_command');
+  });
+
+  test('should return 204 on if no command is found when name query string is provided', async () => {
+    const { sut, loadCommandByNameStub } = makeSut();
+    jest.spyOn(loadCommandByNameStub, 'loadByName').mockResolvedValue(null);
+    const httpResponse = await sut.handle({
+      params: {
+        name: 'invalid_command'
+      }
+    });
+    expect(httpResponse).toEqual(noContent());
   });
 
   test('should return 500 if LoadCommandByName throws an exception', async () => {
