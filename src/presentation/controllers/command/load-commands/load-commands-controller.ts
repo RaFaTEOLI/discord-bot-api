@@ -10,7 +10,7 @@ export class LoadCommandsController implements Controller {
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       if (httpRequest.params?.name) {
-        const command = await this.loadCommandByName.loadByName(httpRequest.params?.name);
+        const command = await this.loadCommandByName.loadByName(httpRequest.params.name);
         return command ? success(command) : noContent();
       }
       const commands = await this.loadCommands.load();
