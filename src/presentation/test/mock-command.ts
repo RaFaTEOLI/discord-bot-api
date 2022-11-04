@@ -3,6 +3,7 @@ import { LoadCommands } from '@/domain/usecases/command/load-commands';
 import { CommandModel } from '@/domain/models/command';
 import { mockCommandModel, mockCommandsData } from '@/domain/test';
 import { LoadCommandById } from '@/domain/usecases/command/load-command-by-id';
+import { LoadCommandByName } from '@/domain/usecases/command/load-command-by-name';
 
 export const mockSaveCommand = (): SaveCommand => {
   class SaveCommandStub implements SaveCommand {
@@ -29,4 +30,13 @@ export const mockLoadCommandById = (): LoadCommandById => {
     }
   }
   return new LoadCommandByIdStub();
+};
+
+export const mockLoadCommandByName = (): LoadCommandByName => {
+  class LoadCommandByNameStub implements LoadCommandByName {
+    async loadByName(name: string): Promise<CommandModel> {
+      return await Promise.resolve(mockCommandModel());
+    }
+  }
+  return new LoadCommandByNameStub();
 };
