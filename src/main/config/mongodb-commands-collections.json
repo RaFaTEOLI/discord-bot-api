@@ -1,0 +1,206 @@
+[
+  {
+    "_id": {
+      "$oid": "6365ab8fa3c6d2ddbb572472"
+    },
+    "command": "rubeo",
+    "dispatcher": "message",
+    "type": "action",
+    "description": "Bot description",
+    "response": null
+  },
+  {
+    "_id": {
+      "$oid": "6365ab8fa3c6d2ddbb572473"
+    },
+    "command": "play <link>",
+    "dispatcher": "message",
+    "type": "action",
+    "description": "Command to play music",
+    "response": null
+  },
+  {
+    "_id": {
+      "$oid": "6365ab8fa3c6d2ddbb572474"
+    },
+    "command": "pause",
+    "dispatcher": "message",
+    "type": "action",
+    "description": "Command to pause the music",
+    "response": null
+  },
+  {
+    "_id": {
+      "$oid": "6365ab8fa3c6d2ddbb572475"
+    },
+    "command": "resume",
+    "dispatcher": "message",
+    "type": "action",
+    "description": "Command to resume music",
+    "response": null
+  },
+  {
+    "_id": {
+      "$oid": "6365ab8fa3c6d2ddbb572476"
+    },
+    "command": "shuffle",
+    "dispatcher": "message",
+    "type": "action",
+    "description": "Command to shuffle the queue",
+    "response": null
+  },
+  {
+    "_id": {
+      "$oid": "6365ab8fa3c6d2ddbb572477"
+    },
+    "command": "playing",
+    "dispatcher": "message",
+    "type": "action",
+    "description": "Command to see what's playing",
+    "response": null
+  },
+  {
+    "_id": {
+      "$oid": "6365ab8fa3c6d2ddbb572478"
+    },
+    "command": "playlist <link>",
+    "dispatcher": "message",
+    "type": "action",
+    "description": "Command to add a playlist to the queue",
+    "response": null
+  },
+  {
+    "_id": {
+      "$oid": "6365ab8fa3c6d2ddbb572479"
+    },
+    "command": "getQueue",
+    "dispatcher": "message",
+    "type": "action",
+    "description": "Command to see the queue",
+    "response": null
+  },
+  {
+    "_id": {
+      "$oid": "6365ab8fa3c6d2ddbb57247a"
+    },
+    "command": "skip",
+    "dispatcher": "message",
+    "type": "action",
+    "description": "Command to skip the music",
+    "response": null
+  },
+  {
+    "_id": {
+      "$oid": "6365ab8fa3c6d2ddbb57247b"
+    },
+    "command": "stop",
+    "dispatcher": "message",
+    "type": "action",
+    "description": "Command to stop the music and clear the queue",
+    "response": null
+  },
+  {
+    "_id": {
+      "$oid": "6365ab8fa3c6d2ddbb57247c"
+    },
+    "command": "showPlaylists",
+    "dispatcher": "message",
+    "type": "action",
+    "description": "Command to show available playlists",
+    "response": null
+  },
+  {
+    "_id": {
+      "$oid": "6365ab8fa3c6d2ddbb57247d"
+    },
+    "command": "removeLoop",
+    "dispatcher": "message",
+    "type": "action",
+    "description": "Command to disable repeat mode"
+  },
+  {
+    "_id": {
+      "$oid": "6365ab8fa3c6d2ddbb57247e"
+    },
+    "command": "toggleLoop",
+    "dispatcher": "message",
+    "type": "action",
+    "description": "Command to enable repeat mode"
+  },
+  {
+    "_id": {
+      "$oid": "6365ab8fa3c6d2ddbb57247f"
+    },
+    "command": "toggleQueueLoop",
+    "dispatcher": "message",
+    "type": "action",
+    "description": "Command to enable queue repeat mode"
+  },
+  {
+    "_id": {
+      "$oid": "6365ab8fa3c6d2ddbb572480"
+    },
+    "command": "setVolume <number>",
+    "dispatcher": "message",
+    "type": "action",
+    "description": "Command to set volume"
+  },
+  {
+    "_id": {
+      "$oid": "6365ab8fa3c6d2ddbb572481"
+    },
+    "command": "seek <seconds>",
+    "dispatcher": "message",
+    "type": "action",
+    "description": "Command to seek to a specific second of the song"
+  },
+  {
+    "_id": {
+      "$oid": "6365ab8fa3c6d2ddbb572482"
+    },
+    "command": "clearQueue",
+    "dispatcher": "message",
+    "type": "action",
+    "description": "Command to clear the queue"
+  },
+  {
+    "_id": {
+      "$oid": "6365ab8fa3c6d2ddbb572483"
+    },
+    "command": "getVolume",
+    "dispatcher": "message",
+    "type": "action",
+    "description": "Command to return the volume",
+    "response": null
+  },
+  {
+    "_id": {
+      "$oid": "6365ab8fa3c6d2ddbb572484"
+    },
+    "command": "nowPlaying",
+    "dispatcher": "message",
+    "type": "action",
+    "description": "Command to return current song",
+    "response": null
+  },
+  {
+    "_id": {
+      "$oid": "6365ab8fa3c6d2ddbb572485"
+    },
+    "command": "remove <number>",
+    "dispatcher": "message",
+    "type": "action",
+    "description": "Command to remove song from queue",
+    "response": null
+  },
+  {
+    "_id": {
+      "$oid": "6365ab8fa3c6d2ddbb572486"
+    },
+    "command": "createProgressBar",
+    "dispatcher": "message",
+    "type": "action",
+    "description": "Command to return progress bar",
+    "response": null
+  }
+]
