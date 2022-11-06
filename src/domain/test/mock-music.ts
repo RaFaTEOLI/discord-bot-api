@@ -6,11 +6,10 @@ export const mockMusicModel = (): MusicModel => {
   return {
     id: faker.datatype.uuid(),
     name: faker.random.word(),
-    startedAt: Date.now()
+    startedAt: Math.floor(Date.now() / 1000)
   };
 };
 
 export const mockSaveMusicParams = (): SaveMusicParams => ({
-  name: faker.random.word(),
-  startedAt: Date.now()
+  name: faker.random.word()
 });
