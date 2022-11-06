@@ -7,3 +7,4 @@ export * from './commands-schema';
 export * from './signup-params-schema';
 export * from './api-key-auth-schema';
 export * from './music-schema';
+export * from './save-music-params-schema';

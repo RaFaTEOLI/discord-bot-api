@@ -1,24 +1,24 @@
 export const musicPath = {
-  get: {
+  post: {
     security: [
       {
         apiKeyAuth: []
       }
     ],
     tags: ['Music'],
-    summary: 'API to fetch current music',
+    summary: 'API to save current music',
     description: 'This route is only for **admin users**',
-    responses: {
-      200: {
-        description: 'Success',
-        content: {
-          'application/json': {
-            schema: {
-              $ref: '#/schemas/music'
-            }
+    requestBody: {
+      required: true,
+      content: {
+        'application/json': {
+          schema: {
+            $ref: '#/schemas/saveMusicParams'
           }
         }
-      },
+      }
+    },
+    responses: {
       204: {
         description: 'Success, No Content'
       },
