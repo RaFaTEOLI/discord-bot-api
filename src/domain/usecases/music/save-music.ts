@@ -1,8 +1,8 @@
 import { MusicModel } from '@/domain/models/music';
 
 export type SaveMusicParams = {
-  name: string;
-  startedAt?: number;
+  name: string | null;
+  startedAt?: number | null;
 };
 
 export interface SaveMusic {
