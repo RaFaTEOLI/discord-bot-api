@@ -4,4 +4,4 @@ jest.config.js
 coverage
 Docker
 .husky
-tsconfig.json
+*.json
