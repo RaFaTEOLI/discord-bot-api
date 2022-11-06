@@ -1,4 +1,4 @@
-import { SaveMusicRepository } from '@/data/protocols/db/music/save-command-repository';
+import { SaveMusicRepository } from '@/data/protocols/db/music/save-music-repository';
 import { MusicModel } from '@/domain/models/music';
 import { SaveMusicParams } from '@/domain/usecases/music/save-music';
 import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper';
