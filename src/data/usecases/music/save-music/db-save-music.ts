@@ -9,7 +9,6 @@ export class DbSaveMusic implements SaveMusic {
       startedAt: Math.floor(Date.now() / 1000)
     });
     const music = await this.saveMusicRepository.save(musicData);
-    console.log({ musicSent: musicData, musicReceived: music });
     return music;
   }
 }
