@@ -11,3 +11,4 @@ export * from './save-music-params-schema';
 export * from './save-queue-params-schema';
 export * from './song-schema';
 export * from './song-params-schema';
+export * from './queue-schema';
