@@ -8,6 +8,6 @@ export type SaveQueueParams = [
   }
 ];
 
-export interface SaveMusic {
+export interface SaveQueue {
   save: (songs: SaveQueueParams) => Promise<void>;
 }
