@@ -1,9 +1,10 @@
-import { HttpRequest, Validation, SaveMusic } from './save-music-controller-protocols';
+import { HttpRequest, SaveMusic } from './save-music-controller-protocols';
 import { SaveMusicController } from './save-music-controller';
 import { badRequest, noContent, serverError } from '@/presentation/helpers/http/http-helper';
 import MockDate from 'mockdate';
-import { mockValidation, mockSaveMusic } from '@/presentation/test';
+import { mockSaveMusic } from '@/presentation/test';
 import { mockSaveMusicParams } from '@/domain/test';
+import { InvalidParamError } from '@/presentation/errors';
 
 const mockRequest = (): HttpRequest => ({
   body: mockSaveMusicParams()
@@ -11,17 +12,14 @@ const mockRequest = (): HttpRequest => ({
 
 interface SutTypes {
   sut: SaveMusicController;
-  validationStub: Validation;
   saveMusicStub: SaveMusic;
 }
 
 const makeSut = (): SutTypes => {
-  const validationStub = mockValidation();
   const saveMusicStub = mockSaveMusic();
-  const sut = new SaveMusicController(validationStub, saveMusicStub);
+  const sut = new SaveMusicController(saveMusicStub);
   return {
     sut,
-    validationStub,
     saveMusicStub
   };
 };
@@ -35,20 +33,11 @@ describe('SaveMusic Controller', () => {
     MockDate.reset();
   });
 
-  test('should call Validation with correct values', async () => {
-    const { sut, validationStub } = makeSut();
-    const validateSpy = jest.spyOn(validationStub, 'validate');
-    const httpRequest = mockRequest();
-    await sut.handle(httpRequest);
-    expect(validateSpy).toHaveBeenCalledWith(httpRequest.body);
-  });
-
-  test('should return 400 if Validation fails', async () => {
-    const { sut, validationStub } = makeSut();
-    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error());
-    const httpRequest = mockRequest();
+  test('should return 400 if no name is provided', async () => {
+    const { sut } = makeSut();
+    const httpRequest = { body: {} };
     const httpResponse = await sut.handle(httpRequest);
-    expect(httpResponse).toEqual(badRequest(new Error()));
+    expect(httpResponse).toEqual(badRequest(new InvalidParamError('name')));
   });
 
   test('should call SaveMusic with correct values', async () => {

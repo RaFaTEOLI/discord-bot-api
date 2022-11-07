@@ -1,15 +1,14 @@
+import { InvalidParamError } from '@/presentation/errors';
 import { badRequest, noContent, serverError } from '@/presentation/helpers/http/http-helper';
-import { Controller, HttpRequest, HttpResponse, Validation, SaveMusic } from './save-music-controller-protocols';
+import { Controller, HttpRequest, HttpResponse, SaveMusic } from './save-music-controller-protocols';
 
 export class SaveMusicController implements Controller {
-  constructor(private readonly validation: Validation, private readonly saveMusic: SaveMusic) {}
+  constructor(private readonly saveMusic: SaveMusic) {}
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const error = this.validation.validate(httpRequest.body);
-
-      if (error) {
-        return badRequest(error);
+      if (!('name' in httpRequest.body)) {
+        return badRequest(new InvalidParamError('name'));
       }
 
       const { name } = httpRequest.body;
