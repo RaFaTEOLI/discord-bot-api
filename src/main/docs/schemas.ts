@@ -7,7 +7,10 @@ import {
   signUpParamsSchema,
   saveCommandParamsSchema,
   musicSchema,
-  saveMusicParamsSchema
+  saveMusicParamsSchema,
+  saveQueueParamsSchema,
+  songSchema,
+  songParamsSchema
 } from './schemas/';
 
 export default {
@@ -19,5 +22,8 @@ export default {
   commands: commandsSchema,
   command: commandSchema,
   music: musicSchema,
-  saveMusicParams: saveMusicParamsSchema
+  saveMusicParams: saveMusicParamsSchema,
+  saveQueueParams: saveQueueParamsSchema,
+  song: songSchema,
+  songParams: songParamsSchema
 };
