@@ -41,4 +41,26 @@ describe('Queue Mongo Repository', () => {
       expect(queue.length).toBe(1);
     });
   });
+
+  describe('load()', () => {
+    test('should load queue on success', async () => {
+      const fakeQueue = mockSaveQueueParams();
+      await queueCollection.insertMany(fakeQueue);
+      const sut = makeSut();
+      const queue = await sut.load();
+      expect(queue.length).toBe(4);
+      expect(queue[0].id).toBeTruthy();
+      expect(queue[0].name).toBeTruthy();
+      expect(queue[0].author).toBeTruthy();
+      expect(queue[0].url).toBeTruthy();
+      expect(queue[0].thumbnail).toBeTruthy();
+      expect(queue[0].duration).toBeTruthy();
+    });
+
+    test('should load an empty array if there is no active queue', async () => {
+      const sut = makeSut();
+      const queue = await sut.load();
+      expect(queue.length).toBe(0);
+    });
+  });
 });

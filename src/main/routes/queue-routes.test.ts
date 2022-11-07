@@ -62,4 +62,31 @@ describe('Queue Routes', () => {
         .expect(204);
     });
   });
+
+  describe('GET /queue', () => {
+    test('should return 403 on load queue without accessToken', async () => {
+      await request(app).get('/api/queue').expect(403);
+    });
+
+    test('should return 200 on load queue with valid admin accessToken', async () => {
+      const accessToken = await makeAccessToken();
+
+      await queueCollection.insertMany(mockSaveQueueParams());
+
+      await request(app).get('/api/queue').set('x-access-token', accessToken).expect(200);
+    });
+
+    test('should return 200 on load queue with valid normal accessToken', async () => {
+      const accessToken = await makeAccessToken(false);
+
+      await queueCollection.insertMany(mockSaveQueueParams());
+
+      await request(app).get('/api/queue').set('x-access-token', accessToken).expect(200);
+    });
+
+    test('should return 200 on load empty queue with valid accessToken', async () => {
+      const accessToken = await makeAccessToken();
+      await request(app).get('/api/queue').set('x-access-token', accessToken).expect(204);
+    });
+  });
 });

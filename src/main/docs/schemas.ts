@@ -10,7 +10,8 @@ import {
   saveMusicParamsSchema,
   saveQueueParamsSchema,
   songSchema,
-  songParamsSchema
+  songParamsSchema,
+  queueSchema
 } from './schemas/';
 
 export default {
@@ -25,5 +26,6 @@ export default {
   saveMusicParams: saveMusicParamsSchema,
   saveQueueParams: saveQueueParamsSchema,
   song: songSchema,
-  songParams: songParamsSchema
+  songParams: songParamsSchema,
+  queue: queueSchema
 };
