@@ -1,4 +1,5 @@
 export type QueueModel = {
+  id: string;
   name: string;
   author: string;
   url: string;
