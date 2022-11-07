@@ -45,4 +45,22 @@ describe('Music Mongo Repository', () => {
       expect(count.length).toBe(1);
     });
   });
+
+  describe('load()', () => {
+    test('should load music on success', async () => {
+      const fakeMusic = mockSaveMusicParams();
+      await musicCollection.insertOne(fakeMusic);
+      const sut = makeSut();
+      const music = await sut.load();
+      expect(music.id).toBeTruthy();
+      expect(music.name).toBe(fakeMusic.name);
+    });
+
+    test('should load a null music on success', async () => {
+      const sut = makeSut();
+      const music = await sut.load();
+      expect(music.id).toBeNull();
+      expect(music.name).toBeNull();
+    });
+  });
 });
