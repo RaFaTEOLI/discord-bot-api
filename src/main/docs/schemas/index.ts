@@ -8,3 +8,6 @@ export * from './signup-params-schema';
 export * from './api-key-auth-schema';
 export * from './music-schema';
 export * from './save-music-params-schema';
+export * from './save-queue-params-schema';
+export * from './song-schema';
+export * from './song-params-schema';

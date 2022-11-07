@@ -32,7 +32,7 @@ const makeAccessToken = async (admin = true): Promise<string> => {
   return accessToken;
 };
 
-describe('music Routes', () => {
+describe('Music Routes', () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL ?? '');
   });

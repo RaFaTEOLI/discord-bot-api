@@ -1,4 +1,12 @@
-import { loginPath, commandPath, signUpPath, commandParamPath, healthCheckPath, musicPath } from './paths/';
+import {
+  loginPath,
+  commandPath,
+  signUpPath,
+  commandParamPath,
+  healthCheckPath,
+  musicPath,
+  queuePath
+} from './paths/';
 
 export default {
   '/login': loginPath,
@@ -6,5 +14,6 @@ export default {
   '/commands': commandPath,
   '/commands/{commandId}': commandParamPath,
   '/health-check': healthCheckPath,
-  '/music': musicPath
+  '/music': musicPath,
+  '/queue': queuePath
 };
