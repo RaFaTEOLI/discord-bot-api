@@ -7,8 +7,8 @@ import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper';
 export class QueueMongoRepository implements SaveQueueRepository, LoadQueueRepository {
   async save(songs: SaveQueueParams): Promise<void> {
     const queueCollection = await MongoHelper.getCollection('queue');
+    await queueCollection.deleteMany({});
     if (songs.length) {
-      await queueCollection.deleteMany({});
       await queueCollection.insertMany(songs);
     }
   }
