@@ -7,7 +7,7 @@ export class LoadQueueController implements Controller {
   async handle(): Promise<HttpResponse> {
     try {
       const queue = await this.loadQueue.load();
-      if (!queue?.length) {
+      if (!queue.length) {
         return noContent();
       }
       return success(queue);
