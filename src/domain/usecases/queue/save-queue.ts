@@ -1,7 +1,13 @@
-import { QueueModel } from '@/domain/models/queue';
-
-export type SaveQueueParams = Omit<QueueModel, 'id'>;
+export type SaveQueueParams = [
+  {
+    name: string;
+    author: string;
+    url: string;
+    thumbnail: string;
+    duration: string;
+  }
+];
 
 export interface SaveMusic {
-  save: (songs: SaveQueueParams[]) => Promise<void>;
+  save: (songs: SaveQueueParams) => Promise<void>;
 }

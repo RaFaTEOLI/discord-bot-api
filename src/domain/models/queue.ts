@@ -1,8 +1,10 @@
-export type QueueModel = {
-  id: string;
-  name: string;
-  author: string;
-  url: string;
-  thumbnail: string;
-  duration: string;
-};
+export type QueueModel = [
+  {
+    id: string;
+    name: string;
+    author: string;
+    url: string;
+    thumbnail: string;
+    duration: string;
+  }
+];
