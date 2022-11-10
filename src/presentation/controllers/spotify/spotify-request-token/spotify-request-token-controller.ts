@@ -1,5 +1,5 @@
 import { InvalidParamError } from '@/presentation/errors';
-import { badRequest, noContent, serverError } from '@/presentation/helpers/http/http-helper';
+import { badRequest, serverError, success } from '@/presentation/helpers/http/http-helper';
 import {
   Controller,
   HttpRequest,
@@ -12,8 +12,8 @@ export class SpotifyRequestTokenController implements Controller {
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      await this.spotifyRequestToken.request(httpRequest.body);
-      return noContent();
+      const account = await this.spotifyRequestToken.request(httpRequest.body);
+      return success(account);
     } catch (error) {
       if (error.message === 'Invalid param: client id') {
         return badRequest(new InvalidParamError('Client ID'));
