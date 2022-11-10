@@ -1,7 +1,7 @@
 import { HttpRequest, SpotifyRequestToken } from './spotify-request-token-controller-protocols';
 import { SpotifyRequestTokenController } from './spotify-request-token-controller';
-import { noContent, serverError } from '@/presentation/helpers/http/http-helper';
-import { mockSpotifyRequestTokenParams } from '@/domain/test';
+import { serverError, success } from '@/presentation/helpers/http/http-helper';
+import { mockAccountModel, mockSpotifyRequestTokenParams } from '@/domain/test';
 import { mockSpotifyRequestToken } from '@/presentation/test';
 
 const mockRequest = (): HttpRequest => ({
@@ -38,9 +38,9 @@ describe('SpotifyRequestToken Controller', () => {
     expect(httpResponse).toEqual(serverError(new Error()));
   });
 
-  test('should return 204 on success', async () => {
+  test('should return 200 on success', async () => {
     const { sut } = makeSut();
     const httpResponse = await sut.handle(mockRequest());
-    expect(httpResponse).toEqual(noContent());
+    expect(httpResponse).toEqual(success(mockAccountModel()));
   });
 });
