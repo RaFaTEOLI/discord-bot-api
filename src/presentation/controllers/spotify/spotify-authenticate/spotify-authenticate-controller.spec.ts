@@ -1,6 +1,11 @@
 import { SpotifyAuthenticateController } from './spotify-authenticate-controller';
 import { forbidden, serverError, success, unauthorized } from '@/presentation/helpers/http/http-helper';
-import { mockAccountModel, mockSpotifyAccessModel, mockSpotifyRequestTokenParams } from '@/domain/test';
+import {
+  mockAccountModel,
+  mockAccountModelWithToken,
+  mockSpotifyAccessModel,
+  mockSpotifyRequestTokenParams
+} from '@/domain/test';
 import {
   mockAuthentication,
   mockAddAccount,
@@ -37,7 +42,7 @@ interface SutTypes {
 }
 
 const makeSut = (fakeAccount = mockAccountModel()): SutTypes => {
-  const addAccountStub = mockAddAccount();
+  const addAccountStub = mockAddAccount(fakeAccount);
   const authenticationStub = mockAuthentication();
   const fakeAccessModel = mockSpotifyAccessModel();
   const spotifyRequestTokenStub = mockSpotifyRequestToken(fakeAccessModel);
@@ -76,9 +81,20 @@ describe('SpotifyAuthenticate Controller', () => {
   });
 
   test('should return 200 on success', async () => {
-    const { sut, fakeAccount } = makeSut();
+    const fakeAccountWithToken = mockAccountModelWithToken();
+    const { sut, fakeAccount } = makeSut(fakeAccountWithToken);
     const httpResponse = await sut.handle(mockRequest());
-    expect(httpResponse).toEqual(success({ accessToken: 'any_token', user: fakeAccount }));
+    expect(httpResponse).toEqual(
+      success({
+        accessToken: 'any_token',
+        user: {
+          email: fakeAccount.email,
+          id: fakeAccount.id,
+          name: fakeAccount.name,
+          spotify: fakeAccount.spotify
+        }
+      })
+    );
   });
 
   test('should call SpotifyLoadUser with correct values if an accessModel is returned', async () => {
@@ -130,10 +146,23 @@ describe('SpotifyAuthenticate Controller', () => {
   });
 
   test('should call Authentication and return 200 on success', async () => {
-    const { sut, fakeAccount, authenticationStub } = makeSut();
+    const fakeAccount = Object.assign({}, mockAccountModel(), {
+      id: 'NOT-FOUND'
+    });
+    const { sut, authenticationStub } = makeSut(fakeAccount);
     const authSpy = jest.spyOn(authenticationStub, 'auth');
-    const httpResponse = await sut.handle(mockRequest());
+    const httpResponse = await sut.handle(mockRequestSignUp());
     expect(authSpy).toHaveBeenCalledWith({ email: fakeAccount.email, password: fakeAccount.password });
-    expect(httpResponse).toEqual(success({ accessToken: 'any_token', user: fakeAccount }));
+    expect(httpResponse).toEqual(
+      success({
+        accessToken: 'any_token',
+        user: {
+          email: fakeAccount.email,
+          id: fakeAccount.id,
+          name: fakeAccount.name,
+          spotify: fakeAccount.spotify
+        }
+      })
+    );
   });
 });

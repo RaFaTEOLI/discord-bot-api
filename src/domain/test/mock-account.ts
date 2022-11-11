@@ -14,6 +14,13 @@ export const mockAccountModel = (): AccountModel =>
     password: 'hashed_password'
   });
 
+export const mockAccountModelWithToken = (): AccountModel =>
+  Object.assign({}, mockAddAccountParams(), {
+    id: 'any_id',
+    password: 'hashed_password',
+    accessToken: 'any_token'
+  });
+
 export const mockAccountModelReturn = (): AccountCleanModel => ({
   id: 'any_id',
   name: 'any_name',

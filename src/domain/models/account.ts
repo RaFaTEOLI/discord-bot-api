@@ -3,6 +3,7 @@ export type AccountModel = {
   name: string;
   email: string;
   password: string;
+  accessToken?: string;
   spotify?: {
     accessToken: string;
     refreshToken: string;

@@ -35,7 +35,9 @@ export class SpotifyAuthenticateController implements Controller {
         redirectUri
       });
 
+      console.log({ spotifyUser });
       let userAccount = spotifyUser;
+      let accessToken = spotifyUser.accessToken;
 
       if (spotifyUser.id === 'NOT-FOUND') {
         if (redirectUri.endsWith('/signup')) {
@@ -48,17 +50,33 @@ export class SpotifyAuthenticateController implements Controller {
             return forbidden(new EmailInUseError());
           }
           userAccount = account;
+          accessToken = await this.authentication.auth({
+            email: spotifyUser.email,
+            password: spotifyUser.password
+          });
         } else {
           return unauthorized();
         }
       }
 
-      const accessToken = await this.authentication.auth({
-        email: spotifyUser.email,
-        password: spotifyUser.password
+      console.log({
+        accessToken,
+        user: {
+          email: userAccount.email,
+          name: userAccount.name,
+          id: userAccount.id,
+          spotify: userAccount.spotify
+        }
       });
-
-      return success({ accessToken, user: userAccount });
+      return success({
+        accessToken,
+        user: {
+          email: userAccount.email,
+          name: userAccount.name,
+          id: userAccount.id,
+          spotify: userAccount.spotify
+        }
+      });
     } catch (error) {
       if (error.message.includes('Invalid param')) {
         return badRequest(new InvalidParamError(error.message.replace('Invalid ', '')));
