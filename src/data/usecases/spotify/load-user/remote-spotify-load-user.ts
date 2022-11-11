@@ -5,19 +5,17 @@ import { AccessDeniedError, InvalidCredentialsError, UnexpectedError } from '@/d
 import { AccountModel } from '@/domain/models/account';
 import { LoadAccountByEmailRepository } from '@/data/protocols/db/account/load-account-by-email-repository';
 import { SpotifyUserModel } from '@/domain/models/spotify';
-import { AddAccountRepository } from '@/data/protocols/db/account/add-account-repository';
 import { SpotifyLoadUser, SpotifyLoadUserParams } from '@/domain/usecases/spotify/spotify-load-user';
 
 export class RemoteSpotifyLoadUser implements SpotifyLoadUser {
   constructor(
     private readonly url: string,
     private readonly httpClient: HttpClient<SpotifyUserModel>,
-    private readonly loadAccountByEmailRepository: LoadAccountByEmailRepository,
-    private readonly addAccountRepository: AddAccountRepository
+    private readonly loadAccountByEmailRepository: LoadAccountByEmailRepository
   ) {}
 
   async load(params: SpotifyLoadUserParams): Promise<AccountModel> {
-    const { accessToken, refreshToken, redirectUri } = params;
+    const { accessToken, refreshToken } = params;
     const httpResponse = await this.httpClient.request({
       url: this.url,
       method: 'get',
@@ -25,28 +23,29 @@ export class RemoteSpotifyLoadUser implements SpotifyLoadUser {
         Authorization: `Bearer ${accessToken}`
       }
     });
+
+    const spotify = {
+      accessToken,
+      refreshToken
+    };
+
     switch (httpResponse.statusCode) {
       case HttpStatusCode.success:
-        const { id, email, display_name } = httpResponse.body;
-        let account = await this.loadAccountByEmailRepository.loadByEmail(email);
-        if (!account) {
-          if (redirectUri.endsWith('/signup')) {
-            account = await this.addAccountRepository.add({
-              email,
-              name: display_name,
-              password: id
-            });
-          } else {
-            throw new AccessDeniedError();
-          }
-        }
+        const { email, display_name, id } = httpResponse.body;
+        const account = await this.loadAccountByEmailRepository.loadByEmail(email);
 
+        if (!account) {
+          return {
+            email,
+            name: display_name,
+            password: id,
+            spotify,
+            id: 'NOT-FOUND'
+          };
+        }
         return {
           ...account,
-          spotify: {
-            accessToken,
-            refreshToken
-          }
+          spotify
         };
       case HttpStatusCode.forbidden:
         throw new AccessDeniedError();
