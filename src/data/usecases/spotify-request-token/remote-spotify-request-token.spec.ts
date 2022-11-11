@@ -65,10 +65,14 @@ describe('RemoteSpotifyRequestToken', () => {
   test('should throw InvalidParamError if HttpClient returns 400', async () => {
     const { sut, httpClientSpy } = makeSut();
     httpClientSpy.response = {
-      statusCode: HttpStatusCode.badRequest
+      statusCode: HttpStatusCode.badRequest,
+      body: {
+        error: 'invalid_grant',
+        error_description: 'Invalid authorization code'
+      } as any
     };
     const promise = sut.request(mockSpotifyRequestTokenParams());
-    await expect(promise).rejects.toThrow(new InvalidParamError('client id'));
+    await expect(promise).rejects.toThrow(new InvalidParamError('authorization code'));
   });
 
   test('should throw AccessDeniedError if HttpClient returns 403', async () => {
