@@ -3,11 +3,11 @@ import { SpotifyRequestToken, SpotifyRequestTokenParams } from '@/domain/usecase
 import { SpotifyAccessModel, SpotifyUserModel } from '../models/spotify';
 import { SpotifyLoadUserParams } from '@/domain/usecases/spotify/spotify-load-user';
 
-export const mockSpotifyRequestTokenParams = (): SpotifyRequestTokenParams => {
+export const mockSpotifyRequestTokenParams = (signUp = false): SpotifyRequestTokenParams => {
   return {
     code: faker.datatype.uuid(),
     state: faker.datatype.uuid(),
-    redirectUri: faker.internet.url(),
+    redirectUri: signUp ? `${faker.internet.url()}/signup` : faker.internet.url(),
     encodedAuthorization: faker.datatype.uuid()
   };
 };
