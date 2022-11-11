@@ -1,5 +1,5 @@
 import { SpotifyAuthenticateController } from './spotify-authenticate-controller';
-import { serverError, success, unauthorized } from '@/presentation/helpers/http/http-helper';
+import { forbidden, serverError, success, unauthorized } from '@/presentation/helpers/http/http-helper';
 import { mockAccountModel, mockSpotifyAccessModel, mockSpotifyRequestTokenParams } from '@/domain/test';
 import {
   mockAuthentication,
@@ -16,6 +16,7 @@ import {
 } from './spotify-authenticate-controller-protocols';
 import { SpotifyAccessModel } from '@/domain/models/spotify';
 import { AccountModel } from '@/domain/models/account';
+import { EmailInUseError } from '@/presentation/errors';
 
 const mockRequest = (): HttpRequest => ({
   body: mockSpotifyRequestTokenParams()
@@ -75,9 +76,9 @@ describe('SpotifyAuthenticate Controller', () => {
   });
 
   test('should return 200 on success', async () => {
-    const { sut, fakeAccessModel } = makeSut();
+    const { sut, fakeAccount } = makeSut();
     const httpResponse = await sut.handle(mockRequest());
-    expect(httpResponse).toEqual(success(fakeAccessModel));
+    expect(httpResponse).toEqual(success({ accessToken: 'any_token', user: fakeAccount }));
   });
 
   test('should call SpotifyLoadUser with correct values if an accessModel is returned', async () => {
@@ -115,5 +116,24 @@ describe('SpotifyAuthenticate Controller', () => {
     const httpRequest = mockRequest();
     const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse).toEqual(unauthorized());
+  });
+
+  test('should return 403 if add account returns null', async () => {
+    const fakeAccount = Object.assign({}, mockAccountModel(), {
+      id: 'NOT-FOUND'
+    });
+    const { sut, addAccountStub } = makeSut(fakeAccount);
+    jest.spyOn(addAccountStub, 'add').mockResolvedValueOnce(null);
+    const httpRequest = mockRequestSignUp();
+    const httpResponse = await sut.handle(httpRequest);
+    expect(httpResponse).toEqual(forbidden(new EmailInUseError()));
+  });
+
+  test('should call Authentication and return 200 on success', async () => {
+    const { sut, fakeAccount, authenticationStub } = makeSut();
+    const authSpy = jest.spyOn(authenticationStub, 'auth');
+    const httpResponse = await sut.handle(mockRequest());
+    expect(authSpy).toHaveBeenCalledWith({ email: fakeAccount.email, password: fakeAccount.password });
+    expect(httpResponse).toEqual(success({ accessToken: 'any_token', user: fakeAccount }));
   });
 });
