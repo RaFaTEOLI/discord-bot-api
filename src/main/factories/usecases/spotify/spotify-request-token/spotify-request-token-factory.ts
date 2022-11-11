@@ -9,6 +9,7 @@ export const makeSpotifyRequestToken = (): SpotifyRequestToken => {
     'https://accounts.spotify.com/api/token',
     makeAxiosHttpClient(),
     accountMongoRepository,
-    makeAxiosHttpClient()
+    makeAxiosHttpClient(),
+    accountMongoRepository
   );
 };
