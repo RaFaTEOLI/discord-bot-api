@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { SpotifyRequestToken, SpotifyRequestTokenParams } from '@/domain/usecases/spotify/spotify-request-token';
-import { SpotifyAccessModel } from '../models/spotify';
+import { SpotifyAccessModel, SpotifyUserModel } from '../models/spotify';
 import { AccountModel } from '../models/account';
 import { mockAccountModel } from './mock-account';
 
@@ -19,6 +19,12 @@ export const mockSpotifyAccessModel = (): SpotifyAccessModel => ({
   scope: 'user-read-private user-read-email',
   expires_in: 3600,
   refresh_token: faker.datatype.uuid()
+});
+
+export const mockSpotifyUserModel = (): SpotifyUserModel => ({
+  id: faker.datatype.uuid(),
+  email: faker.internet.email(),
+  display_name: faker.name.fullName()
 });
 
 export class SpotifyRequestTokenSpy implements SpotifyRequestToken {
