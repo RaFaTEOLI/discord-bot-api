@@ -35,7 +35,6 @@ export class SpotifyAuthenticateController implements Controller {
         redirectUri
       });
 
-      console.log({ spotifyUser });
       let userAccount = spotifyUser;
       let accessToken = spotifyUser.accessToken;
 
