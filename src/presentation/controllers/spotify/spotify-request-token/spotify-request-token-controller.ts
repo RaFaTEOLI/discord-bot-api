@@ -15,8 +15,8 @@ export class SpotifyRequestTokenController implements Controller {
       const account = await this.spotifyRequestToken.request(httpRequest.body);
       return success(account);
     } catch (error) {
-      if (error.message === 'Invalid param: client id') {
-        return badRequest(new InvalidParamError('Client ID'));
+      if (error.message.includes('Invalid param')) {
+        return badRequest(new InvalidParamError(error.message.replace('Invalid ', '')));
       }
       return serverError(error);
     }
