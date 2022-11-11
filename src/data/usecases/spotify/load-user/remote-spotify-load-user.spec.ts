@@ -1,35 +1,26 @@
-import { HttpClientSpy, mockAddAccountRepository, mockLoadAccountByEmailRepository } from '@/data/test';
+import { HttpClientSpy, mockLoadAccountByEmailRepository } from '@/data/test';
 import { mockSpotifyLoadUserParams, mockSpotifyUserModel } from '@/domain/test';
 import { AccessDeniedError, InvalidCredentialsError, UnexpectedError } from '@/domain/errors';
 import { HttpStatusCode } from '@/data/protocols/http';
 import { faker } from '@faker-js/faker';
 import { SpotifyUserModel } from '@/domain/models/spotify';
 import { LoadAccountByEmailRepository } from '@/data/protocols/db/account/load-account-by-email-repository';
-import { AddAccountRepository } from '@/data/protocols/db/account/add-account-repository';
 import { RemoteSpotifyLoadUser } from './remote-spotify-load-user';
 
 type SutTypes = {
   sut: RemoteSpotifyLoadUser;
   httpClientSpy: HttpClientSpy<SpotifyUserModel>;
   loadAccountByEmailRepositoryStub: LoadAccountByEmailRepository;
-  addAccountRepositoryStub: AddAccountRepository;
 };
 
 const makeSut = (url: string = faker.internet.url()): SutTypes => {
   const httpClientSpy = new HttpClientSpy<SpotifyUserModel>();
   const loadAccountByEmailRepositoryStub = mockLoadAccountByEmailRepository();
-  const addAccountRepositoryStub = mockAddAccountRepository();
-  const sut = new RemoteSpotifyLoadUser(
-    url,
-    httpClientSpy,
-    loadAccountByEmailRepositoryStub,
-    addAccountRepositoryStub
-  );
+  const sut = new RemoteSpotifyLoadUser(url, httpClientSpy, loadAccountByEmailRepositoryStub);
   return {
     sut,
     httpClientSpy,
-    loadAccountByEmailRepositoryStub,
-    addAccountRepositoryStub
+    loadAccountByEmailRepositoryStub
   };
 };
 
@@ -103,30 +94,15 @@ describe('RemoteSpotifyLoadUser', () => {
     expect(account.spotify.accessToken).toBeTruthy();
   });
 
-  test('should throw AccessDeniedError if user is not found', async () => {
+  test('should return an AccountModel with id as NOT-FOUND if HttpClient returns 200 and user is not found', async () => {
     const { sut, httpClientSpy, loadAccountByEmailRepositoryStub } = makeSut();
     jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockResolvedValueOnce(null);
     httpClientSpy.response = {
       statusCode: HttpStatusCode.success,
       body: mockSpotifyUserModel()
     };
-    const promise = sut.load(mockSpotifyLoadUserParams());
-    await expect(promise).rejects.toThrow(new AccessDeniedError());
-  });
-
-  test('should create new user if user is not found and redirect uri is signup', async () => {
-    const { sut, httpClientSpy, loadAccountByEmailRepositoryStub, addAccountRepositoryStub } = makeSut();
-    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockResolvedValueOnce(null);
-    const addSpy = jest.spyOn(addAccountRepositoryStub, 'add');
-    httpClientSpy.response = {
-      statusCode: HttpStatusCode.success,
-      body: mockSpotifyUserModel()
-    };
-    const loadUserParams = mockSpotifyLoadUserParams();
-    const account = await sut.load(
-      Object.assign({}, loadUserParams, { redirectUri: `${faker.internet.url()}/signup` })
-    );
-    expect(addSpy).toHaveBeenCalled();
+    const account = await sut.load(mockSpotifyLoadUserParams());
+    expect(account.id).toBe('NOT-FOUND');
     expect(account.email).toBeTruthy();
     expect(account.spotify.accessToken).toBeTruthy();
   });
