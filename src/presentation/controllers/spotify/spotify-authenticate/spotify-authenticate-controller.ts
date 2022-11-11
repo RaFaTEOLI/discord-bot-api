@@ -1,5 +1,5 @@
 import { InvalidParamError } from '@/presentation/errors';
-import { badRequest, serverError, success } from '@/presentation/helpers/http/http-helper';
+import { badRequest, serverError, success, unauthorized } from '@/presentation/helpers/http/http-helper';
 
 import {
   Controller,
@@ -21,12 +21,25 @@ export class SpotifyAuthenticateController implements Controller {
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
+      const { redirectUri } = httpRequest.body;
       const accessModel = await this.spotifyRequestToken.request(httpRequest.body);
-      await this.spotifyLoadUser.load({
+      const spotifyUser = await this.spotifyLoadUser.load({
         accessToken: accessModel.access_token,
         refreshToken: accessModel.refresh_token,
-        redirectUri: httpRequest.body.redirectUri
+        redirectUri
       });
+
+      if (spotifyUser.id === 'NOT-FOUND') {
+        if (redirectUri.endsWith('/signup')) {
+          await this.addAccount.add({
+            email: spotifyUser.email,
+            name: spotifyUser.name,
+            password: spotifyUser.password
+          });
+        } else {
+          return unauthorized();
+        }
+      }
 
       return success(accessModel);
     } catch (error) {
