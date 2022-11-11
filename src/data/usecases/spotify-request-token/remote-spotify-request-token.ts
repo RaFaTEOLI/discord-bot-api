@@ -60,7 +60,8 @@ export class RemoteSpotifyRequestToken implements SpotifyRequestToken {
       case HttpStatusCode.forbidden:
         throw new AccessDeniedError();
       case HttpStatusCode.badRequest:
-        throw new InvalidParamError('client id');
+        const badRequestResponse = httpResponse.body as any;
+        throw new InvalidParamError(badRequestResponse.error_description.replace('Invalid ', ''));
       case HttpStatusCode.unauthorized:
         throw new InvalidCredentialsError();
       default:
