@@ -6,14 +6,16 @@ import { AccountModel } from '@/domain/models/account';
 import { SpotifyRequestToken, SpotifyRequestTokenParams } from '@/domain/usecases/spotify/spotify-request-token';
 import { InvalidParamError } from '@/presentation/errors';
 import { LoadAccountByEmailRepository } from '@/data/protocols/db/account/load-account-by-email-repository';
-import { SpotifyAccessModel } from '@/domain/models/spotify';
+import { SpotifyAccessModel, SpotifyUserModel } from '@/domain/models/spotify';
+import { AddAccountRepository } from '@/data/protocols/db/account/add-account-repository';
 
 export class RemoteSpotifyRequestToken implements SpotifyRequestToken {
   constructor(
     private readonly url: string,
     private readonly httpClient: HttpClient<SpotifyAccessModel>,
     private readonly loadAccountByEmailRepository: LoadAccountByEmailRepository,
-    private readonly httpClientSpotify: HttpClient<{ email: string }>
+    private readonly httpClientSpotify: HttpClient<SpotifyUserModel>,
+    private readonly addAccountRepository: AddAccountRepository
   ) {}
 
   async request(params: SpotifyRequestTokenParams): Promise<AccountModel> {
@@ -44,10 +46,18 @@ export class RemoteSpotifyRequestToken implements SpotifyRequestToken {
             Authorization: `Bearer ${access_token}`
           }
         });
-        const { email } = userHttpResponse.body;
-        const account = await this.loadAccountByEmailRepository.loadByEmail(email);
+        const { id, email, display_name } = userHttpResponse.body;
+        let account = await this.loadAccountByEmailRepository.loadByEmail(email);
         if (!account) {
-          throw new AccessDeniedError();
+          if (params.redirectUri.endsWith('/signup')) {
+            account = await this.addAccountRepository.add({
+              email,
+              name: display_name,
+              password: id
+            });
+          } else {
+            throw new AccessDeniedError();
+          }
         }
 
         return {
@@ -61,7 +71,7 @@ export class RemoteSpotifyRequestToken implements SpotifyRequestToken {
         throw new AccessDeniedError();
       case HttpStatusCode.badRequest:
         const badRequestResponse = httpResponse.body as any;
-        throw new InvalidParamError(badRequestResponse.error_description.replace('Invalid ', ''));
+        throw new InvalidParamError(badRequestResponse.error.replace('invalid_', ''));
       case HttpStatusCode.unauthorized:
         throw new InvalidCredentialsError();
       default:
