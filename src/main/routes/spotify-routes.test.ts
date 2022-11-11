@@ -11,9 +11,9 @@ describe('Spotify Routes', () => {
   afterAll(async () => {
     await MongoHelper.disconnect();
   });
-  describe('POST /token', () => {
+  describe('POST /spotify/auth', () => {
     test('should return 400 on token generation with wrong credentials', async () => {
-      await request(app).post('/api/spotify/token').send(mockSpotifyRequestTokenParams()).expect(400);
+      await request(app).post('/api/spotify/auth').send(mockSpotifyRequestTokenParams()).expect(400);
     });
   });
 });
