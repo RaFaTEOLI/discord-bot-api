@@ -5,7 +5,8 @@ import {
   commandParamPath,
   healthCheckPath,
   musicPath,
-  queuePath
+  queuePath,
+  spotifyPath
 } from './paths/';
 
 export default {
@@ -15,5 +16,6 @@ export default {
   '/commands/{commandId}': commandParamPath,
   '/health-check': healthCheckPath,
   '/music': musicPath,
-  '/queue': queuePath
+  '/queue': queuePath,
+  '/spotify/auth': spotifyPath
 };

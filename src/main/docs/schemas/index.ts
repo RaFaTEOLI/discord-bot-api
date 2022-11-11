@@ -12,3 +12,4 @@ export * from './save-queue-params-schema';
 export * from './song-schema';
 export * from './song-params-schema';
 export * from './queue-schema';
+export * from './spotify-params-schema';
