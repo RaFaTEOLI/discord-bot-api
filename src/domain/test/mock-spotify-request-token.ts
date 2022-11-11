@@ -1,8 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { SpotifyRequestToken, SpotifyRequestTokenParams } from '@/domain/usecases/spotify/spotify-request-token';
 import { SpotifyAccessModel, SpotifyUserModel } from '../models/spotify';
-import { AccountModel } from '../models/account';
-import { mockAccountModel } from './mock-account';
+import { SpotifyLoadUserParams } from '@/domain/usecases/spotify/spotify-load-user';
 
 export const mockSpotifyRequestTokenParams = (): SpotifyRequestTokenParams => {
   return {
@@ -10,6 +9,14 @@ export const mockSpotifyRequestTokenParams = (): SpotifyRequestTokenParams => {
     state: faker.datatype.uuid(),
     redirectUri: faker.internet.url(),
     encodedAuthorization: faker.datatype.uuid()
+  };
+};
+
+export const mockSpotifyLoadUserParams = (): SpotifyLoadUserParams => {
+  return {
+    accessToken: faker.datatype.uuid(),
+    refreshToken: faker.datatype.uuid(),
+    redirectUri: faker.internet.url()
   };
 };
 
@@ -31,11 +38,11 @@ export class SpotifyRequestTokenSpy implements SpotifyRequestToken {
   url = faker.internet.url();
   spotifySettings = mockSpotifyRequestTokenParams();
   spotifyClientId = faker.datatype.uuid();
-  account = mockAccountModel();
+  accessModel = mockSpotifyAccessModel();
   callsCount = 0;
 
-  async request(): Promise<AccountModel> {
+  async request(): Promise<SpotifyAccessModel> {
     this.callsCount++;
-    return await Promise.resolve(this.account);
+    return await Promise.resolve(this.accessModel);
   }
 }
