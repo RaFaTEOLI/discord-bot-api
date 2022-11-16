@@ -53,7 +53,16 @@ describe('Login Controller', () => {
   test('should return 200 if valid credentials are provided', async () => {
     const { sut } = makeSut();
     const httpResponse = await sut.handle(mockRequest());
-    expect(httpResponse).toEqual(success({ accessToken: 'any_token' }));
+    expect(httpResponse).toEqual(
+      success({
+        accessToken: 'any_token',
+        user: {
+          email: 'any_email@mail.com',
+          id: 'any_id',
+          name: 'any_name'
+        }
+      })
+    );
   });
 
   test('should call Validation with correct value', async () => {

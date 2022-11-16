@@ -100,10 +100,12 @@ describe('DbAuthentication UseCase', () => {
     await expect(promise).rejects.toThrow();
   });
 
-  test('should return an accessToken', async () => {
+  test('should return an account with accessToken', async () => {
     const { sut } = makeSut();
-    const accessToken = await sut.auth(mockAuthentication());
-    expect(accessToken).toBe('any_token');
+    const account = await sut.auth(mockAuthentication());
+    expect(account.accessToken).toBe('any_token');
+    expect(account.name).toBeTruthy();
+    expect(account.email).toBeTruthy();
   });
 
   test('should call UpdateAccessTokenRepository with correct values', async () => {

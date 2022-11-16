@@ -14,8 +14,8 @@ export const mockAddAccount = (fakeAccount = mockAccountModel()): AddAccount => 
 
 export const mockAuthentication = (): Authentication => {
   class AuthenticationStub implements Authentication {
-    async auth(authentication: AuthenticationParams): Promise<string> {
-      return await Promise.resolve('any_token');
+    async auth(authentication: AuthenticationParams): Promise<AccountModel> {
+      return await Promise.resolve({ ...mockAccountModel(), accessToken: 'any_token' });
     }
   }
   return new AuthenticationStub();

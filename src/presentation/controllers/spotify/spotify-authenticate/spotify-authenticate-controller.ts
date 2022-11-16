@@ -49,10 +49,11 @@ export class SpotifyAuthenticateController implements Controller {
             return forbidden(new EmailInUseError());
           }
           userAccount = account;
-          accessToken = await this.authentication.auth({
+          const authAccount = await this.authentication.auth({
             email: spotifyUser.email,
             password: spotifyUser.password
           });
+          accessToken = authAccount.accessToken;
         } else {
           return unauthorized();
         }
