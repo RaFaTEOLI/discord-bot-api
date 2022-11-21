@@ -59,21 +59,13 @@ export class SpotifyAuthenticateController implements Controller {
         }
       }
 
-      console.log({
-        accessToken,
-        user: {
-          email: userAccount.email,
-          name: userAccount.name,
-          id: userAccount.id,
-          spotify: userAccount.spotify
-        }
-      });
       return success({
         accessToken,
         user: {
           email: userAccount.email,
           name: userAccount.name,
           id: userAccount.id,
+          ...(userAccount.role && { role: userAccount.role }),
           spotify: userAccount.spotify
         }
       });
