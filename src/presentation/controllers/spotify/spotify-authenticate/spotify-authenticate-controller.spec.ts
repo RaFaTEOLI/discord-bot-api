@@ -165,4 +165,27 @@ describe('SpotifyAuthenticate Controller', () => {
       })
     );
   });
+
+  test('should call Authentication and return 200 on success with admin role', async () => {
+    const fakeAccount = Object.assign({}, mockAccountModel(), {
+      id: 'NOT-FOUND',
+      role: 'admin'
+    });
+    const { sut, authenticationStub } = makeSut(fakeAccount);
+    const authSpy = jest.spyOn(authenticationStub, 'auth');
+    const httpResponse = await sut.handle(mockRequestSignUp());
+    expect(authSpy).toHaveBeenCalledWith({ email: fakeAccount.email, password: fakeAccount.password });
+    expect(httpResponse).toEqual(
+      success({
+        accessToken: 'any_token',
+        user: {
+          email: fakeAccount.email,
+          id: fakeAccount.id,
+          name: fakeAccount.name,
+          role: fakeAccount.role,
+          spotify: fakeAccount.spotify
+        }
+      })
+    );
+  });
 });
