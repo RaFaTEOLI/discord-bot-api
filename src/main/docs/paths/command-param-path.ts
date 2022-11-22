@@ -82,5 +82,40 @@ export const commandParamPath = {
         $ref: '#/components/serverError'
       }
     }
+  },
+  delete: {
+    security: [
+      {
+        apiKeyAuth: []
+      }
+    ],
+    tags: ['Command'],
+    summary: 'API to delete a command',
+    description: 'This route is only for **admins**',
+    parameters: [
+      {
+        in: 'path',
+        name: 'commandId',
+        description: 'ID from Command to be deleted',
+        required: true,
+        schema: {
+          type: 'string'
+        }
+      }
+    ],
+    responses: {
+      204: {
+        description: 'Success, No Content'
+      },
+      400: {
+        $ref: '#/components/badRequest'
+      },
+      403: {
+        $ref: '#/components/forbidden'
+      },
+      500: {
+        $ref: '#/components/serverError'
+      }
+    }
   }
 };
