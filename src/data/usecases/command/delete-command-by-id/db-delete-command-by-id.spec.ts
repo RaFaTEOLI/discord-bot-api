@@ -26,8 +26,15 @@ describe('DbDeleteCommandById', () => {
     expect(deleteByIdSpy).toHaveBeenCalledWith(id);
   });
 
-  test('should return void on success', async () => {
+  test('should return true on success', async () => {
     const { sut } = makeSut();
+    const command = await sut.deleteById(faker.datatype.uuid());
+    expect(command).toBeTruthy();
+  });
+
+  test('should return false if no record is found', async () => {
+    const { sut, deleteCommandByIdRepositoryStub } = makeSut();
+    jest.spyOn(deleteCommandByIdRepositoryStub, 'deleteById').mockResolvedValueOnce(false);
     const command = await sut.deleteById(faker.datatype.uuid());
     expect(command).toBeFalsy();
   });

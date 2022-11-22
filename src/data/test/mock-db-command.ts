@@ -45,8 +45,8 @@ export const mockLoadCommandByNameRepository = (): LoadCommandByNameRepository =
 
 export const mockDeleteCommandByIdRepository = (): DeleteCommandByIdRepository => {
   class DeleteCommandByIdRepositoryStub implements DeleteCommandByIdRepository {
-    async deleteById(id: string): Promise<void> {
-      return await Promise.resolve();
+    async deleteById(id: string): Promise<boolean> {
+      return await Promise.resolve(true);
     }
   }
   return new DeleteCommandByIdRepositoryStub();
