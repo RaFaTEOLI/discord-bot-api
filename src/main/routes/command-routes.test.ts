@@ -249,4 +249,39 @@ describe('Command Routes', () => {
         .expect(204);
     });
   });
+
+  describe('DELETE /commands/{commandId}', () => {
+    test('should return 403 on command delete without accessToken', async () => {
+      await request(app).delete('/api/commands/any_id').expect(403);
+    });
+
+    test('should return 204 on command delete with a valid admin accessToken', async () => {
+      const accessToken = await makeAccessToken();
+      const result = await commandCollection.insertOne({
+        command: 'any_command',
+        dispatcher: 'message',
+        type: 'message',
+        description: 'any_description',
+        response: 'any_response',
+        message: 'any_message'
+      });
+      const id = result.insertedId.toString();
+      await request(app).delete(`/api/commands/${id}`).set('x-access-token', accessToken).expect(204);
+    });
+
+    test('should return 400 on command delete with invalid id', async () => {
+      const accessToken = await makeAccessToken();
+      const result = await commandCollection.insertOne({
+        command: 'any_command',
+        dispatcher: 'message',
+        type: 'message',
+        description: 'any_description',
+        response: 'any_response',
+        message: 'any_message'
+      });
+      const id = result.insertedId.toString();
+      await commandCollection.deleteMany({});
+      await request(app).delete(`/api/commands/${id}`).set('x-access-token', accessToken).expect(400);
+    });
+  });
 });
