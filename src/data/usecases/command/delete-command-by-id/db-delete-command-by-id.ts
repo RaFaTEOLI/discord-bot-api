@@ -3,7 +3,7 @@ import { DeleteCommandById, DeleteCommandByIdRepository } from './db-delete-comm
 export class DbDeleteCommandById implements DeleteCommandById {
   constructor(private readonly deleteCommandRepository: DeleteCommandByIdRepository) {}
 
-  async deleteById(id: string): Promise<void> {
-    await this.deleteCommandRepository.deleteById(id);
+  async deleteById(id: string): Promise<boolean> {
+    return await this.deleteCommandRepository.deleteById(id);
   }
 }
