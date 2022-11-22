@@ -103,4 +103,18 @@ describe('Command Mongo Repository', () => {
       expect(command.command).toBe(createdCommand.command);
     });
   });
+
+  describe('deleteById()', () => {
+    test('should delete command by id on success', async () => {
+      const result = await commandCollection.insertOne(mockSaveCommandParams());
+      const id = result.insertedId.toString();
+      const sut = makeSut();
+      const deleted = await sut.deleteById(id);
+      const command = await commandCollection.findOne({
+        command: 'any_command'
+      });
+      expect(deleted).toBeTruthy();
+      expect(command).toBeFalsy();
+    });
+  });
 });

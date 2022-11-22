@@ -5,6 +5,7 @@ import { mockCommandModel, mockCommandsData } from '@/domain/test';
 import { LoadCommandsRepository } from '@/data/protocols/db/command/load-commands-repository';
 import { LoadCommandByIdRepository } from '@/data/protocols/db/command/load-command-by-id-repository';
 import { LoadCommandByNameRepository } from '@/data/protocols/db/command/load-command-by-name-repository';
+import { DeleteCommandByIdRepository } from '@/data/protocols/db/command/delete-command-by-id-repository';
 
 export const mockSaveCommandRepository = (): SaveCommandRepository => {
   class SaveCommandRepositoryStub implements SaveCommandRepository {
@@ -40,4 +41,13 @@ export const mockLoadCommandByNameRepository = (): LoadCommandByNameRepository =
     }
   }
   return new LoadCommandByNameRepositoryStub();
+};
+
+export const mockDeleteCommandByIdRepository = (): DeleteCommandByIdRepository => {
+  class DeleteCommandByIdRepositoryStub implements DeleteCommandByIdRepository {
+    async deleteById(id: string): Promise<boolean> {
+      return await Promise.resolve(true);
+    }
+  }
+  return new DeleteCommandByIdRepositoryStub();
 };
