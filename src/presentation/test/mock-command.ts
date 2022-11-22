@@ -4,6 +4,7 @@ import { CommandModel } from '@/domain/models/command';
 import { mockCommandModel, mockCommandsData } from '@/domain/test';
 import { LoadCommandById } from '@/domain/usecases/command/load-command-by-id';
 import { LoadCommandByName } from '@/domain/usecases/command/load-command-by-name';
+import { DeleteCommandById } from '../controllers/command/delete-command-by-id/delete-command-by-id-protocols';
 
 export const mockSaveCommand = (): SaveCommand => {
   class SaveCommandStub implements SaveCommand {
@@ -39,4 +40,13 @@ export const mockLoadCommandByName = (): LoadCommandByName => {
     }
   }
   return new LoadCommandByNameStub();
+};
+
+export const mockDeleteCommandById = (): DeleteCommandById => {
+  class DeleteCommandByIdStub implements DeleteCommandById {
+    async deleteById(id: string): Promise<boolean> {
+      return await Promise.resolve(true);
+    }
+  }
+  return new DeleteCommandByIdStub();
 };
