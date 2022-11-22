@@ -9,9 +9,15 @@ import { LoadCommandsRepository } from '@/data/protocols/db/command/load-command
 import { ObjectId } from 'mongodb';
 import { MongoHelper } from '../helpers/mongo-helper';
 import { LoadCommandByNameRepository } from '@/data/protocols/db/command/load-command-by-name-repository';
+import { DeleteCommandByIdRepository } from '@/data/protocols/db/command/delete-command-by-id-repository';
 
 export class CommandMongoRepository
-  implements SaveCommandRepository, LoadCommandsRepository, LoadCommandByIdRepository, LoadCommandByNameRepository
+  implements
+    SaveCommandRepository,
+    LoadCommandsRepository,
+    LoadCommandByIdRepository,
+    LoadCommandByNameRepository,
+    DeleteCommandByIdRepository
 {
   async save(commandData: SaveCommandParams): Promise<CommandModel> {
     const commandCollection = await MongoHelper.getCollection('commands');
@@ -54,5 +60,15 @@ export class CommandMongoRepository
     const commandCollection = await MongoHelper.getCollection('commands');
     const command = await commandCollection.findOne({ command: name });
     return MongoHelper.format(command);
+  }
+
+  async deleteById(id: string): Promise<boolean> {
+    const commandCollection = await MongoHelper.getCollection('commands');
+    const result = await commandCollection.deleteOne({ _id: new ObjectId(id) });
+    if (result.deletedCount === 1) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
