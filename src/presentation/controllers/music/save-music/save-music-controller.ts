@@ -10,9 +10,12 @@ export class SaveMusicController implements Controller {
       if (!('name' in httpRequest.body)) {
         return badRequest(new InvalidParamError('name'));
       }
+      if (!('duration' in httpRequest.body)) {
+        return badRequest(new InvalidParamError('duration'));
+      }
 
-      const { name } = httpRequest.body;
-      await this.saveMusic.save({ name });
+      const { name, duration } = httpRequest.body;
+      await this.saveMusic.save({ name, duration });
       return noContent();
     } catch (error) {
       return serverError(error);
