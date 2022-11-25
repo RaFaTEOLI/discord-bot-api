@@ -35,9 +35,16 @@ describe('SaveMusic Controller', () => {
 
   test('should return 400 if no name is provided', async () => {
     const { sut } = makeSut();
-    const httpRequest = { body: {} };
+    const httpRequest = { body: { duration: null } };
     const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse).toEqual(badRequest(new InvalidParamError('name')));
+  });
+
+  test('should return 400 if no duration is provided', async () => {
+    const { sut } = makeSut();
+    const httpRequest = { body: { name: null } };
+    const httpResponse = await sut.handle(httpRequest);
+    expect(httpResponse).toEqual(badRequest(new InvalidParamError('duration')));
   });
 
   test('should call SaveMusic with correct values', async () => {
