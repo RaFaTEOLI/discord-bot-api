@@ -12,6 +12,7 @@ export class MusicMongoRepository implements SaveMusicRepository, LoadMusicRepos
       {
         $set: {
           name: data.name,
+          duration: data.duration,
           startedAt: data.startedAt
         }
       },
@@ -26,6 +27,6 @@ export class MusicMongoRepository implements SaveMusicRepository, LoadMusicRepos
   async load(): Promise<MusicModel> {
     const musicCollection = await MongoHelper.getCollection('music');
     const result = await musicCollection.findOne();
-    return MongoHelper.format(result) ?? { id: null, name: null, startedAt: null };
+    return MongoHelper.format(result) ?? { id: null, name: null, duration: null, startedAt: null };
   }
 }
