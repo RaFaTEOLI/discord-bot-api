@@ -42,6 +42,7 @@ describe('Music Mongo Repository', () => {
       const count = await musicCollection.find().toArray();
       expect(music).toBeTruthy();
       expect(music.name).toBe(fakeMusic.name);
+      expect(music.duration).toBe(fakeMusic.duration);
       expect(count.length).toBe(1);
     });
   });
@@ -54,6 +55,7 @@ describe('Music Mongo Repository', () => {
       const music = await sut.load();
       expect(music.id).toBeTruthy();
       expect(music.name).toBe(fakeMusic.name);
+      expect(music.duration).toBe(fakeMusic.duration);
     });
 
     test('should load a null music on success', async () => {
@@ -61,6 +63,7 @@ describe('Music Mongo Repository', () => {
       const music = await sut.load();
       expect(music.id).toBeNull();
       expect(music.name).toBeNull();
+      expect(music.duration).toBeNull();
     });
   });
 });
