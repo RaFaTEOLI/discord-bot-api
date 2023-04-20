@@ -12,7 +12,9 @@ export class RemoteSpotifyRequestToken implements SpotifyRequestToken {
   async request(params: SpotifyRequestTokenParams): Promise<SpotifyAccessModel> {
     const formData = new URLSearchParams();
     formData.append('code', params.code);
-    formData.append('state', params.state);
+    if ('state' in params) {
+      formData.append('state', params.state);
+    }
     formData.append('grant_type', 'authorization_code');
     formData.append('redirect_uri', params.redirectUri);
 

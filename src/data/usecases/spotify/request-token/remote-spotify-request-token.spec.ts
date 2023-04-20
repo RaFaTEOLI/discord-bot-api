@@ -97,4 +97,18 @@ describe('RemoteSpotifyRequestToken', () => {
     expect(accessModel.access_token).toBeTruthy();
     expect(accessModel.refresh_token).toBeTruthy();
   });
+
+  test('should return an AccessModel when state is not provided', async () => {
+    const { sut, httpClientSpy } = makeSut();
+    const httpResult = mockSpotifyAccessModel();
+    httpClientSpy.response = {
+      statusCode: HttpStatusCode.success,
+      body: httpResult
+    };
+    const spotifyRequestTokenParams = mockSpotifyRequestTokenParams();
+    delete spotifyRequestTokenParams.state;
+    const accessModel = await sut.request(spotifyRequestTokenParams);
+    expect(accessModel.access_token).toBeTruthy();
+    expect(accessModel.refresh_token).toBeTruthy();
+  });
 });
