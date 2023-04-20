@@ -18,6 +18,18 @@ export class RemoteSpotifyRequestToken implements SpotifyRequestToken {
     formData.append('grant_type', 'authorization_code');
     formData.append('redirect_uri', params.redirectUri);
 
+    console.debug('Requesting token from Spotify:', {
+      url: this.url,
+      method: 'post',
+      body: formData,
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': '*',
+        Authorization: `Basic ${params.encodedAuthorization}`
+      }
+    });
+
     const httpResponse = await this.httpClient.request({
       url: this.url,
       method: 'post',
@@ -29,6 +41,9 @@ export class RemoteSpotifyRequestToken implements SpotifyRequestToken {
         Authorization: `Basic ${params.encodedAuthorization}`
       }
     });
+
+    console.debug('Response from Spotify:', httpResponse);
+
     switch (httpResponse.statusCode) {
       case HttpStatusCode.success:
         return httpResponse.body;
