@@ -50,7 +50,7 @@ export class SpotifyAuthenticateController implements Controller {
           if (!account) {
             return forbidden(new EmailInUseError());
           }
-          userAccount = account;
+          userAccount = { ...account, spotify: userAccount.spotify };
           const authAccount = await this.authentication.auth({
             email: spotifyUser.email,
             password: spotifyUser.password
@@ -61,6 +61,16 @@ export class SpotifyAuthenticateController implements Controller {
         }
       }
 
+      console.debug('Returning User Account:', {
+        accessToken,
+        user: {
+          email: userAccount.email,
+          name: userAccount.name,
+          id: userAccount.id,
+          ...(userAccount.role && { role: userAccount.role }),
+          spotify: userAccount.spotify
+        }
+      });
       return success({
         accessToken,
         user: {

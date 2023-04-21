@@ -1,6 +1,7 @@
 import { AccountModel, AccountCleanModel } from '@/domain/models/account';
 import { AddAccountParams } from '@/domain/usecases/account/add-account';
 import { AuthenticationParams } from '@/domain/usecases/account/authentication';
+import { faker } from '@faker-js/faker';
 
 export const mockAddAccountParams = (): AddAccountParams => ({
   name: 'any_name',
@@ -14,11 +15,12 @@ export const mockAccountModel = (): AccountModel =>
     password: 'hashed_password'
   });
 
-export const mockAccountModelWithToken = (): AccountModel =>
+export const mockAccountModelWithToken = (spotifyToken?: boolean): AccountModel =>
   Object.assign({}, mockAddAccountParams(), {
     id: 'any_id',
     password: 'hashed_password',
-    accessToken: 'any_token'
+    accessToken: 'any_token',
+    ...(spotifyToken && { spotify: { accessToken: faker.datatype.uuid(), refreshToken: faker.datatype.uuid() } })
   });
 
 export const mockAccountModelReturn = (): AccountCleanModel => ({
