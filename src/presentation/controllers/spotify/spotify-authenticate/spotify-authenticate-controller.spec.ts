@@ -188,4 +188,38 @@ describe('SpotifyAuthenticate Controller', () => {
       })
     );
   });
+
+  test('should return 200 on success with spotify', async () => {
+    const fakeAccountWithToken = mockAccountModelWithToken(true);
+    const { sut, fakeAccount } = makeSut(fakeAccountWithToken);
+    const httpResponse = await sut.handle(mockRequest());
+    expect(httpResponse).toEqual(
+      success({
+        accessToken: 'any_token',
+        user: {
+          email: fakeAccount.email,
+          id: fakeAccount.id,
+          name: fakeAccount.name,
+          spotify: fakeAccount.spotify
+        }
+      })
+    );
+  });
+
+  test('should return 200 on success with spotify signup', async () => {
+    const fakeAccountWithToken = mockAccountModelWithToken(true);
+    const { sut, fakeAccount } = makeSut(fakeAccountWithToken);
+    const httpResponse = await sut.handle(mockRequestSignUp());
+    expect(httpResponse).toEqual(
+      success({
+        accessToken: 'any_token',
+        user: {
+          email: fakeAccount.email,
+          id: fakeAccount.id,
+          name: fakeAccount.name,
+          spotify: fakeAccount.spotify
+        }
+      })
+    );
+  });
 });
