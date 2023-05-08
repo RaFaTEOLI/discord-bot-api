@@ -29,13 +29,12 @@ export class SpotifyAuthenticateController implements Controller {
     try {
       const { redirectUri } = httpRequest.body;
       const accessModel = await this.spotifyRequestToken.request(httpRequest.body);
-      console.debug('Fetched Access Model from Spotify:', accessModel);
+
       const spotifyUser = await this.spotifyLoadUser.load({
         accessToken: accessModel.access_token,
         refreshToken: accessModel.refresh_token,
         redirectUri
       });
-      console.debug('Fetched SpotifyUser:', spotifyUser);
 
       let userAccount = spotifyUser;
       let accessToken = spotifyUser.accessToken;
@@ -61,16 +60,6 @@ export class SpotifyAuthenticateController implements Controller {
         }
       }
 
-      console.debug('Returning User Account:', {
-        accessToken,
-        user: {
-          email: userAccount.email,
-          name: userAccount.name,
-          id: userAccount.id,
-          ...(userAccount.role && { role: userAccount.role }),
-          spotify: userAccount.spotify
-        }
-      });
       return success({
         accessToken,
         user: {
