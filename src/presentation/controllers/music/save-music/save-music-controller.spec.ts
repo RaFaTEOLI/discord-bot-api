@@ -2,9 +2,10 @@ import { HttpRequest, SaveMusic } from './save-music-controller-protocols';
 import { SaveMusicController } from './save-music-controller';
 import { badRequest, noContent, serverError } from '@/presentation/helpers/http/http-helper';
 import MockDate from 'mockdate';
-import { mockSaveMusic } from '@/presentation/test';
+import { mockSaveMusic, mockSocketClient } from '@/presentation/test';
 import { mockSaveMusicParams } from '@/domain/test';
 import { InvalidParamError } from '@/presentation/errors';
+import { Socket } from 'socket.io-client';
 
 const mockRequest = (): HttpRequest => ({
   body: mockSaveMusicParams()
@@ -13,14 +14,17 @@ const mockRequest = (): HttpRequest => ({
 interface SutTypes {
   sut: SaveMusicController;
   saveMusicStub: SaveMusic;
+  socketClientStub: Socket;
 }
 
 const makeSut = (): SutTypes => {
   const saveMusicStub = mockSaveMusic();
-  const sut = new SaveMusicController(saveMusicStub);
+  const socketClientStub = mockSocketClient();
+  const sut = new SaveMusicController(saveMusicStub, socketClientStub);
   return {
     sut,
-    saveMusicStub
+    saveMusicStub,
+    socketClientStub
   };
 };
 
@@ -66,5 +70,17 @@ describe('SaveMusic Controller', () => {
     const { sut } = makeSut();
     const httpResponse = await sut.handle(mockRequest());
     expect(httpResponse).toEqual(noContent());
+  });
+
+  test('should emit socket event on success', async () => {
+    const { sut, socketClientStub } = makeSut();
+    const socketSpy = jest.spyOn(socketClientStub, 'emit');
+    const request = mockRequest();
+    const httpResponse = await sut.handle(request);
+    expect(httpResponse).toEqual(noContent());
+    expect(socketSpy).toHaveBeenCalledWith('music', {
+      name: request.body.name,
+      duration: request.body.duration
+    });
   });
 });
