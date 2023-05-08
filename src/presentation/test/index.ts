@@ -4,3 +4,4 @@ export * from './mock-command';
 export * from './mock-music';
 export * from './mock-queue';
 export * from './mock-spotify';
+export * from './mock-socket';
