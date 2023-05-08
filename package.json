@@ -58,6 +58,8 @@
     "jsonwebtoken": "^8.5.1",
     "module-alias": "^2.2.2",
     "mongodb": "^4.8.1",
+    "socket.io": "^4.6.1",
+    "socket.io-client": "^4.6.1",
     "swagger-ui-express": "^4.5.0",
     "validator": "^13.7.0"
   },
