@@ -4,6 +4,7 @@ Backend API for Discord Bot.
 
 - Bot Player: https://github.com/RaFaTEOLI/discord-bot-player
 - Bot App: https://github.com/RaFaTEOLI/discord-bot-app
+- Bot API Queue: https://github.com/RaFaTEOLI/discord-bot-api-queue
 
 ## Swagger Documentation
 
