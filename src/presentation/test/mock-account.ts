@@ -1,7 +1,8 @@
 import { AddAccount, AddAccountParams } from '@/domain/usecases/account/add-account';
 import { AccountModel } from '@/domain/models/account';
-import { mockAccountModel } from '@/domain/test';
+import { mockAccountModel, mockAccountModelWithSpotifyAndDiscord } from '@/domain/test';
 import { Authentication, AuthenticationParams } from '@/domain/usecases/account/authentication';
+import { SaveAccount, SaveAccountParams } from '@/domain/usecases/account/save-account';
 
 export const mockAddAccount = (fakeAccount = mockAccountModel()): AddAccount => {
   class AddAccountStub implements AddAccount {
@@ -19,4 +20,13 @@ export const mockAuthentication = (): Authentication => {
     }
   }
   return new AuthenticationStub();
+};
+
+export const mockSaveAccount = (fakeAccount = mockAccountModelWithSpotifyAndDiscord()): SaveAccount => {
+  class SaveAccountStub implements SaveAccount {
+    async save(account: SaveAccountParams): Promise<AccountModel> {
+      return await Promise.resolve(fakeAccount);
+    }
+  }
+  return new SaveAccountStub();
 };
