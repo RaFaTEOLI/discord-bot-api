@@ -5,6 +5,8 @@ import { AddAccountParams } from '@/domain/usecases/account/add-account';
 import { LoadAccountByEmailRepository } from '@/data/protocols/db/account/load-account-by-email-repository';
 import { LoadAccountByTokenRepository } from '@/data/protocols/db/account/load-account-by-token-repository';
 import { UpdateAccessTokenRepository } from '@/data/protocols/db/account/update-access-token-repository';
+import { SaveAccountRepository } from '@/data/protocols/db/account/save-account-repository';
+import { SaveAccountParams } from '@/data/usecases/account/save-account/db-save-account-protocols';
 
 export const mockAddAccountRepository = (): AddAccountRepository => {
   class AddAccountRepositoryStub implements AddAccountRepository {
@@ -40,4 +42,13 @@ export const mockUpdateAccessTokenRepository = (): UpdateAccessTokenRepository =
     }
   }
   return new UpdateAccessTokenRepositoryStub();
+};
+
+export const mockSaveAccountRepository = (fakeAccount = mockAccountModel()): SaveAccountRepository => {
+  class SaveAccountRepositoryStub implements SaveAccountRepository {
+    async save(data: SaveAccountParams): Promise<AccountModel> {
+      return await Promise.resolve(fakeAccount);
+    }
+  }
+  return new SaveAccountRepositoryStub();
 };
