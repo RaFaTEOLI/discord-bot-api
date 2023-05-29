@@ -2,6 +2,7 @@ import { mockAddAccountParams } from '@/domain/test';
 import { Collection } from 'mongodb';
 import { MongoHelper } from '../helpers/mongo-helper';
 import { AccountMongoRepository } from './account-mongo-repository';
+import { faker } from '@faker-js/faker';
 
 const makeSut = (): AccountMongoRepository => {
   return new AccountMongoRepository();
@@ -130,6 +131,22 @@ describe('Account Mongo Repository', () => {
       const sut = makeSut();
       const account = await sut.loadByToken('any_token');
       expect(account).toBeNull();
+    });
+  });
+
+  describe('save()', () => {
+    test('should update the name on save success', async () => {
+      const sut = makeSut();
+      const accountParams = mockAddAccountParams();
+      const result = await accountCollection.insertOne(accountParams);
+      const newName = faker.name.firstName();
+      const id = result.insertedId.toString();
+      await sut.save({ id, name: newName });
+      const account = await accountCollection.findOne({
+        _id: result.insertedId
+      });
+      expect(account).toBeTruthy();
+      expect(account.name).toBe(newName);
     });
   });
 });
