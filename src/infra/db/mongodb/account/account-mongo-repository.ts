@@ -8,6 +8,7 @@ import { AccountModel } from '@/domain/models/account';
 import { AddAccountParams } from '@/domain/usecases/account/add-account';
 import { MongoHelper } from '../helpers/mongo-helper';
 import { ObjectId } from 'mongodb';
+import { SaveAccountParams } from '@/domain/usecases/account/save-account';
 
 export class AccountMongoRepository
   implements
@@ -56,5 +57,17 @@ export class AccountMongoRepository
       ]
     });
     return account ? MongoHelper.format(account) : null;
+  }
+
+  async save(data: SaveAccountParams): Promise<void> {
+    const accountCollection = await MongoHelper.getCollection('accounts');
+    await accountCollection.updateOne(
+      {
+        _id: new ObjectId(data.id)
+      },
+      {
+        $set: data
+      }
+    );
   }
 }
