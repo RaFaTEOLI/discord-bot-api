@@ -1,13 +1,13 @@
 import { HttpRequest, SaveAccount } from './save-account-controller-protocols';
 import { SaveAccountController } from './save-account-controller';
-import { badRequest, noContent, serverError } from '@/presentation/helpers/http/http-helper';
+import { noContent, serverError } from '@/presentation/helpers/http/http-helper';
 import MockDate from 'mockdate';
 import { mockSaveAccount } from '@/presentation/test';
-import { mockAccountModelWithSpotifyAndDiscord } from '@/domain/test';
-import { InvalidParamError } from '@/presentation/errors';
+import { mockAccountModel, mockAccountModelWithSpotifyAndDiscord } from '@/domain/test';
 
 const mockRequest = (): HttpRequest => ({
-  body: mockAccountModelWithSpotifyAndDiscord()
+  body: mockAccountModelWithSpotifyAndDiscord(),
+  account: mockAccountModel()
 });
 
 interface SutTypes {
@@ -33,19 +33,12 @@ describe('SaveAccount Controller', () => {
     MockDate.reset();
   });
 
-  test('should return 400 if no id is provided', async () => {
-    const { sut } = makeSut();
-    const httpRequest = { body: {} };
-    const httpResponse = await sut.handle(httpRequest);
-    expect(httpResponse).toEqual(badRequest(new InvalidParamError('id')));
-  });
-
   test('should call SaveAccount with correct values', async () => {
     const { sut, saveAccountStub } = makeSut();
     const saveSpy = jest.spyOn(saveAccountStub, 'save');
     const httpRequest = mockRequest();
     await sut.handle(httpRequest);
-    expect(saveSpy).toHaveBeenCalledWith(httpRequest.body);
+    expect(saveSpy).toHaveBeenCalledWith(httpRequest.account.id, httpRequest.body);
   });
 
   test('should not call SaveAccount with password, accessToken and role', async () => {
@@ -58,10 +51,11 @@ describe('SaveAccount Controller', () => {
         password: 'any_password',
         accessToken: 'any_token',
         role: 'any_role'
-      }
+      },
+      account: httpRequest.account
     };
     await sut.handle(newRequest);
-    expect(saveSpy).toHaveBeenCalledWith(httpRequest.body);
+    expect(saveSpy).toHaveBeenCalledWith(httpRequest.account.id, httpRequest.body);
   });
 
   test('should return 500 if SaveAccount throws an exception', async () => {

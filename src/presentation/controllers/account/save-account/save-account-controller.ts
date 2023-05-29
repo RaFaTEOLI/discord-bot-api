@@ -1,5 +1,4 @@
-import { InvalidParamError } from '@/presentation/errors';
-import { badRequest, noContent, serverError } from '@/presentation/helpers/http/http-helper';
+import { noContent, serverError } from '@/presentation/helpers/http/http-helper';
 import { Controller, HttpRequest, HttpResponse, SaveAccount } from './save-account-controller-protocols';
 
 export class SaveAccountController implements Controller {
@@ -7,10 +6,6 @@ export class SaveAccountController implements Controller {
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      if (!('id' in httpRequest.body)) {
-        return badRequest(new InvalidParamError('id'));
-      }
-
       if ('password' in httpRequest.body) {
         delete httpRequest.body.password;
       }
@@ -23,7 +18,7 @@ export class SaveAccountController implements Controller {
         delete httpRequest.body.role;
       }
 
-      await this.saveAccount.save(httpRequest.body);
+      await this.saveAccount.save(httpRequest.account.id, httpRequest.body);
 
       return noContent();
     } catch (error) {

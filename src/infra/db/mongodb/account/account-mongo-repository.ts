@@ -9,13 +9,15 @@ import { AddAccountParams } from '@/domain/usecases/account/add-account';
 import { MongoHelper } from '../helpers/mongo-helper';
 import { ObjectId } from 'mongodb';
 import { SaveAccountParams } from '@/domain/usecases/account/save-account';
+import { SaveAccountRepository } from '@/data/protocols/db/account/save-account-repository';
 
 export class AccountMongoRepository
   implements
     AddAccountRepository,
     LoadAccountByEmailRepository,
     UpdateAccessTokenRepository,
-    LoadAccountByTokenRepository
+    LoadAccountByTokenRepository,
+    SaveAccountRepository
 {
   async add(accountData: AddAccountParams): Promise<AccountModel> {
     const accountCollection = await MongoHelper.getCollection('accounts');
@@ -59,11 +61,11 @@ export class AccountMongoRepository
     return account ? MongoHelper.format(account) : null;
   }
 
-  async save(data: SaveAccountParams): Promise<void> {
+  async save(id: string, data: SaveAccountParams): Promise<void> {
     const accountCollection = await MongoHelper.getCollection('accounts');
     await accountCollection.updateOne(
       {
-        _id: new ObjectId(data.id)
+        _id: new ObjectId(id)
       },
       {
         $set: data

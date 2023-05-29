@@ -141,7 +141,7 @@ describe('Account Mongo Repository', () => {
       const result = await accountCollection.insertOne(accountParams);
       const newName = faker.name.firstName();
       const id = result.insertedId.toString();
-      await sut.save({ id, name: newName });
+      await sut.save(id, { name: newName });
       const account = await accountCollection.findOne({
         _id: result.insertedId
       });

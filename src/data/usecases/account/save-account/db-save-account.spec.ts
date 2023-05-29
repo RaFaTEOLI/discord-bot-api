@@ -3,6 +3,7 @@ import { DbSaveAccount } from './db-save-account';
 import MockDate from 'mockdate';
 import { mockSaveAccountRepository } from '@/data/test';
 import { mockAccountModelWithSpotifyAndDiscord } from '@/domain/test';
+import { faker } from '@faker-js/faker';
 
 interface SutTypes {
   sut: DbSaveAccount;
@@ -30,14 +31,9 @@ describe('DdSaveAccount Usecase', () => {
   test('should call SaveAccountRepository with correct values', async () => {
     const { sut, saveAccountRepositoryStub } = makeSut();
     const saveSpy = jest.spyOn(saveAccountRepositoryStub, 'save');
+    const id = faker.datatype.uuid();
     const data = mockAccountModelWithSpotifyAndDiscord();
-    await sut.save(data);
-    expect(saveSpy).toHaveBeenCalledWith(data);
-  });
-
-  test('should return a music on SaveAccountRepository success', async () => {
-    const { sut } = makeSut();
-    const music = await sut.save(mockAccountModelWithSpotifyAndDiscord());
-    expect(music).toBeTruthy();
+    await sut.save(id, data);
+    expect(saveSpy).toHaveBeenCalledWith(id, data);
   });
 });
