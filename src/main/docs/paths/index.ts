@@ -6,3 +6,4 @@ export * from './health-check';
 export * from './music-path';
 export * from './queue-path';
 export * from './spotify-path';
+export * from './account-path';
