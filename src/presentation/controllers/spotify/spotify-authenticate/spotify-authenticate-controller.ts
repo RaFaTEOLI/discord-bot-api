@@ -67,7 +67,8 @@ export class SpotifyAuthenticateController implements Controller {
           name: userAccount.name,
           id: userAccount.id,
           ...(userAccount.role && { role: userAccount.role }),
-          spotify: userAccount.spotify
+          spotify: userAccount.spotify,
+          ...(userAccount.spotify && { discord: userAccount.discord })
         }
       });
     } catch (error) {
