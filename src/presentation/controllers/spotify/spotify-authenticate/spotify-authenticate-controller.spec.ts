@@ -222,4 +222,22 @@ describe('SpotifyAuthenticate Controller', () => {
       })
     );
   });
+
+  test('should return 200 on success with Discord linked user', async () => {
+    const fakeAccountWithToken = mockAccountModelWithToken();
+    const { sut, fakeAccount } = makeSut(fakeAccountWithToken);
+    const httpResponse = await sut.handle(mockRequest());
+    expect(httpResponse).toEqual(
+      success({
+        accessToken: 'any_token',
+        user: {
+          email: fakeAccount.email,
+          id: fakeAccount.id,
+          name: fakeAccount.name,
+          spotify: fakeAccount.spotify,
+          discord: fakeAccountWithToken.discord
+        }
+      })
+    );
+  });
 });

@@ -15,12 +15,20 @@ export const mockAccountModel = (): AccountModel =>
     password: 'hashed_password'
   });
 
-export const mockAccountModelWithToken = (spotifyToken?: boolean): AccountModel =>
+export const mockAccountModelWithToken = (spotifyToken?: boolean, discord?: boolean): AccountModel =>
   Object.assign({}, mockAddAccountParams(), {
     id: 'any_id',
     password: 'hashed_password',
     accessToken: 'any_token',
-    ...(spotifyToken && { spotify: { accessToken: faker.datatype.uuid(), refreshToken: faker.datatype.uuid() } })
+    ...(spotifyToken && { spotify: { accessToken: faker.datatype.uuid(), refreshToken: faker.datatype.uuid() } }),
+    ...(discord && {
+      discord: {
+        id: faker.datatype.uuid(),
+        username: faker.internet.userName(),
+        avatar: faker.internet.avatar(),
+        discriminator: '0000'
+      }
+    })
   });
 
 export const mockAccountModelWithSpotifyAndDiscord = (): AccountModel => {

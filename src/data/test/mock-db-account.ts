@@ -46,8 +46,8 @@ export const mockUpdateAccessTokenRepository = (): UpdateAccessTokenRepository =
 
 export const mockSaveAccountRepository = (fakeAccount = mockAccountModel()): SaveAccountRepository => {
   class SaveAccountRepositoryStub implements SaveAccountRepository {
-    async save(data: SaveAccountParams): Promise<AccountModel> {
-      return await Promise.resolve(fakeAccount);
+    async save(id: string, data: SaveAccountParams): Promise<void> {
+      await Promise.resolve(fakeAccount);
     }
   }
   return new SaveAccountRepositoryStub();

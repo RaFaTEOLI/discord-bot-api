@@ -24,8 +24,8 @@ export const mockAuthentication = (): Authentication => {
 
 export const mockSaveAccount = (fakeAccount = mockAccountModelWithSpotifyAndDiscord()): SaveAccount => {
   class SaveAccountStub implements SaveAccount {
-    async save(account: SaveAccountParams): Promise<AccountModel> {
-      return await Promise.resolve(fakeAccount);
+    async save(id: string, account: SaveAccountParams): Promise<void> {
+      await Promise.resolve();
     }
   }
   return new SaveAccountStub();
