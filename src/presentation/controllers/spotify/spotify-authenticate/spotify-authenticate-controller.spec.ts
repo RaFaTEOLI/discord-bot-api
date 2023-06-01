@@ -10,14 +10,16 @@ import {
   mockAuthentication,
   mockAddAccount,
   mockSpotifyRequestToken,
-  mockSpotifyLoadUser
+  mockSpotifyLoadUser,
+  mockSaveAccount
 } from '@/presentation/test';
 import {
   HttpRequest,
   SpotifyRequestToken,
   AddAccount,
   Authentication,
-  SpotifyLoadUser
+  SpotifyLoadUser,
+  SaveAccount
 } from './spotify-authenticate-controller-protocols';
 import { SpotifyAccessModel } from '@/domain/models/spotify';
 import { AccountModel } from '@/domain/models/account';
@@ -39,6 +41,7 @@ interface SutTypes {
   fakeAccessModel: SpotifyAccessModel;
   spotifyLoadUserStub: SpotifyLoadUser;
   fakeAccount: AccountModel;
+  saveAccountStub: SaveAccount;
 }
 
 const makeSut = (fakeAccount = mockAccountModel()): SutTypes => {
@@ -47,11 +50,13 @@ const makeSut = (fakeAccount = mockAccountModel()): SutTypes => {
   const fakeAccessModel = mockSpotifyAccessModel();
   const spotifyRequestTokenStub = mockSpotifyRequestToken(fakeAccessModel);
   const spotifyLoadUserStub = mockSpotifyLoadUser(fakeAccount);
+  const saveAccountStub = mockSaveAccount(fakeAccount);
   const sut = new SpotifyAuthenticateController(
     spotifyRequestTokenStub,
     spotifyLoadUserStub,
     addAccountStub,
-    authenticationStub
+    authenticationStub,
+    saveAccountStub
   );
   return {
     sut,
@@ -60,7 +65,8 @@ const makeSut = (fakeAccount = mockAccountModel()): SutTypes => {
     authenticationStub,
     fakeAccessModel,
     spotifyLoadUserStub,
-    fakeAccount
+    fakeAccount,
+    saveAccountStub
   };
 };
 
@@ -239,5 +245,15 @@ describe('SpotifyAuthenticate Controller', () => {
         }
       })
     );
+  });
+
+  test('should call SaveAccount with spotify access model', async () => {
+    const fakeAccountWithToken = mockAccountModelWithToken(true);
+    const { sut, saveAccountStub } = makeSut(fakeAccountWithToken);
+    const saveSpy = jest.spyOn(saveAccountStub, 'save');
+    await sut.handle(mockRequest());
+    expect(saveSpy).toHaveBeenCalledWith(fakeAccountWithToken.id, {
+      spotify: fakeAccountWithToken.spotify
+    });
   });
 });
