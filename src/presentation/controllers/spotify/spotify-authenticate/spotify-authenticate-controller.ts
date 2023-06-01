@@ -14,7 +14,8 @@ import {
   SpotifyRequestToken,
   SpotifyLoadUser,
   AddAccount,
-  Authentication
+  Authentication,
+  SaveAccount
 } from './spotify-authenticate-controller-protocols';
 
 export class SpotifyAuthenticateController implements Controller {
@@ -22,7 +23,8 @@ export class SpotifyAuthenticateController implements Controller {
     private readonly spotifyRequestToken: SpotifyRequestToken,
     private readonly spotifyLoadUser: SpotifyLoadUser,
     private readonly addAccount: AddAccount,
-    private readonly authentication: Authentication
+    private readonly authentication: Authentication,
+    private readonly saveAccount: SaveAccount
   ) {}
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
@@ -59,6 +61,8 @@ export class SpotifyAuthenticateController implements Controller {
           return unauthorized();
         }
       }
+
+      await this.saveAccount.save(userAccount.id, { spotify: userAccount.spotify });
 
       return success({
         accessToken,
