@@ -5,6 +5,7 @@ import { SpotifyAuthenticateController } from '@/presentation/controllers/spotif
 import { makeDbAuthentication } from '@/main/factories/usecases/account/authentication/db-authentication-factory';
 import { makeDbAddAccount } from '@/main/factories/usecases/account/add-account/db-add-account-factory';
 import { makeSpotifyLoadUser } from '@/main/factories/usecases/spotify/spotify-load-user/spotify-load-user-factory';
+import { makeDbSaveAccount } from '@/main/factories/usecases/account/save-account/db-save-account-factory';
 
 export const makeSpotifyAuthenticateController = (): Controller => {
   return makeLogControllerDecorator(
@@ -12,7 +13,8 @@ export const makeSpotifyAuthenticateController = (): Controller => {
       makeSpotifyRequestToken(),
       makeSpotifyLoadUser(),
       makeDbAddAccount(),
-      makeDbAuthentication()
+      makeDbAuthentication(),
+      makeDbSaveAccount()
     )
   );
 };

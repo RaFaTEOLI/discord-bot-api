@@ -3,7 +3,7 @@ export type SpotifyAccessModel = {
   token_type: 'Bearer';
   scope: string;
   expires_in: number;
-  refresh_token: string;
+  refresh_token?: string;
 };
 
 export type SpotifyUserModel = {

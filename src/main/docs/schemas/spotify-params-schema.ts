@@ -16,3 +16,25 @@ export const spotifyParamsSchema = {
   },
   required: ['code', 'state', 'redirectUri', 'encodedAuthorization']
 };
+
+export const spotifyRefreshTokenParamsSchema = {
+  type: 'object',
+  properties: {
+    refreshToken: {
+      type: 'string'
+    },
+    encodedAuthorization: {
+      type: 'string'
+    }
+  },
+  required: ['refreshToken', 'encodedAuthorization']
+};
+
+export const spotifyAccessTokenSchema = {
+  type: 'object',
+  properties: {
+    accessToken: {
+      type: 'string'
+    }
+  }
+};
