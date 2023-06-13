@@ -7,7 +7,8 @@ import {
   musicPath,
   queuePath,
   spotifyPath,
-  accountPath
+  accountPath,
+  spotifyRefreshTokenPath
 } from './paths/';
 
 export default {
@@ -19,5 +20,6 @@ export default {
   '/music': musicPath,
   '/queue': queuePath,
   '/spotify/auth': spotifyPath,
+  '/spotify/refresh-token': spotifyRefreshTokenPath,
   '/account': accountPath
 };
