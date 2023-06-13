@@ -17,8 +17,8 @@ describe('Spotify Routes', () => {
     });
   });
   describe('POST /spotify/refresh-token', () => {
-    test('should return 400 on token refresh with wrong credentials', async () => {
-      await request(app).post('/api/spotify/refresh-token').send(mockSpotifyRefreshTokenParams()).expect(400);
+    test('should return 403 on token refresh without being authenticated', async () => {
+      await request(app).post('/api/spotify/refresh-token').send(mockSpotifyRefreshTokenParams()).expect(403);
     });
   });
 });

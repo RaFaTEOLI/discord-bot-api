@@ -39,7 +39,13 @@ export const spotifyPath = {
 export const spotifyRefreshTokenPath = {
   post: {
     tags: ['Spotify'],
+    security: [
+      {
+        apiKeyAuth: []
+      }
+    ],
     summary: 'API to refresh token from Spotify',
+    description: 'This route is only for **authenticated users**',
     requestBody: {
       required: true,
       content: {
