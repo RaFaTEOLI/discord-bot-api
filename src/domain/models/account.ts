@@ -7,7 +7,7 @@ export type AccountModel = {
   accessToken?: string;
   spotify?: {
     accessToken: string;
-    refreshToken: string;
+    refreshToken?: string;
   };
   discord?: {
     id: string;
