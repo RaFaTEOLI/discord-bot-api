@@ -1,5 +1,4 @@
-import { InvalidParamError } from '@/presentation/errors';
-import { badRequest, serverError, success } from '@/presentation/helpers/http/http-helper';
+import { serverError, success } from '@/presentation/helpers/http/http-helper';
 
 import {
   Controller,
@@ -26,9 +25,6 @@ export class SpotifyRefreshTokenController implements Controller {
       });
     } catch (error) {
       console.log(error);
-      if (error.message.includes('Invalid param')) {
-        return badRequest(new InvalidParamError(error.message.replace('Invalid ', '')));
-      }
       return serverError(error);
     }
   }
