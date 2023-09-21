@@ -24,7 +24,7 @@ module.exports = {
   preset: '@shelf/jest-mongodb',
   // A map from regular expressions to paths to transformers
   transform: {
-    '.+\\.ts$': 'ts-jest'
+    '.+\\.ts$': ['@swc/jest']
   },
   moduleNameMapper: {
     '@/(.*)': '<rootDir>/src/$1'
