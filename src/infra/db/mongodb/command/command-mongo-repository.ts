@@ -32,7 +32,8 @@ export class CommandMongoRepository
           type: commandData.type,
           description: commandData.description,
           response: commandData.response,
-          message: commandData.message
+          message: commandData.message,
+          discordStatus: commandData.discordStatus || 'SENT'
         }
       },
       {

@@ -6,4 +6,5 @@ export type CommandModel = {
   description: string;
   response?: string | null;
   message?: any;
+  discordStatus: 'SENT' | 'RECEIVED' | 'FAILED';
 };
