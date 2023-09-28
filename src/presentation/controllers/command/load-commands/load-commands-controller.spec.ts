@@ -59,13 +59,15 @@ describe('LoadCommands Controller', () => {
   });
 
   test('should return 200 on success if name query string is provided', async () => {
-    const { sut } = makeSut();
+    const { sut, loadCommandByNameStub } = makeSut();
+    const commandModel = mockCommandModel();
+    jest.spyOn(loadCommandByNameStub, 'loadByName').mockResolvedValueOnce(commandModel);
     const httpResponse = await sut.handle({
       query: {
         name: 'any_command'
       }
     });
-    expect(httpResponse).toEqual(success(mockCommandModel()));
+    expect(httpResponse).toEqual(success(commandModel));
     expect(httpResponse.body.command).toBe('any_command');
   });
 

@@ -42,7 +42,7 @@ describe('DdSaveCommand Usecase', () => {
     const { sut } = makeSut();
     const commandData = mockSaveCommandParams();
     const command = await sut.save(commandData);
-    expect(command).toEqual({ ...commandData, id: command.id });
+    expect(command).toEqual({ ...commandData, id: command.id, discordStatus: 'SENT' });
   });
 
   test('should throw exception if SaveCommandRepository throws exception', async () => {
@@ -58,5 +58,12 @@ describe('DdSaveCommand Usecase', () => {
     const commandData = mockSaveCommandParams();
     const command = await sut.save(commandData);
     expect(command).toBeNull();
+  });
+
+  test('should return a Command with discordStatus received', async () => {
+    const { sut } = makeSut();
+    const commandData = mockSaveCommandParams();
+    const command = await sut.save({ ...commandData, discordStatus: 'RECEIVED' });
+    expect(command).toEqual({ ...commandData, id: command.id, discordStatus: 'RECEIVED' });
   });
 });

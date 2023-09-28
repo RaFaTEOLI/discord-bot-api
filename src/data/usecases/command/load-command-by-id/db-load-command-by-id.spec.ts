@@ -34,9 +34,11 @@ describe('DbLoadCommandById', () => {
   });
 
   test('should return a Command on success', async () => {
-    const { sut } = makeSut();
+    const { sut, loadCommandByIdRepositoryStub } = makeSut();
+    const commandModel = mockCommandModel();
+    jest.spyOn(loadCommandByIdRepositoryStub, 'loadById').mockResolvedValueOnce(commandModel);
     const command = await sut.loadById('any_id');
-    expect(command).toEqual(mockCommandModel());
+    expect(command).toEqual(commandModel);
   });
 
   test('should throw exception if LoadCommandByIdRepository throws exception', async () => {

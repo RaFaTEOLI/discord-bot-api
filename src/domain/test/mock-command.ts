@@ -1,7 +1,8 @@
 import { CommandModel } from '@/domain/models/command';
 import { SaveCommandParams } from '@/domain/usecases/command/save-command';
+import { faker } from '@faker-js/faker';
 
-export const mockCommandModel = (): CommandModel => {
+export const mockCommandModel = (override?: Partial<CommandModel>): CommandModel => {
   return {
     id: 'any_id',
     command: 'any_command',
@@ -9,7 +10,8 @@ export const mockCommandModel = (): CommandModel => {
     type: 'message',
     description: 'any_description',
     response: 'any_response',
-    message: 'any_message'
+    message: 'any_message',
+    discordStatus: override?.discordStatus ?? faker.helpers.arrayElement(['SENT', 'RECEIVED', 'FAILED'])
   };
 };
 
@@ -22,7 +24,8 @@ export const mockCommandsData = (): CommandModel[] => {
       type: 'message',
       description: 'any_description',
       response: 'any_response',
-      message: 'any_message'
+      message: 'any_message',
+      discordStatus: 'SENT'
     },
     {
       id: 'other_id',
@@ -31,7 +34,8 @@ export const mockCommandsData = (): CommandModel[] => {
       type: 'action',
       description: 'other_description',
       response: 'other_response',
-      message: 'other_message'
+      message: 'other_message',
+      discordStatus: 'RECEIVED'
     }
   ];
 };

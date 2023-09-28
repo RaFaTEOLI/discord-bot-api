@@ -10,7 +10,10 @@ import { DeleteCommandByIdRepository } from '@/data/protocols/db/command/delete-
 export const mockSaveCommandRepository = (): SaveCommandRepository => {
   class SaveCommandRepositoryStub implements SaveCommandRepository {
     async save(command: SaveCommandParams): Promise<CommandModel> {
-      return await Promise.resolve(mockCommandModel());
+      if (command.discordStatus) {
+        return await Promise.resolve(mockCommandModel({ discordStatus: command.discordStatus }));
+      }
+      return await Promise.resolve(mockCommandModel({ discordStatus: 'SENT' }));
     }
   }
   return new SaveCommandRepositoryStub();

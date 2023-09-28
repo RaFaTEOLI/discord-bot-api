@@ -35,9 +35,11 @@ describe('DbLoadCommands', () => {
   });
 
   test('should return a list of Commands on success', async () => {
-    const { sut } = makeSut();
+    const { sut, loadCommandsRepositoryStub } = makeSut();
+    const commandsData = mockCommandsData();
+    jest.spyOn(loadCommandsRepositoryStub, 'loadAll').mockResolvedValueOnce(commandsData);
     const commands = await sut.load();
-    expect(commands).toEqual(mockCommandsData());
+    expect(commands).toEqual(commandsData);
   });
 
   test('should throw exception if LoadCommandsRepository throws exception', async () => {

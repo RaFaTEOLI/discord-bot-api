@@ -42,13 +42,15 @@ describe('LoadCommandById Controller', () => {
   });
 
   test('should return 200 on success', async () => {
-    const { sut } = makeSut();
+    const { sut, loadCommandByIdStub } = makeSut();
+    const commandModel = mockCommandModel();
+    jest.spyOn(loadCommandByIdStub, 'loadById').mockResolvedValueOnce(commandModel);
     const httpResponse = await sut.handle({
       params: {
         commandId: 'any_id'
       }
     });
-    expect(httpResponse).toEqual(success(mockCommandModel()));
+    expect(httpResponse).toEqual(success(commandModel));
   });
 
   test('should return 204 if LoadCommandById returns empty', async () => {
