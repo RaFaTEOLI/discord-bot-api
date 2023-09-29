@@ -24,21 +24,21 @@ services:
     ports:
       - '27017:27017'
     volumes:
-      - /home/rafael/projects/discord-bot-api/Docker/Volumes/MongoDB:/data/db
+      - /home/rafael/projects/discord-bot/discord-bot-api/Docker/Volumes/MongoDB:/data/db
     networks:
       - mongo-compose-network
 
   api:
     container_name: api-container
     image: node:16
-    working_dir: /home/rafael/projects/discord-bot-api/Docker/discord-bot-api
+    working_dir: /home/rafael/projects/discord-bot/discord-bot-api/Docker/discord-bot-api
     restart: always
     command: bash -c "npm install && npm run debug"
     environment:
       - MONGO_URL=mongodb://root:1234@mongo:27017/
     volumes:
-      - ./dist/:/home/rafael/projects/discord-bot-api/Docker/discord-bot-api/dist
-      - ./package.json:/home/rafael/projects/discord-bot-api/Docker/discord-bot-api/package.json
+      - ./dist/:/home/rafael/projects/discord-bot/discord-bot-api/Docker/discord-bot-api/dist
+      - ./package.json:/home/rafael/projects/discord-bot/discord-bot-api/Docker/discord-bot-api/package.json
     ports:
       - '5050:5050'
       - '9222:9222'
