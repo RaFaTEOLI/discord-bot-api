@@ -1,5 +1,5 @@
 export const healthCheckPath = {
-  post: {
+  get: {
     tags: ['Health Check'],
     summary: 'API to check status',
     description: 'This route is for anyone',
