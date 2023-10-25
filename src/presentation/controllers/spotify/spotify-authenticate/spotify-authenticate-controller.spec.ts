@@ -24,6 +24,7 @@ import {
 import { SpotifyAccessModel } from '@/domain/models/spotify';
 import { AccountModel } from '@/domain/models/account';
 import { EmailInUseError } from '@/presentation/errors';
+import { describe, test, expect, vi } from 'vitest';
 
 const mockRequest = (): HttpRequest => ({
   body: mockSpotifyRequestTokenParams()
@@ -73,7 +74,7 @@ const makeSut = (fakeAccount = mockAccountModel()): SutTypes => {
 describe('SpotifyAuthenticate Controller', () => {
   test('should call SpotifyAuthenticate with correct values', async () => {
     const { sut, spotifyRequestTokenStub } = makeSut();
-    const addSpy = jest.spyOn(spotifyRequestTokenStub, 'request');
+    const addSpy = vi.spyOn(spotifyRequestTokenStub, 'request');
     const httpRequest = mockRequest();
     await sut.handle(httpRequest);
     expect(addSpy).toHaveBeenCalledWith(httpRequest.body);
@@ -81,7 +82,7 @@ describe('SpotifyAuthenticate Controller', () => {
 
   test('should return 500 if SpotifyRequestToken throws an exception', async () => {
     const { sut, spotifyRequestTokenStub } = makeSut();
-    jest.spyOn(spotifyRequestTokenStub, 'request').mockRejectedValueOnce(new Error());
+    vi.spyOn(spotifyRequestTokenStub, 'request').mockRejectedValueOnce(new Error());
     const httpResponse = await sut.handle(mockRequest());
     expect(httpResponse).toEqual(serverError(new Error()));
   });
@@ -105,7 +106,7 @@ describe('SpotifyAuthenticate Controller', () => {
 
   test('should call SpotifyLoadUser with correct values if an accessModel is returned', async () => {
     const { sut, spotifyLoadUserStub, fakeAccessModel } = makeSut();
-    const loadSpy = jest.spyOn(spotifyLoadUserStub, 'load');
+    const loadSpy = vi.spyOn(spotifyLoadUserStub, 'load');
     const httpRequest = mockRequest();
     await sut.handle(httpRequest);
     expect(loadSpy).toHaveBeenCalledWith({
@@ -120,7 +121,7 @@ describe('SpotifyAuthenticate Controller', () => {
       id: 'NOT-FOUND'
     });
     const { sut, addAccountStub } = makeSut(fakeAccount);
-    const addSpy = jest.spyOn(addAccountStub, 'add');
+    const addSpy = vi.spyOn(addAccountStub, 'add');
     const httpRequest = mockRequestSignUp();
     await sut.handle(httpRequest);
     expect(addSpy).toHaveBeenCalledWith({
@@ -145,7 +146,7 @@ describe('SpotifyAuthenticate Controller', () => {
       id: 'NOT-FOUND'
     });
     const { sut, addAccountStub } = makeSut(fakeAccount);
-    jest.spyOn(addAccountStub, 'add').mockResolvedValueOnce(null);
+    vi.spyOn(addAccountStub, 'add').mockResolvedValueOnce(null);
     const httpRequest = mockRequestSignUp();
     const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse).toEqual(forbidden(new EmailInUseError()));
@@ -156,7 +157,7 @@ describe('SpotifyAuthenticate Controller', () => {
       id: 'NOT-FOUND'
     });
     const { sut, authenticationStub } = makeSut(fakeAccount);
-    const authSpy = jest.spyOn(authenticationStub, 'auth');
+    const authSpy = vi.spyOn(authenticationStub, 'auth');
     const httpResponse = await sut.handle(mockRequestSignUp());
     expect(authSpy).toHaveBeenCalledWith({ email: fakeAccount.email, password: fakeAccount.password });
     expect(httpResponse).toEqual(
@@ -178,7 +179,7 @@ describe('SpotifyAuthenticate Controller', () => {
       role: 'admin'
     });
     const { sut, authenticationStub } = makeSut(fakeAccount);
-    const authSpy = jest.spyOn(authenticationStub, 'auth');
+    const authSpy = vi.spyOn(authenticationStub, 'auth');
     const httpResponse = await sut.handle(mockRequestSignUp());
     expect(authSpy).toHaveBeenCalledWith({ email: fakeAccount.email, password: fakeAccount.password });
     expect(httpResponse).toEqual(
@@ -250,7 +251,7 @@ describe('SpotifyAuthenticate Controller', () => {
   test('should call SaveAccount with spotify access model', async () => {
     const fakeAccountWithToken = mockAccountModelWithToken(true);
     const { sut, saveAccountStub } = makeSut(fakeAccountWithToken);
-    const saveSpy = jest.spyOn(saveAccountStub, 'save');
+    const saveSpy = vi.spyOn(saveAccountStub, 'save');
     await sut.handle(mockRequest());
     expect(saveSpy).toHaveBeenCalledWith(fakeAccountWithToken.id, {
       spotify: fakeAccountWithToken.spotify

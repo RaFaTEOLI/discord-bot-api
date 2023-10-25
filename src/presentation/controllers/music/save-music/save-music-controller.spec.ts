@@ -6,6 +6,7 @@ import { mockSaveMusic, mockSocketClient } from '@/presentation/test';
 import { mockSaveMusicParams } from '@/domain/test';
 import { InvalidParamError } from '@/presentation/errors';
 import { Socket } from 'socket.io-client';
+import { describe, test, expect, vi, beforeAll, afterAll } from 'vitest';
 
 const mockRequest = (): HttpRequest => ({
   body: mockSaveMusicParams()
@@ -53,7 +54,7 @@ describe('SaveMusic Controller', () => {
 
   test('should call SaveMusic with correct values', async () => {
     const { sut, saveMusicStub } = makeSut();
-    const addSpy = jest.spyOn(saveMusicStub, 'save');
+    const addSpy = vi.spyOn(saveMusicStub, 'save');
     const httpRequest = mockRequest();
     await sut.handle(httpRequest);
     expect(addSpy).toHaveBeenCalledWith(httpRequest.body);
@@ -61,7 +62,7 @@ describe('SaveMusic Controller', () => {
 
   test('should return 500 if SaveMusic throws an exception', async () => {
     const { sut, saveMusicStub } = makeSut();
-    jest.spyOn(saveMusicStub, 'save').mockRejectedValueOnce(new Error());
+    vi.spyOn(saveMusicStub, 'save').mockRejectedValueOnce(new Error());
     const httpResponse = await sut.handle(mockRequest());
     expect(httpResponse).toEqual(serverError(new Error()));
   });
@@ -74,7 +75,7 @@ describe('SaveMusic Controller', () => {
 
   test('should emit socket event on success', async () => {
     const { sut, socketClientStub } = makeSut();
-    const socketSpy = jest.spyOn(socketClientStub, 'emit');
+    const socketSpy = vi.spyOn(socketClientStub, 'emit');
     const request = mockRequest();
     const httpResponse = await sut.handle(request);
     expect(httpResponse).toEqual(noContent());

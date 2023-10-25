@@ -4,6 +4,7 @@ import { Controller, HttpRequest, HttpResponse } from '@/presentation/protocols'
 import { LogControllerDecorator } from './log-controller-decorator';
 import { mockAccountModel } from '@/domain/test';
 import { mockLogErrorRepository } from '@/data/test';
+import { describe, test, expect, vi } from 'vitest';
 
 const makeController = (): Controller => {
   class ControllerStub implements Controller {
@@ -46,7 +47,7 @@ const makeSut = (): SutTypes => {
 describe('LogControllerDecorator', () => {
   test('should call controller handle', async () => {
     const { sut, controllerStub } = makeSut();
-    const handleSpy = jest.spyOn(controllerStub, 'handle');
+    const handleSpy = vi.spyOn(controllerStub, 'handle');
     const httpRequest = mockRequest();
     await sut.handle(httpRequest);
     expect(handleSpy).toHaveBeenCalledWith(httpRequest);
@@ -62,8 +63,8 @@ describe('LogControllerDecorator', () => {
   test('should call LogErrorRepository with correct error if controller returns 500', async () => {
     const { sut, controllerStub, logErrorRepositoryStub } = makeSut();
 
-    const logSpy = jest.spyOn(logErrorRepositoryStub, 'logError');
-    jest.spyOn(controllerStub, 'handle').mockResolvedValueOnce(makeFakeServerError());
+    const logSpy = vi.spyOn(logErrorRepositoryStub, 'logError');
+    vi.spyOn(controllerStub, 'handle').mockResolvedValueOnce(makeFakeServerError());
     const httpRequest = mockRequest();
     await sut.handle(httpRequest);
     expect(logSpy).toHaveBeenCalledWith('any_stack');

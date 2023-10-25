@@ -5,6 +5,7 @@ import app from '@/main/config/app';
 import { sign } from 'jsonwebtoken';
 import env from '@/main/config/env';
 import { mockAccountModelWithSpotifyAndDiscord } from '@/domain/test';
+import { describe, test, beforeAll, beforeEach, afterAll } from 'vitest';
 
 let accountCollection: Collection;
 
@@ -32,7 +33,7 @@ const makeAccessToken = async (admin = true): Promise<string> => {
 
 describe('Account Routes', () => {
   beforeAll(async () => {
-    await MongoHelper.connect(process.env.MONGO_URL ?? '');
+    await MongoHelper.connect(globalThis.__MONGO_URI__ ?? '');
   });
 
   beforeEach(async () => {

@@ -1,8 +1,9 @@
 import { RequiredFieldValidation, ValidationComposite } from '@/validation/validators';
 import { Validation } from '@/presentation/protocols/validation';
 import { makeUpdateCommandValidation } from './update-command-validation-factory';
+import { describe, test, expect, vi } from 'vitest';
 
-jest.mock('@/validation/validators/validation-composite');
+vi.mock('@/validation/validators/validation-composite');
 
 describe('UpdateCommand Validation Factory', () => {
   test('should call ValidationComposite with all validations', () => {

@@ -2,6 +2,7 @@ import { mockSaveMusicParams } from '@/domain/test';
 import { Collection } from 'mongodb';
 import { MongoHelper } from '../helpers/mongo-helper';
 import { MusicMongoRepository } from './music-mongo-repository';
+import { describe, test, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 
 const makeSut = (): MusicMongoRepository => {
   return new MusicMongoRepository();
@@ -11,7 +12,7 @@ let musicCollection: Collection;
 
 describe('Music Mongo Repository', () => {
   beforeAll(async () => {
-    await MongoHelper.connect(process.env.MONGO_URL ?? '');
+    await MongoHelper.connect(globalThis.__MONGO_URI__ ?? '');
   });
 
   beforeEach(async () => {

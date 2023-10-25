@@ -2,8 +2,9 @@ import { EmailValidation, RequiredFieldValidation, ValidationComposite } from '@
 import { Validation } from '@/presentation/protocols/validation';
 import { makeLoginValidation } from './login-validation-factory';
 import { mockEmailValidator } from '@/validation/test';
+import { describe, test, expect, vi } from 'vitest';
 
-jest.mock('@/validation/validators/validation-composite');
+vi.mock('@/validation/validators/validation-composite');
 
 describe('Login Validation Factory', () => {
   test('should call ValidationComposite with all validations', () => {

@@ -14,6 +14,7 @@ import {
   mockUpdateAccessTokenRepository
 } from '@/data/test';
 import { mockAuthentication } from '@/domain/test';
+import { describe, test, expect, vi } from 'vitest';
 
 type SutTypes = {
   sut: DbAuthentication;
@@ -46,56 +47,56 @@ const makeSut = (): SutTypes => {
 describe('DbAuthentication UseCase', () => {
   test('should call LoadAccountByEmailRepository with correct email', async () => {
     const { sut, loadAccountByEmailRepositoryStub } = makeSut();
-    const loadSpy = jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail');
+    const loadSpy = vi.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail');
     await sut.auth(mockAuthentication());
     expect(loadSpy).toHaveBeenCalledWith('any_email@mail.com');
   });
 
   test('should throw exception if LoadAccountByEmailRepository throws an exception', async () => {
     const { sut, loadAccountByEmailRepositoryStub } = makeSut();
-    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockRejectedValueOnce(new Error());
+    vi.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockRejectedValueOnce(new Error());
     const promise = sut.auth(mockAuthentication());
     await expect(promise).rejects.toThrow();
   });
 
   test('should return null if LoadAccountByEmailRepository returns null', async () => {
     const { sut, loadAccountByEmailRepositoryStub } = makeSut();
-    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockReturnValueOnce(null);
+    vi.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockReturnValueOnce(null);
     const accessToken = await sut.auth(mockAuthentication());
     expect(accessToken).toBeNull();
   });
 
   test('should call HashComparer with correct values', async () => {
     const { sut, hashComparerStub } = makeSut();
-    const compareSpy = jest.spyOn(hashComparerStub, 'compare');
+    const compareSpy = vi.spyOn(hashComparerStub, 'compare');
     await sut.auth(mockAuthentication());
     expect(compareSpy).toHaveBeenCalledWith('any_password', 'hashed_password');
   });
 
   test('should throw exception if HashComparer throws an exception', async () => {
     const { sut, hashComparerStub } = makeSut();
-    jest.spyOn(hashComparerStub, 'compare').mockRejectedValueOnce(new Error());
+    vi.spyOn(hashComparerStub, 'compare').mockRejectedValueOnce(new Error());
     const promise = sut.auth(mockAuthentication());
     await expect(promise).rejects.toThrow();
   });
 
   test('should return null if HashComparer returns false', async () => {
     const { sut, hashComparerStub } = makeSut();
-    jest.spyOn(hashComparerStub, 'compare').mockResolvedValueOnce(false);
+    vi.spyOn(hashComparerStub, 'compare').mockResolvedValueOnce(false);
     const accessToken = await sut.auth(mockAuthentication());
     expect(accessToken).toBeNull();
   });
 
   test('should call Encrypter with correct id', async () => {
     const { sut, encrypterStub } = makeSut();
-    const encryptSpy = jest.spyOn(encrypterStub, 'encrypt');
+    const encryptSpy = vi.spyOn(encrypterStub, 'encrypt');
     await sut.auth(mockAuthentication());
     expect(encryptSpy).toHaveBeenCalledWith('any_id');
   });
 
   test('should throw exception if Encrypter throws an exception', async () => {
     const { sut, encrypterStub } = makeSut();
-    jest.spyOn(encrypterStub, 'encrypt').mockRejectedValueOnce(new Error());
+    vi.spyOn(encrypterStub, 'encrypt').mockRejectedValueOnce(new Error());
     const promise = sut.auth(mockAuthentication());
     await expect(promise).rejects.toThrow();
   });
@@ -110,14 +111,14 @@ describe('DbAuthentication UseCase', () => {
 
   test('should call UpdateAccessTokenRepository with correct values', async () => {
     const { sut, updateAccessTokenRepositoryStub } = makeSut();
-    const updateSpy = jest.spyOn(updateAccessTokenRepositoryStub, 'updateAccessToken');
+    const updateSpy = vi.spyOn(updateAccessTokenRepositoryStub, 'updateAccessToken');
     await sut.auth(mockAuthentication());
     expect(updateSpy).toHaveBeenCalledWith('any_id', 'any_token');
   });
 
   test('should throw exception if UpdateAccessTokenRepository throws an exception', async () => {
     const { sut, updateAccessTokenRepositoryStub } = makeSut();
-    jest.spyOn(updateAccessTokenRepositoryStub, 'updateAccessToken').mockRejectedValueOnce(new Error());
+    vi.spyOn(updateAccessTokenRepositoryStub, 'updateAccessToken').mockRejectedValueOnce(new Error());
     const promise = sut.auth(mockAuthentication());
     await expect(promise).rejects.toThrow();
   });

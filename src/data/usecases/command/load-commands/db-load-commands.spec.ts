@@ -3,6 +3,7 @@ import { DbLoadCommands } from './db-load-commands';
 import MockDate from 'mockdate';
 import { mockLoadCommandsRepository } from '@/data/test';
 import { mockCommandsData } from '@/domain/test';
+import { describe, test, expect, vi, beforeAll, afterAll } from 'vitest';
 
 interface SutTypes {
   sut: DbLoadCommands;
@@ -29,7 +30,7 @@ describe('DbLoadCommands', () => {
 
   test('should call LoadCommandsRepository', async () => {
     const { sut, loadCommandsRepositoryStub } = makeSut();
-    const loadAllSpy = jest.spyOn(loadCommandsRepositoryStub, 'loadAll');
+    const loadAllSpy = vi.spyOn(loadCommandsRepositoryStub, 'loadAll');
     await sut.load();
     expect(loadAllSpy).toHaveBeenCalled();
   });
@@ -37,14 +38,14 @@ describe('DbLoadCommands', () => {
   test('should return a list of Commands on success', async () => {
     const { sut, loadCommandsRepositoryStub } = makeSut();
     const commandsData = mockCommandsData();
-    jest.spyOn(loadCommandsRepositoryStub, 'loadAll').mockResolvedValueOnce(commandsData);
+    vi.spyOn(loadCommandsRepositoryStub, 'loadAll').mockResolvedValueOnce(commandsData);
     const commands = await sut.load();
     expect(commands).toEqual(commandsData);
   });
 
   test('should throw exception if LoadCommandsRepository throws exception', async () => {
     const { sut, loadCommandsRepositoryStub } = makeSut();
-    jest.spyOn(loadCommandsRepositoryStub, 'loadAll').mockRejectedValueOnce(new Error());
+    vi.spyOn(loadCommandsRepositoryStub, 'loadAll').mockRejectedValueOnce(new Error());
     const promise = sut.load();
     await expect(promise).rejects.toThrow();
   });

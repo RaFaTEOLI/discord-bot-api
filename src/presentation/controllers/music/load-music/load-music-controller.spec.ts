@@ -4,6 +4,7 @@ import { serverError, success } from '@/presentation/helpers/http/http-helper';
 import { mockLoadMusic } from '@/presentation/test';
 import { mockMusicModel } from '@/domain/test';
 import { MusicModel } from '@/domain/models/music';
+import { describe, test, expect, vi } from 'vitest';
 
 interface SutTypes {
   sut: LoadMusicController;
@@ -25,14 +26,14 @@ const makeSut = (): SutTypes => {
 describe('LoadMusic Controller', () => {
   test('should call LoadMusic', async () => {
     const { sut, loadMusicStub } = makeSut();
-    const addSpy = jest.spyOn(loadMusicStub, 'load');
+    const addSpy = vi.spyOn(loadMusicStub, 'load');
     await sut.handle();
     expect(addSpy).toHaveBeenCalled();
   });
 
   test('should return 500 if LoadMusic throws an exception', async () => {
     const { sut, loadMusicStub } = makeSut();
-    jest.spyOn(loadMusicStub, 'load').mockRejectedValueOnce(new Error());
+    vi.spyOn(loadMusicStub, 'load').mockRejectedValueOnce(new Error());
     const httpResponse = await sut.handle();
     expect(httpResponse).toEqual(serverError(new Error()));
   });

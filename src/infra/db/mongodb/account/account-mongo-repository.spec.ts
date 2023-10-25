@@ -3,6 +3,7 @@ import { Collection } from 'mongodb';
 import { MongoHelper } from '../helpers/mongo-helper';
 import { AccountMongoRepository } from './account-mongo-repository';
 import { faker } from '@faker-js/faker';
+import { describe, test, expect, beforeAll, afterAll } from 'vitest';
 
 const makeSut = (): AccountMongoRepository => {
   return new AccountMongoRepository();
@@ -12,7 +13,7 @@ let accountCollection: Collection;
 
 describe('Account Mongo Repository', () => {
   beforeAll(async () => {
-    await MongoHelper.connect(process.env.MONGO_URL ?? '');
+    await MongoHelper.connect(globalThis.__MONGO_URI__ ?? '');
   });
 
   beforeEach(async () => {

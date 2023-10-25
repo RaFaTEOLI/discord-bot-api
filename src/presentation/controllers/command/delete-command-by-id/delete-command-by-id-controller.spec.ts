@@ -4,6 +4,7 @@ import { badRequest, noContent, serverError } from '@/presentation/helpers/http/
 import { mockDeleteCommandById } from '@/presentation/test';
 import { faker } from '@faker-js/faker';
 import { InvalidParamError } from '@/presentation/errors';
+import { describe, test, expect, vi } from 'vitest';
 
 interface SutTypes {
   sut: DeleteCommandByIdController;
@@ -28,7 +29,7 @@ const makeSut = (): SutTypes => {
 describe('DeleteCommandById Controller', () => {
   test('should call DeleteCommandById', async () => {
     const { sut, deleteCommandByIdStub } = makeSut();
-    const loadSpy = jest.spyOn(deleteCommandByIdStub, 'deleteById');
+    const loadSpy = vi.spyOn(deleteCommandByIdStub, 'deleteById');
     await sut.handle(mockRequest());
     expect(loadSpy).toHaveBeenCalled();
   });
@@ -41,14 +42,14 @@ describe('DeleteCommandById Controller', () => {
 
   test('should return 400 if DeleteCommandById returns false', async () => {
     const { sut, deleteCommandByIdStub } = makeSut();
-    jest.spyOn(deleteCommandByIdStub, 'deleteById').mockResolvedValue(null);
+    vi.spyOn(deleteCommandByIdStub, 'deleteById').mockResolvedValue(null);
     const httpResponse = await sut.handle(mockRequest());
     expect(httpResponse).toEqual(badRequest(new InvalidParamError('commandId')));
   });
 
   test('should return 500 if DeleteCommandById throws an exception', async () => {
     const { sut, deleteCommandByIdStub } = makeSut();
-    jest.spyOn(deleteCommandByIdStub, 'deleteById').mockRejectedValueOnce(new Error());
+    vi.spyOn(deleteCommandByIdStub, 'deleteById').mockRejectedValueOnce(new Error());
     const httpResponse = await sut.handle({});
     expect(httpResponse).toEqual(serverError(new Error()));
   });

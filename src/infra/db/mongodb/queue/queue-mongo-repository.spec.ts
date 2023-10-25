@@ -2,6 +2,7 @@ import { mockSaveQueueParams } from '@/domain/test';
 import { Collection } from 'mongodb';
 import { MongoHelper } from '../helpers/mongo-helper';
 import { QueueMongoRepository } from './queue-mongo-repository';
+import { describe, test, expect, beforeAll, beforeEach, afterAll } from 'vitest';
 
 const makeSut = (): QueueMongoRepository => {
   return new QueueMongoRepository();
@@ -11,7 +12,7 @@ let queueCollection: Collection;
 
 describe('Queue Mongo Repository', () => {
   beforeAll(async () => {
-    await MongoHelper.connect(process.env.MONGO_URL ?? '');
+    await MongoHelper.connect(globalThis.__MONGO_URI__ ?? '');
   });
 
   beforeEach(async () => {
@@ -39,6 +40,13 @@ describe('Queue Mongo Repository', () => {
       await sut.save(fakeQueue);
       const queue = await queueCollection.find().toArray();
       expect(queue.length).toBe(1);
+    });
+
+    test('should not call save if songs.length is 0', async () => {
+      const sut = makeSut();
+      await sut.save([] as any);
+      const queue = await queueCollection.find().toArray();
+      expect(queue.length).toBe(0);
     });
   });
 

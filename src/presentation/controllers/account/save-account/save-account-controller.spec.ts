@@ -4,6 +4,7 @@ import { noContent, serverError } from '@/presentation/helpers/http/http-helper'
 import MockDate from 'mockdate';
 import { mockSaveAccount } from '@/presentation/test';
 import { mockAccountModel, mockAccountModelWithSpotifyAndDiscord } from '@/domain/test';
+import { describe, test, expect, vi, beforeAll, afterAll } from 'vitest';
 
 const mockRequest = (): HttpRequest => ({
   body: mockAccountModelWithSpotifyAndDiscord(),
@@ -35,7 +36,7 @@ describe('SaveAccount Controller', () => {
 
   test('should call SaveAccount with correct values', async () => {
     const { sut, saveAccountStub } = makeSut();
-    const saveSpy = jest.spyOn(saveAccountStub, 'save');
+    const saveSpy = vi.spyOn(saveAccountStub, 'save');
     const httpRequest = mockRequest();
     await sut.handle(httpRequest);
     expect(saveSpy).toHaveBeenCalledWith(httpRequest.account.id, httpRequest.body);
@@ -43,7 +44,7 @@ describe('SaveAccount Controller', () => {
 
   test('should not call SaveAccount with password, accessToken and role', async () => {
     const { sut, saveAccountStub } = makeSut();
-    const saveSpy = jest.spyOn(saveAccountStub, 'save');
+    const saveSpy = vi.spyOn(saveAccountStub, 'save');
     const httpRequest = mockRequest();
     const newRequest = {
       body: {
@@ -60,7 +61,7 @@ describe('SaveAccount Controller', () => {
 
   test('should return 500 if SaveAccount throws an exception', async () => {
     const { sut, saveAccountStub } = makeSut();
-    jest.spyOn(saveAccountStub, 'save').mockRejectedValueOnce(new Error());
+    vi.spyOn(saveAccountStub, 'save').mockRejectedValueOnce(new Error());
     const httpResponse = await sut.handle(mockRequest());
     expect(httpResponse).toEqual(serverError(new Error()));
   });

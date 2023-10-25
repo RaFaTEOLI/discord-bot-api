@@ -3,11 +3,12 @@ import request from 'supertest';
 import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper';
 import app from '@/main/config/app';
 import { hash } from 'bcrypt';
+import { describe, test, beforeAll, beforeEach, afterAll } from 'vitest';
 
 let accountCollection: Collection;
 describe('Authentication Routes', () => {
   beforeAll(async () => {
-    await MongoHelper.connect(process.env.MONGO_URL ?? '');
+    await MongoHelper.connect(globalThis.__MONGO_URI__ ?? '');
   });
 
   beforeEach(async () => {
@@ -27,7 +28,7 @@ describe('Authentication Routes', () => {
           name: 'Rafael',
           email: 'rafinha.tessarolo@hotmail.com',
           password: '123',
-          passwordConfirmation: '123',
+          passwordConfirmation: '123'
         })
         .expect(200);
     });
@@ -39,13 +40,13 @@ describe('Authentication Routes', () => {
       await accountCollection.insertOne({
         name: 'Rafael',
         email: 'rafinha.tessarolo@hotmail.com',
-        password,
+        password
       });
       await request(app)
         .post('/api/login')
         .send({
           email: 'rafinha.tessarolo@hotmail.com',
-          password: '123',
+          password: '123'
         })
         .expect(200);
     });
@@ -55,7 +56,7 @@ describe('Authentication Routes', () => {
         .post('/api/login')
         .send({
           email: 'rafinha.tessarolo@hotmail.com',
-          password: '123',
+          password: '123'
         })
         .expect(401);
     });

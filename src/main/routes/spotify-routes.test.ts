@@ -2,10 +2,11 @@ import request from 'supertest';
 import app from '@/main/config/app';
 import { mockSpotifyRequestTokenParams, mockSpotifyRefreshTokenParams } from '@/domain/test';
 import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper';
+import { describe, test, beforeAll, afterAll } from 'vitest';
 
 describe('Spotify Routes', () => {
   beforeAll(async () => {
-    await MongoHelper.connect(process.env.MONGO_URL ?? '');
+    await MongoHelper.connect(globalThis.__MONGO_URI__ ?? '');
   });
 
   afterAll(async () => {

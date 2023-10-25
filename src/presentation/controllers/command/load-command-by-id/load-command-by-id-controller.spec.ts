@@ -4,6 +4,7 @@ import { noContent, serverError, success } from '@/presentation/helpers/http/htt
 import MockDate from 'mockdate';
 import { mockCommandModel } from '@/domain/test';
 import { mockLoadCommandById } from '@/presentation/test';
+import { describe, test, expect, vi, beforeAll, afterAll } from 'vitest';
 
 interface SutTypes {
   sut: LoadCommandByIdController;
@@ -36,7 +37,7 @@ describe('LoadCommandById Controller', () => {
 
   test('should call LoadCommandById', async () => {
     const { sut, loadCommandByIdStub } = makeSut();
-    const loadSpy = jest.spyOn(loadCommandByIdStub, 'loadById');
+    const loadSpy = vi.spyOn(loadCommandByIdStub, 'loadById');
     await sut.handle(mockRequest());
     expect(loadSpy).toHaveBeenCalled();
   });
@@ -44,7 +45,7 @@ describe('LoadCommandById Controller', () => {
   test('should return 200 on success', async () => {
     const { sut, loadCommandByIdStub } = makeSut();
     const commandModel = mockCommandModel();
-    jest.spyOn(loadCommandByIdStub, 'loadById').mockResolvedValueOnce(commandModel);
+    vi.spyOn(loadCommandByIdStub, 'loadById').mockResolvedValueOnce(commandModel);
     const httpResponse = await sut.handle({
       params: {
         commandId: 'any_id'
@@ -55,14 +56,14 @@ describe('LoadCommandById Controller', () => {
 
   test('should return 204 if LoadCommandById returns empty', async () => {
     const { sut, loadCommandByIdStub } = makeSut();
-    jest.spyOn(loadCommandByIdStub, 'loadById').mockResolvedValue(null);
+    vi.spyOn(loadCommandByIdStub, 'loadById').mockResolvedValue(null);
     const httpResponse = await sut.handle(mockRequest());
     expect(httpResponse).toEqual(noContent());
   });
 
   test('should return 500 if LoadCommandById throws an exception', async () => {
     const { sut, loadCommandByIdStub } = makeSut();
-    jest.spyOn(loadCommandByIdStub, 'loadById').mockRejectedValueOnce(new Error());
+    vi.spyOn(loadCommandByIdStub, 'loadById').mockRejectedValueOnce(new Error());
     const httpResponse = await sut.handle({});
     expect(httpResponse).toEqual(serverError(new Error()));
   });
