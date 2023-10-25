@@ -2,6 +2,7 @@ import { LoadQueueRepository, QueueModel } from './db-load-queue-protocols';
 import { DbLoadQueue } from './db-load-queue';
 import { mockLoadQueueRepository } from '@/data/test';
 import { mockQueueModel } from '@/domain/test';
+import { describe, test, expect, vi } from 'vitest';
 
 interface SutTypes {
   sut: DbLoadQueue;
@@ -23,7 +24,7 @@ const makeSut = (): SutTypes => {
 describe('DbLoadQueue Usecase', () => {
   test('should call LoadQueueRepository', async () => {
     const { sut, loadQueueRepositoryStub } = makeSut();
-    const loadSpy = jest.spyOn(loadQueueRepositoryStub, 'load');
+    const loadSpy = vi.spyOn(loadQueueRepositoryStub, 'load');
     await sut.load();
     expect(loadSpy).toHaveBeenCalled();
   });

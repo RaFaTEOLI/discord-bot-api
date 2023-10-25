@@ -2,6 +2,7 @@ import { DeleteCommandByIdRepository } from './db-delete-command-by-id-protocols
 import { DbDeleteCommandById } from './db-delete-command-by-id';
 import { mockDeleteCommandByIdRepository } from '@/data/test';
 import { faker } from '@faker-js/faker';
+import { describe, test, expect, vi } from 'vitest';
 
 interface SutTypes {
   sut: DbDeleteCommandById;
@@ -20,7 +21,7 @@ const makeSut = (): SutTypes => {
 describe('DbDeleteCommandById', () => {
   test('should call DeleteCommandByIdRepository with correct id', async () => {
     const { sut, deleteCommandByIdRepositoryStub } = makeSut();
-    const deleteByIdSpy = jest.spyOn(deleteCommandByIdRepositoryStub, 'deleteById');
+    const deleteByIdSpy = vi.spyOn(deleteCommandByIdRepositoryStub, 'deleteById');
     const id = faker.datatype.uuid();
     await sut.deleteById(id);
     expect(deleteByIdSpy).toHaveBeenCalledWith(id);
@@ -34,14 +35,14 @@ describe('DbDeleteCommandById', () => {
 
   test('should return false if no record is found', async () => {
     const { sut, deleteCommandByIdRepositoryStub } = makeSut();
-    jest.spyOn(deleteCommandByIdRepositoryStub, 'deleteById').mockResolvedValueOnce(false);
+    vi.spyOn(deleteCommandByIdRepositoryStub, 'deleteById').mockResolvedValueOnce(false);
     const command = await sut.deleteById(faker.datatype.uuid());
     expect(command).toBeFalsy();
   });
 
   test('should throw exception if DeleteCommandByIdRepository throws exception', async () => {
     const { sut, deleteCommandByIdRepositoryStub } = makeSut();
-    jest.spyOn(deleteCommandByIdRepositoryStub, 'deleteById').mockRejectedValueOnce(new Error());
+    vi.spyOn(deleteCommandByIdRepositoryStub, 'deleteById').mockRejectedValueOnce(new Error());
     const promise = sut.deleteById(faker.datatype.uuid());
     await expect(promise).rejects.toThrow();
   });

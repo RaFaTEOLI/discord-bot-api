@@ -3,6 +3,7 @@ import { AccessDeniedError } from '../errors';
 import { AuthMiddleware } from './auth-middleware';
 import { LoadAccountByToken, HttpRequest, AccountModel } from './auth-middleware-protocols';
 import { mockAccountModel, mockAccountModelReturn } from '@/domain/test';
+import { describe, test, expect, vi } from 'vitest';
 
 const mockRequest = (): HttpRequest => ({
   headers: {
@@ -43,14 +44,14 @@ describe('AuthMiddleware', () => {
   test('should call LoadAccountByToken with correct accessToken', async () => {
     const role = 'any_role';
     const { sut, loadAccountByTokenStub } = makeSut(role);
-    const loadSpy = jest.spyOn(loadAccountByTokenStub, 'load');
+    const loadSpy = vi.spyOn(loadAccountByTokenStub, 'load');
     await sut.handle(mockRequest());
     expect(loadSpy).toHaveBeenCalledWith('any_token', role);
   });
 
   test('should return 403 if LoadAccountByToken returns null', async () => {
     const { sut, loadAccountByTokenStub } = makeSut();
-    jest.spyOn(loadAccountByTokenStub, 'load').mockResolvedValueOnce(null);
+    vi.spyOn(loadAccountByTokenStub, 'load').mockResolvedValueOnce(null);
     const httpResponse = await sut.handle(mockRequest());
     expect(httpResponse).toEqual(forbidden(new AccessDeniedError()));
   });
@@ -63,7 +64,7 @@ describe('AuthMiddleware', () => {
 
   test('should return 500 if LoadAccountByToken throws an exception', async () => {
     const { sut, loadAccountByTokenStub } = makeSut();
-    jest.spyOn(loadAccountByTokenStub, 'load').mockRejectedValueOnce(new Error());
+    vi.spyOn(loadAccountByTokenStub, 'load').mockRejectedValueOnce(new Error());
     const httpResponse = await sut.handle(mockRequest());
     expect(httpResponse).toEqual(serverError(new Error()));
   });

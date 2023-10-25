@@ -3,6 +3,7 @@ import { SaveQueueController } from './save-queue-controller';
 import { badRequest, noContent, serverError } from '@/presentation/helpers/http/http-helper';
 import { mockValidation, mockSaveQueue } from '@/presentation/test';
 import { mockSaveQueueParams } from '@/domain/test';
+import { describe, test, expect, vi } from 'vitest';
 
 const mockRequest = (): HttpRequest => ({
   body: { songs: mockSaveQueueParams() }
@@ -28,7 +29,7 @@ const makeSut = (): SutTypes => {
 describe('SaveQueue Controller', () => {
   test('should call Validation with correct values', async () => {
     const { sut, validationStub } = makeSut();
-    const validateSpy = jest.spyOn(validationStub, 'validate');
+    const validateSpy = vi.spyOn(validationStub, 'validate');
     const httpRequest = mockRequest();
     await sut.handle(httpRequest);
     expect(validateSpy).toHaveBeenCalledWith(httpRequest.body);
@@ -36,7 +37,7 @@ describe('SaveQueue Controller', () => {
 
   test('should return 400 if Validation fails', async () => {
     const { sut, validationStub } = makeSut();
-    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error());
+    vi.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error());
     const httpRequest = mockRequest();
     const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse).toEqual(badRequest(new Error()));
@@ -44,7 +45,7 @@ describe('SaveQueue Controller', () => {
 
   test('should call SaveQueue with correct values', async () => {
     const { sut, saveQueueStub } = makeSut();
-    const saveSpy = jest.spyOn(saveQueueStub, 'save');
+    const saveSpy = vi.spyOn(saveQueueStub, 'save');
     const httpRequest = mockRequest();
     await sut.handle(httpRequest);
     expect(saveSpy).toHaveBeenCalledWith(httpRequest.body.songs);
@@ -52,7 +53,7 @@ describe('SaveQueue Controller', () => {
 
   test('should return 500 if SaveQueue throws an exception', async () => {
     const { sut, saveQueueStub } = makeSut();
-    jest.spyOn(saveQueueStub, 'save').mockRejectedValueOnce(new Error());
+    vi.spyOn(saveQueueStub, 'save').mockRejectedValueOnce(new Error());
     const httpResponse = await sut.handle(mockRequest());
     expect(httpResponse).toEqual(serverError(new Error()));
   });

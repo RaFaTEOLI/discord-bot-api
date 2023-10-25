@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { expressApp as app } from '@/main/config/app';
 import { noCache } from './no-cache';
+import { describe, test } from 'vitest';
 
 describe('NoCache Middleware', () => {
   test('should disable caching', async () => {

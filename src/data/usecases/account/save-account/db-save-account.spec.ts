@@ -4,6 +4,7 @@ import MockDate from 'mockdate';
 import { mockSaveAccountRepository } from '@/data/test';
 import { mockAccountModelWithSpotifyAndDiscord } from '@/domain/test';
 import { faker } from '@faker-js/faker';
+import { describe, test, expect, vi } from 'vitest';
 
 interface SutTypes {
   sut: DbSaveAccount;
@@ -30,7 +31,7 @@ describe('DdSaveAccount Usecase', () => {
 
   test('should call SaveAccountRepository with correct values', async () => {
     const { sut, saveAccountRepositoryStub } = makeSut();
-    const saveSpy = jest.spyOn(saveAccountRepositoryStub, 'save');
+    const saveSpy = vi.spyOn(saveAccountRepositoryStub, 'save');
     const id = faker.datatype.uuid();
     const data = mockAccountModelWithSpotifyAndDiscord();
     await sut.save(id, data);

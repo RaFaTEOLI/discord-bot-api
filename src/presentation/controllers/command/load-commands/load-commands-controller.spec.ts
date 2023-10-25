@@ -4,6 +4,7 @@ import { noContent, serverError, success } from '@/presentation/helpers/http/htt
 import MockDate from 'mockdate';
 import { mockCommandModel, mockCommandsData } from '@/domain/test';
 import { mockLoadCommandByName, mockLoadCommands } from '@/presentation/test';
+import { describe, test, expect, vi, beforeAll, afterAll } from 'vitest';
 
 interface SutTypes {
   sut: LoadCommandsController;
@@ -33,7 +34,7 @@ describe('LoadCommands Controller', () => {
 
   test('should call LoadCommands', async () => {
     const { sut, loadCommandsStub } = makeSut();
-    const loadSpy = jest.spyOn(loadCommandsStub, 'load');
+    const loadSpy = vi.spyOn(loadCommandsStub, 'load');
     await sut.handle({});
     expect(loadSpy).toHaveBeenCalled();
   });
@@ -46,14 +47,14 @@ describe('LoadCommands Controller', () => {
 
   test('should return 204 if LoadCommands returns empty', async () => {
     const { sut, loadCommandsStub } = makeSut();
-    jest.spyOn(loadCommandsStub, 'load').mockResolvedValue([]);
+    vi.spyOn(loadCommandsStub, 'load').mockResolvedValue([]);
     const httpResponse = await sut.handle({});
     expect(httpResponse).toEqual(noContent());
   });
 
   test('should return 500 if LoadCommands throws an exception', async () => {
     const { sut, loadCommandsStub } = makeSut();
-    jest.spyOn(loadCommandsStub, 'load').mockRejectedValueOnce(new Error());
+    vi.spyOn(loadCommandsStub, 'load').mockRejectedValueOnce(new Error());
     const httpResponse = await sut.handle({});
     expect(httpResponse).toEqual(serverError(new Error()));
   });
@@ -61,7 +62,7 @@ describe('LoadCommands Controller', () => {
   test('should return 200 on success if name query string is provided', async () => {
     const { sut, loadCommandByNameStub } = makeSut();
     const commandModel = mockCommandModel();
-    jest.spyOn(loadCommandByNameStub, 'loadByName').mockResolvedValueOnce(commandModel);
+    vi.spyOn(loadCommandByNameStub, 'loadByName').mockResolvedValueOnce(commandModel);
     const httpResponse = await sut.handle({
       query: {
         name: 'any_command'
@@ -73,7 +74,7 @@ describe('LoadCommands Controller', () => {
 
   test('should return 204 on if no command is found when name query string is provided', async () => {
     const { sut, loadCommandByNameStub } = makeSut();
-    jest.spyOn(loadCommandByNameStub, 'loadByName').mockResolvedValue(null);
+    vi.spyOn(loadCommandByNameStub, 'loadByName').mockResolvedValue(null);
     const httpResponse = await sut.handle({
       query: {
         name: 'invalid_command'
@@ -84,7 +85,7 @@ describe('LoadCommands Controller', () => {
 
   test('should return 500 if LoadCommandByName throws an exception', async () => {
     const { sut, loadCommandByNameStub } = makeSut();
-    jest.spyOn(loadCommandByNameStub, 'loadByName').mockRejectedValueOnce(new Error());
+    vi.spyOn(loadCommandByNameStub, 'loadByName').mockRejectedValueOnce(new Error());
     const httpResponse = await sut.handle({
       query: {
         name: 'any_command'

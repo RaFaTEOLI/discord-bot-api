@@ -2,6 +2,7 @@ import { mockSaveCommandParams } from '@/domain/test';
 import { Collection } from 'mongodb';
 import { MongoHelper } from '../helpers/mongo-helper';
 import { CommandMongoRepository } from './command-mongo-repository';
+import { describe, test, expect, beforeAll, beforeEach, afterAll } from 'vitest';
 
 const makeSut = (): CommandMongoRepository => {
   return new CommandMongoRepository();
@@ -11,7 +12,7 @@ let commandCollection: Collection;
 
 describe('Command Mongo Repository', () => {
   beforeAll(async () => {
-    await MongoHelper.connect(process.env.MONGO_URL ?? '');
+    await MongoHelper.connect(globalThis.__MONGO_URI__ ?? '');
   });
 
   beforeEach(async () => {

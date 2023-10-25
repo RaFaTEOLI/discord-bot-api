@@ -14,6 +14,7 @@ import {
   SpotifyAccessModel,
   AccountModel
 } from './spotify-refresh-token-controller-protocols';
+import { describe, test, expect, vi } from 'vitest';
 
 const mockRequest = (): HttpRequest => ({
   body: mockSpotifyRefreshTokenParams(),
@@ -45,7 +46,7 @@ const makeSut = (fakeAccount = mockAccountModel()): SutTypes => {
 describe('SpotifyRefreshToken Controller', () => {
   test('should call SpotifyRefreshToken with correct values', async () => {
     const { sut, spotifyRefreshTokenStub } = makeSut();
-    const refreshSpy = jest.spyOn(spotifyRefreshTokenStub, 'refresh');
+    const refreshSpy = vi.spyOn(spotifyRefreshTokenStub, 'refresh');
     const httpRequest = mockRequest();
     await sut.handle(httpRequest);
     expect(refreshSpy).toHaveBeenCalledWith(httpRequest.body);
@@ -53,7 +54,7 @@ describe('SpotifyRefreshToken Controller', () => {
 
   test('should return 500 if SpotifyRefreshToken throws an exception', async () => {
     const { sut, spotifyRefreshTokenStub } = makeSut();
-    jest.spyOn(spotifyRefreshTokenStub, 'refresh').mockRejectedValueOnce(new Error());
+    vi.spyOn(spotifyRefreshTokenStub, 'refresh').mockRejectedValueOnce(new Error());
     const httpResponse = await sut.handle(mockRequest());
     expect(httpResponse).toEqual(serverError(new Error()));
   });
@@ -61,7 +62,7 @@ describe('SpotifyRefreshToken Controller', () => {
   test('should return 200 on success', async () => {
     const fakeAccountWithToken = mockAccountModelWithToken();
     const { sut, fakeAccessModel, saveAccountStub } = makeSut(fakeAccountWithToken);
-    const saveSpy = jest.spyOn(saveAccountStub, 'save');
+    const saveSpy = vi.spyOn(saveAccountStub, 'save');
     const httpResponse = await sut.handle(mockRequest());
     expect(httpResponse).toEqual(
       success({

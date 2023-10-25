@@ -3,6 +3,7 @@ import { DbSaveCommand } from './db-save-command';
 import MockDate from 'mockdate';
 import { mockSaveCommandRepository, mockLoadCommandByNameRepository } from '@/data/test';
 import { mockCommandModel, mockSaveCommandParams } from '@/domain/test';
+import { describe, test, expect, vi, beforeAll, afterAll } from 'vitest';
 
 interface SutTypes {
   sut: DbSaveCommand;
@@ -32,7 +33,7 @@ describe('DdSaveCommand Usecase', () => {
 
   test('should call SaveCommandRepository with correct values', async () => {
     const { sut, saveCommandRepositoryStub } = makeSut();
-    const saveSpy = jest.spyOn(saveCommandRepositoryStub, 'save');
+    const saveSpy = vi.spyOn(saveCommandRepositoryStub, 'save');
     const commandData = mockSaveCommandParams();
     await sut.save(commandData);
     expect(saveSpy).toHaveBeenCalledWith(commandData);
@@ -47,14 +48,14 @@ describe('DdSaveCommand Usecase', () => {
 
   test('should throw exception if SaveCommandRepository throws exception', async () => {
     const { sut, saveCommandRepositoryStub } = makeSut();
-    jest.spyOn(saveCommandRepositoryStub, 'save').mockRejectedValueOnce(new Error());
+    vi.spyOn(saveCommandRepositoryStub, 'save').mockRejectedValueOnce(new Error());
     const promise = sut.save(mockSaveCommandParams());
     await expect(promise).rejects.toThrow();
   });
 
   test('should return null if LoadCommandByName returns a command and id is not provided', async () => {
     const { sut, loadCommandByNameRepositoryStub } = makeSut();
-    jest.spyOn(loadCommandByNameRepositoryStub, 'loadByName').mockResolvedValueOnce(mockCommandModel());
+    vi.spyOn(loadCommandByNameRepositoryStub, 'loadByName').mockResolvedValueOnce(mockCommandModel());
     const commandData = mockSaveCommandParams();
     const command = await sut.save(commandData);
     expect(command).toBeNull();

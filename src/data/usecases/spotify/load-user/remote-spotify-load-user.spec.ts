@@ -6,6 +6,7 @@ import { faker } from '@faker-js/faker';
 import { SpotifyUserModel } from '@/domain/models/spotify';
 import { LoadAccountByEmailRepository } from '@/data/protocols/db/account/load-account-by-email-repository';
 import { RemoteSpotifyLoadUser } from './remote-spotify-load-user';
+import { describe, test, expect, vi } from 'vitest';
 
 type SutTypes = {
   sut: RemoteSpotifyLoadUser;
@@ -96,7 +97,7 @@ describe('RemoteSpotifyLoadUser', () => {
 
   test('should return an AccountModel with id as NOT-FOUND if HttpClient returns 200 and user is not found', async () => {
     const { sut, httpClientSpy, loadAccountByEmailRepositoryStub } = makeSut();
-    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockResolvedValueOnce(null);
+    vi.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockResolvedValueOnce(null);
     httpClientSpy.response = {
       statusCode: HttpStatusCode.success,
       body: mockSpotifyUserModel()

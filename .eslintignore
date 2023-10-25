@@ -1,6 +1,6 @@
 node_modules
 dist
-jest.config.js
+vitest.config.ts
 coverage
 Docker
 .husky

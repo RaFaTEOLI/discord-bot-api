@@ -6,6 +6,7 @@ import { HttpStatusCode } from '@/data/protocols/http';
 import { faker } from '@faker-js/faker';
 import { SpotifyAccessModel } from '@/domain/models/spotify';
 import { InvalidParamError } from '@/presentation/errors';
+import { describe, test, expect } from 'vitest';
 
 type SutTypes = {
   sut: RemoteSpotifyRefreshToken;

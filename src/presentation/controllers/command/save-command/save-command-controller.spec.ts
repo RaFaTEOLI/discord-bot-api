@@ -5,6 +5,7 @@ import MockDate from 'mockdate';
 import { mockValidation, mockSaveCommand } from '@/presentation/test';
 import { mockSaveCommandParams } from '@/domain/test';
 import { InvalidParamError } from '@/presentation/errors';
+import { describe, test, expect, vi, beforeAll, afterAll } from 'vitest';
 
 const mockRequest = (): HttpRequest => ({
   body: mockSaveCommandParams()
@@ -45,7 +46,7 @@ describe('SaveCommand Controller', () => {
 
   test('should call Validation with correct values', async () => {
     const { sut, validationStub } = makeSut();
-    const validateSpy = jest.spyOn(validationStub, 'validate');
+    const validateSpy = vi.spyOn(validationStub, 'validate');
     const httpRequest = mockRequest();
     await sut.handle(httpRequest);
     expect(validateSpy).toHaveBeenCalledWith(httpRequest.body);
@@ -53,7 +54,7 @@ describe('SaveCommand Controller', () => {
 
   test('should return 400 if Validation fails', async () => {
     const { sut, validationStub } = makeSut();
-    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error());
+    vi.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error());
     const httpRequest = mockRequest();
     const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse).toEqual(badRequest(new Error()));
@@ -61,7 +62,7 @@ describe('SaveCommand Controller', () => {
 
   test('should return 400 if save command returns null', async () => {
     const { sut, saveCommandStub } = makeSut();
-    jest.spyOn(saveCommandStub, 'save').mockResolvedValueOnce(null);
+    vi.spyOn(saveCommandStub, 'save').mockResolvedValueOnce(null);
     const httpRequest = mockRequest();
     const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse).toEqual(badRequest(new InvalidParamError('command')));
@@ -69,7 +70,7 @@ describe('SaveCommand Controller', () => {
 
   test('should call SaveCommand with correct values', async () => {
     const { sut, saveCommandStub } = makeSut();
-    const addSpy = jest.spyOn(saveCommandStub, 'save');
+    const addSpy = vi.spyOn(saveCommandStub, 'save');
     const httpRequest = mockRequest();
     await sut.handle(httpRequest);
     expect(addSpy).toHaveBeenCalledWith(httpRequest.body);
@@ -77,7 +78,7 @@ describe('SaveCommand Controller', () => {
 
   test('should call SaveCommand with correct values and commandId', async () => {
     const { sut, saveCommandStub } = makeSut();
-    const addSpy = jest.spyOn(saveCommandStub, 'save');
+    const addSpy = vi.spyOn(saveCommandStub, 'save');
     const httpRequest = mockRequestWithCommandId();
     await sut.handle(httpRequest);
     expect(addSpy).toHaveBeenCalledWith({ id: httpRequest.params.commandId, ...httpRequest.body });
@@ -85,7 +86,7 @@ describe('SaveCommand Controller', () => {
 
   test('should return 500 if SaveCommand throws an exception', async () => {
     const { sut, saveCommandStub } = makeSut();
-    jest.spyOn(saveCommandStub, 'save').mockRejectedValueOnce(new Error());
+    vi.spyOn(saveCommandStub, 'save').mockRejectedValueOnce(new Error());
     const httpResponse = await sut.handle(mockRequest());
     expect(httpResponse).toEqual(serverError(new Error()));
   });

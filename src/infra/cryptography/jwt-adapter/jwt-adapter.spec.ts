@@ -1,15 +1,20 @@
 import jwt from 'jsonwebtoken';
 import { JWTAdapter } from './jwt-adapter';
+import { describe, test, expect, vi } from 'vitest';
 
-jest.mock('jsonwebtoken', () => ({
-  async sign(): Promise<string> {
-    return await Promise.resolve('any_token');
-  },
+vi.mock('jsonwebtoken', async () => {
+  return {
+    default: {
+      async sign(): Promise<string> {
+        return await Promise.resolve('any_token');
+      },
 
-  async verify(): Promise<string> {
-    return await Promise.resolve('any_value');
-  },
-}));
+      async verify(): Promise<string> {
+        return await Promise.resolve('any_value');
+      }
+    }
+  };
+});
 
 const makeSut = (): JWTAdapter => {
   return new JWTAdapter('secret');
@@ -19,7 +24,7 @@ describe('JWT Adapter', () => {
   describe('sign()', () => {
     test('should call sign with correct values', async () => {
       const sut = makeSut();
-      const signSpy = jest.spyOn(jwt, 'sign');
+      const signSpy = vi.spyOn(jwt, 'sign');
       await sut.encrypt('any_id');
       expect(signSpy).toHaveBeenCalledWith({ id: 'any_id' }, 'secret');
     });
@@ -32,7 +37,7 @@ describe('JWT Adapter', () => {
 
     test('should throw an exception if sign throws an exception', async () => {
       const sut = makeSut();
-      jest.spyOn(jwt, 'sign').mockRejectedValueOnce(new Error() as never);
+      vi.spyOn(jwt, 'sign').mockRejectedValueOnce(new Error() as never);
       const promise = sut.encrypt('any_id');
       await expect(promise).rejects.toThrow();
     });
@@ -41,7 +46,7 @@ describe('JWT Adapter', () => {
   describe('verify()', () => {
     test('should call verify with correct values', async () => {
       const sut = makeSut();
-      const verifySpy = jest.spyOn(jwt, 'verify');
+      const verifySpy = vi.spyOn(jwt, 'verify');
       await sut.decrypt('any_token');
       expect(verifySpy).toHaveBeenCalledWith('any_token', 'secret');
     });
@@ -54,7 +59,7 @@ describe('JWT Adapter', () => {
 
     test('should throw an exception if verify throws an exception', async () => {
       const sut = makeSut();
-      jest.spyOn(jwt, 'verify').mockRejectedValueOnce(new Error() as never);
+      vi.spyOn(jwt, 'verify').mockRejectedValueOnce(new Error() as never);
       const promise = sut.decrypt('any_token');
       await expect(promise).rejects.toThrow();
     });

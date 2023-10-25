@@ -3,6 +3,7 @@ import { DbSaveMusic } from './db-save-music';
 import MockDate from 'mockdate';
 import { mockSaveMusicRepository } from '@/data/test';
 import { mockSaveMusicParams } from '@/domain/test';
+import { describe, test, expect, vi, beforeAll, afterAll } from 'vitest';
 
 interface SutTypes {
   sut: DbSaveMusic;
@@ -29,7 +30,7 @@ describe('DdSaveMusic Usecase', () => {
 
   test('should call SaveMusicRepository with correct values', async () => {
     const { sut, saveMusicRepositoryStub } = makeSut();
-    const saveSpy = jest.spyOn(saveMusicRepositoryStub, 'save');
+    const saveSpy = vi.spyOn(saveMusicRepositoryStub, 'save');
     const musicData = mockSaveMusicParams();
     await sut.save(musicData);
     expect(saveSpy).toHaveBeenCalledWith({ ...musicData, startedAt: Math.floor(Date.now() / 1000) });
