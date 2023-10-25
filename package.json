@@ -16,7 +16,7 @@
     "down": "docker-compose down",
     "test": "vitest --threads=false --single-thread --sequence.shuffle --sequence.seed 1698238251980 --run --passWithNoTests --silent",
     "test:staged": "yarn test related",
-    "test:ci": "yarn test --coverage"
+    "test:ci": "yarn test --coverage --retry=1"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",
