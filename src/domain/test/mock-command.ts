@@ -27,13 +27,13 @@ const mockCommandOptionDiscordType = (): CommandOptionType =>
 export const mockCommandModel = (override?: Partial<CommandModel>): CommandModel => {
   return {
     id: 'any_id',
-    command: 'any_command',
-    dispatcher: 'message',
-    type: 'message',
-    description: 'any_description',
-    response: 'any_response',
+    command: faker.word.verb(),
+    dispatcher: faker.helpers.arrayElement(['client', 'message']),
+    type: faker.helpers.arrayElement(['music', 'action', 'message']),
+    description: faker.lorem.words(3),
+    response: faker.lorem.words(2),
+    message: faker.lorem.words(2),
     discordType: mockApplicationCommandDiscordType(),
-    message: 'any_message',
     discordStatus: override?.discordStatus ?? faker.helpers.arrayElement(['SENT', 'RECEIVED', 'FAILED']),
     options: [
       {

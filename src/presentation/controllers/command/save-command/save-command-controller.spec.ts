@@ -2,10 +2,12 @@ import { HttpRequest, Validation, SaveCommand } from './save-command-controller-
 import { SaveCommandController } from './save-command-controller';
 import { badRequest, noContent, serverError } from '@/presentation/helpers/http/http-helper';
 import MockDate from 'mockdate';
-import { mockValidation, mockSaveCommand } from '@/presentation/test';
+import { mockValidation, mockSaveCommand, mockSocketClient } from '@/presentation/test';
 import { mockSaveCommandParams } from '@/domain/test';
 import { InvalidParamError } from '@/presentation/errors';
+import { Socket } from 'socket.io-client';
 import { describe, test, expect, vi, beforeAll, afterAll } from 'vitest';
+import { faker } from '@faker-js/faker';
 
 const mockRequest = (): HttpRequest => ({
   body: mockSaveCommandParams()
@@ -14,7 +16,7 @@ const mockRequest = (): HttpRequest => ({
 const mockRequestWithCommandId = (): HttpRequest => ({
   body: mockSaveCommandParams(),
   params: {
-    commandId: 'command_id'
+    commandId: faker.datatype.uuid()
   }
 });
 
@@ -22,16 +24,19 @@ interface SutTypes {
   sut: SaveCommandController;
   validationStub: Validation;
   saveCommandStub: SaveCommand;
+  socketClientStub: Socket;
 }
 
 const makeSut = (): SutTypes => {
   const validationStub = mockValidation();
   const saveCommandStub = mockSaveCommand();
-  const sut = new SaveCommandController(validationStub, saveCommandStub);
+  const socketClientStub = mockSocketClient();
+  const sut = new SaveCommandController(validationStub, saveCommandStub, socketClientStub);
   return {
     sut,
     validationStub,
-    saveCommandStub
+    saveCommandStub,
+    socketClientStub
   };
 };
 
@@ -95,5 +100,20 @@ describe('SaveCommand Controller', () => {
     const { sut } = makeSut();
     const httpResponse = await sut.handle(mockRequest());
     expect(httpResponse).toEqual(noContent());
+  });
+
+  test('should emit socket event on success', async () => {
+    const { sut, socketClientStub, saveCommandStub } = makeSut();
+    const socketSpy = vi.spyOn(socketClientStub, 'emit');
+    const request = mockRequest();
+    vi.spyOn(saveCommandStub, 'save').mockResolvedValueOnce({ id: faker.datatype.uuid(), ...request.body });
+    const httpResponse = await sut.handle(request);
+    expect(httpResponse).toEqual(noContent());
+    expect(socketSpy).toHaveBeenCalledWith('command', {
+      name: request.body.command,
+      type: request.body.discordType,
+      description: request.body.description,
+      ...(request.body.options && { options: request.body.options })
+    });
   });
 });
