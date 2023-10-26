@@ -40,10 +40,7 @@ export class SaveCommandController implements Controller {
       }
 
       this.socketClient.emit('command', {
-        name: command.command,
-        type: command.discordType,
-        description: command.description,
-        ...(command.options && { options: command.options }),
+        id: command.id,
         discordStatus: command.discordStatus
       });
 
