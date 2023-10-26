@@ -43,7 +43,8 @@ export class SaveCommandController implements Controller {
         name: command.command,
         type: command.discordType,
         description: command.description,
-        ...(command.options && { options: command.options })
+        ...(command.options && { options: command.options }),
+        discordStatus: command.discordStatus
       });
 
       return noContent();
