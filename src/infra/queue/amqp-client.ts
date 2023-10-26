@@ -1,12 +1,10 @@
 import { QueueClient } from '@/data/protocols/queue';
 import { connect } from 'amqplib';
 import env from '@/main/config/env';
-import { SaveCommandParams } from '@/domain/usecases/command/save-command';
-import { SaveQueueParams } from '@/domain/usecases/queue/save-queue';
-import { SaveMusicParams } from '@/domain/usecases/music/save-music';
+import { QueueSaveCommandParams } from '@/domain/usecases/command/save-command';
 
-export class AmqpClient<R = SaveMusicParams | SaveQueueParams | SaveCommandParams> implements QueueClient<R> {
-  async send(queue: 'music' | 'queue' | 'command', data: R): Promise<void> {
+export class AmqpClient<R = QueueSaveCommandParams> implements QueueClient<R> {
+  async send(queue: 'command', data: R): Promise<void> {
     const connection = await connect(
       `amqp://${env.apiQueueUsername}:${env.apiQueuePassword}@${env.apiQueueAdress}:${env.apiQueuePort}`
     );

@@ -1,5 +1,5 @@
 import { ApplicationCommandType, CommandModel, CommandOptionType } from '@/domain/models/command';
-import { SaveCommandParams } from '@/domain/usecases/command/save-command';
+import { QueueSaveCommandParams, SaveCommandParams } from '@/domain/usecases/command/save-command';
 import { faker } from '@faker-js/faker';
 
 export const mockApplicationCommandDiscordType = (): ApplicationCommandType =>
@@ -89,6 +89,22 @@ export const mockSaveCommandParams = (params?: { withOptions?: boolean }): SaveC
   response: faker.lorem.words(2),
   message: faker.lorem.words(2),
   discordType: mockApplicationCommandDiscordType(),
+  ...(params?.withOptions && {
+    options: [
+      {
+        name: faker.word.verb(),
+        description: faker.lorem.words(3),
+        required: faker.datatype.boolean(),
+        type: mockCommandOptionDiscordType()
+      }
+    ]
+  })
+});
+
+export const mockQueueSaveCommandParams = (params?: { withOptions?: boolean }): QueueSaveCommandParams => ({
+  name: faker.word.verb(),
+  type: mockApplicationCommandDiscordType(),
+  description: faker.lorem.words(3),
   ...(params?.withOptions && {
     options: [
       {

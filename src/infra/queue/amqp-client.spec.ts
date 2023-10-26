@@ -1,4 +1,4 @@
-import { mockSaveMusicParams } from '@/domain/test';
+import { mockQueueSaveCommandParams } from '@/domain/test';
 import { AmqpClient } from '@/infra/queue/amqp-client';
 import { describe, test, expect, vi } from 'vitest';
 
@@ -29,10 +29,10 @@ const makeSut = async (): Promise<SutTypes> => {
 };
 
 describe('AmqpClient', () => {
-  test('should call send with correct values for music', async () => {
+  test('should call send with correct values for command', async () => {
     const { sut } = await makeSut();
-    const musicModel = mockSaveMusicParams();
-    await sut.send('music', musicModel);
-    expect(mockSendToQueue).toHaveBeenCalledWith('music', Buffer.from(JSON.stringify(musicModel)));
+    const commandParams = mockQueueSaveCommandParams();
+    await sut.send('command', commandParams);
+    expect(mockSendToQueue).toHaveBeenCalledWith('command', Buffer.from(JSON.stringify(commandParams)));
   });
 });
