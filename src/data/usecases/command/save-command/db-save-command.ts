@@ -29,7 +29,6 @@ export class DbSaveCommand implements SaveCommand {
               err.message as string
             }`
           );
-          return;
         }
       }
 
