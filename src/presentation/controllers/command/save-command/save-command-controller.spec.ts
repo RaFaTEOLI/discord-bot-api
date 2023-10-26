@@ -106,18 +106,16 @@ describe('SaveCommand Controller', () => {
     const { sut, socketClientStub, saveCommandStub } = makeSut();
     const socketSpy = vi.spyOn(socketClientStub, 'emit');
     const request = mockRequest();
+    const commandId = faker.datatype.uuid();
     vi.spyOn(saveCommandStub, 'save').mockResolvedValueOnce({
-      id: faker.datatype.uuid(),
+      id: commandId,
       ...request.body,
       discordStatus: 'SENT'
     });
     const httpResponse = await sut.handle(request);
     expect(httpResponse).toEqual(noContent());
     expect(socketSpy).toHaveBeenCalledWith('command', {
-      name: request.body.command,
-      type: request.body.discordType,
-      description: request.body.description,
-      ...(request.body.options && { options: request.body.options }),
+      id: commandId,
       discordStatus: 'SENT'
     });
   });
