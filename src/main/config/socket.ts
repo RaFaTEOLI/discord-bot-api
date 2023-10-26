@@ -18,6 +18,11 @@ export default (app: Express): Server<any, any> => {
       console.log('🎵: Music Received:', payload);
       io.emit('music', payload);
     });
+
+    socket.on('command', payload => {
+      console.log('⚙️: Command Received:', payload);
+      io.emit('command', payload);
+    });
   });
 
   return server;
