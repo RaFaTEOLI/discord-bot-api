@@ -27,19 +27,23 @@ describe('Command Mongo Repository', () => {
   describe('save()', () => {
     test('should create a command on success if it does not exist already', async () => {
       const sut = makeSut();
-      const createdCommand = await sut.save(mockSaveCommandParams());
+      const commandParams = mockSaveCommandParams();
+      const createdCommand = await sut.save(commandParams);
       const command = await commandCollection.findOne({
         command: createdCommand.command
       });
       expect(command).toBeTruthy();
+      expect(createdCommand.command).toBe(commandParams.command);
     });
 
     test('should update a command on success if it already exists', async () => {
       const sut = makeSut();
-      const result = await commandCollection.insertOne(mockSaveCommandParams());
-      await sut.save({ id: result.insertedId.toString(), ...mockSaveCommandParams() });
+      const commandParams = mockSaveCommandParams();
+      const result = await commandCollection.insertOne(commandParams);
+      const updateParams = mockSaveCommandParams();
+      await sut.save({ id: result.insertedId.toString(), ...updateParams });
       const command = await commandCollection.findOne({
-        command: 'any_command'
+        command: updateParams.command
       });
       expect(command).toBeTruthy();
     });
@@ -47,31 +51,15 @@ describe('Command Mongo Repository', () => {
 
   describe('loadAll()', () => {
     test('should load all commands on success', async () => {
-      await commandCollection.insertMany([
-        {
-          command: 'any_command',
-          dispatcher: 'message',
-          type: 'message',
-          description: 'any_description',
-          response: 'any_response',
-          message: 'any_message'
-        },
-        {
-          command: 'other_command',
-          dispatcher: 'client',
-          type: 'action',
-          description: 'other_description',
-          response: 'other_response',
-          message: 'other_message'
-        }
-      ]);
+      const commandsToAdd = [mockSaveCommandParams(), mockSaveCommandParams({ withOptions: true })];
+      await commandCollection.insertMany(commandsToAdd);
       const sut = makeSut();
       const commands = await sut.loadAll();
       expect(commands.length).toBe(2);
       expect(commands[0].id).toBeTruthy();
-      expect(commands[0].command).toBe('any_command');
+      expect(commands[0].command).toBe(commandsToAdd[0].command);
       expect(commands[1].id).toBeTruthy();
-      expect(commands[1].command).toBe('other_command');
+      expect(commands[1].command).toBe(commandsToAdd[1].command);
     });
 
     test('should load empty list', async () => {
@@ -83,13 +71,14 @@ describe('Command Mongo Repository', () => {
 
   describe('loadById()', () => {
     test('should load command by id on success', async () => {
-      const result = await commandCollection.insertOne(mockSaveCommandParams());
+      const commandToAdd = mockSaveCommandParams();
+      const result = await commandCollection.insertOne(commandToAdd);
       const id = result.insertedId.toString();
       const sut = makeSut();
       const command = await sut.loadById(id);
       expect(command).toBeTruthy();
       expect(command.id).toBeTruthy();
-      expect(command.command).toBe('any_command');
+      expect(command.command).toBe(commandToAdd.command);
     });
   });
 
@@ -107,12 +96,13 @@ describe('Command Mongo Repository', () => {
 
   describe('deleteById()', () => {
     test('should delete command by id on success', async () => {
-      const result = await commandCollection.insertOne(mockSaveCommandParams());
+      const commandToAdd = mockSaveCommandParams();
+      const result = await commandCollection.insertOne(commandToAdd);
       const id = result.insertedId.toString();
       const sut = makeSut();
       const deleted = await sut.deleteById(id);
       const command = await commandCollection.findOne({
-        command: 'any_command'
+        command: commandToAdd.command
       });
       expect(deleted).toBeTruthy();
       expect(command).toBeFalsy();

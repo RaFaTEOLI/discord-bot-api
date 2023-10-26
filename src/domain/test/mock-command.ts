@@ -1,6 +1,28 @@
-import { CommandModel } from '@/domain/models/command';
+import { ApplicationCommandType, CommandModel, CommandOptionType } from '@/domain/models/command';
 import { SaveCommandParams } from '@/domain/usecases/command/save-command';
 import { faker } from '@faker-js/faker';
+
+export const mockApplicationCommandDiscordType = (): ApplicationCommandType =>
+  faker.helpers.arrayElement([
+    ApplicationCommandType.CHAT_INPUT,
+    ApplicationCommandType.MESSAGE,
+    ApplicationCommandType.USER
+  ]);
+
+const mockCommandOptionDiscordType = (): CommandOptionType =>
+  faker.helpers.arrayElement([
+    CommandOptionType.SUB_COMMAND,
+    CommandOptionType.SUB_COMMAND_GROUP,
+    CommandOptionType.STRING,
+    CommandOptionType.INTEGER,
+    CommandOptionType.BOOLEAN,
+    CommandOptionType.USER,
+    CommandOptionType.CHANNEL,
+    CommandOptionType.ROLE,
+    CommandOptionType.MENTIONABLE,
+    CommandOptionType.NUMBER,
+    CommandOptionType.ATTACHMENT
+  ]);
 
 export const mockCommandModel = (override?: Partial<CommandModel>): CommandModel => {
   return {
@@ -10,41 +32,71 @@ export const mockCommandModel = (override?: Partial<CommandModel>): CommandModel
     type: 'message',
     description: 'any_description',
     response: 'any_response',
+    discordType: mockApplicationCommandDiscordType(),
     message: 'any_message',
-    discordStatus: override?.discordStatus ?? faker.helpers.arrayElement(['SENT', 'RECEIVED', 'FAILED'])
+    discordStatus: override?.discordStatus ?? faker.helpers.arrayElement(['SENT', 'RECEIVED', 'FAILED']),
+    options: [
+      {
+        name: faker.word.verb(),
+        description: faker.lorem.words(3),
+        required: faker.datatype.boolean(),
+        type: mockCommandOptionDiscordType()
+      }
+    ]
   };
 };
 
 export const mockCommandsData = (): CommandModel[] => {
   return [
     {
-      id: 'any_id',
-      command: 'any_command',
-      dispatcher: 'message',
-      type: 'message',
-      description: 'any_description',
-      response: 'any_response',
-      message: 'any_message',
-      discordStatus: 'SENT'
+      id: faker.datatype.uuid(),
+      command: faker.word.verb(),
+      dispatcher: faker.helpers.arrayElement(['client', 'message']),
+      type: faker.helpers.arrayElement(['music', 'action', 'message']),
+      description: faker.lorem.words(3),
+      response: faker.lorem.words(2),
+      message: faker.lorem.words(2),
+      discordType: mockApplicationCommandDiscordType(),
+      discordStatus: faker.helpers.arrayElement(['SENT', 'RECEIVED', 'FAILED'])
     },
     {
-      id: 'other_id',
-      command: 'other_command',
-      dispatcher: 'client',
-      type: 'action',
-      description: 'other_description',
-      response: 'other_response',
-      message: 'other_message',
-      discordStatus: 'RECEIVED'
+      id: faker.datatype.uuid(),
+      command: faker.word.verb(),
+      dispatcher: faker.helpers.arrayElement(['client', 'message']),
+      type: faker.helpers.arrayElement(['music', 'action', 'message']),
+      description: faker.lorem.words(3),
+      response: faker.lorem.words(2),
+      message: faker.lorem.words(2),
+      discordType: mockApplicationCommandDiscordType(),
+      discordStatus: faker.helpers.arrayElement(['SENT', 'RECEIVED', 'FAILED']),
+      options: [
+        {
+          name: faker.word.verb(),
+          description: faker.lorem.words(3),
+          required: faker.datatype.boolean(),
+          type: mockCommandOptionDiscordType()
+        }
+      ]
     }
   ];
 };
 
-export const mockSaveCommandParams = (): SaveCommandParams => ({
-  command: 'any_command',
-  dispatcher: 'message',
-  type: 'message',
-  description: 'any_description',
-  response: 'any_response',
-  message: 'any_message'
+export const mockSaveCommandParams = (params?: { withOptions?: boolean }): SaveCommandParams => ({
+  command: faker.word.verb(),
+  dispatcher: faker.helpers.arrayElement(['client', 'message']),
+  type: faker.helpers.arrayElement(['music', 'action', 'message']),
+  description: faker.lorem.words(3),
+  response: faker.lorem.words(2),
+  message: faker.lorem.words(2),
+  discordType: mockApplicationCommandDiscordType(),
+  ...(params?.withOptions && {
+    options: [
+      {
+        name: faker.word.verb(),
+        description: faker.lorem.words(3),
+        required: faker.datatype.boolean(),
+        type: mockCommandOptionDiscordType()
+      }
+    ]
+  })
 });
