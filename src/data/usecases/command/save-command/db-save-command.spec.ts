@@ -12,11 +12,16 @@ interface SutTypes {
   amqpClientSpy: AmqpClientSpy;
 }
 
-const makeSut = (): SutTypes => {
+const makeSut = (useApiQueue = true): SutTypes => {
   const saveCommandRepositoryStub = mockSaveCommandRepository();
   const loadCommandByNameRepositoryStub = mockLoadCommandByNameRepository();
   const amqpClientSpy = new AmqpClientSpy();
-  const sut = new DbSaveCommand(saveCommandRepositoryStub, loadCommandByNameRepositoryStub, amqpClientSpy, true);
+  const sut = new DbSaveCommand(
+    saveCommandRepositoryStub,
+    loadCommandByNameRepositoryStub,
+    amqpClientSpy,
+    useApiQueue
+  );
   return {
     sut,
     saveCommandRepositoryStub,
@@ -95,5 +100,14 @@ describe('DdSaveCommand Usecase', () => {
     expect(errorLogSpy).toHaveBeenCalledWith(
       `Error sending command payload to API Queue: ${JSON.stringify(body)} with error: ${new Error().message}`
     );
+  });
+
+  test('should not call AmqpClient when useApiQueue is false', async () => {
+    const { sut, amqpClientSpy, saveCommandRepositoryStub } = makeSut(false);
+    const sendSpy = vi.spyOn(amqpClientSpy, 'send');
+    const commandModel = mockCommandModel();
+    vi.spyOn(saveCommandRepositoryStub, 'save').mockResolvedValueOnce(commandModel);
+    await sut.save(mockSaveCommandParams());
+    expect(sendSpy).not.toHaveBeenCalled();
   });
 });
