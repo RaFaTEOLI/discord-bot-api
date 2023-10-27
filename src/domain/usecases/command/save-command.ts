@@ -6,7 +6,7 @@ export type SaveCommandParams = Optional<CommandModel, 'id' | 'discordStatus'>;
 export type QueueSaveCommandParams = {
   name: string;
   type: ApplicationCommandType;
-  description: string;
+  description?: string;
   options?: Array<{
     name: string;
     description: string;

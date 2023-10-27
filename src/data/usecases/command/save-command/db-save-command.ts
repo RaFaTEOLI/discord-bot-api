@@ -1,5 +1,10 @@
 import { QueueSaveCommandParams, SaveCommand, SaveCommandParams } from '@/domain/usecases/command/save-command';
-import { SaveCommandRepository, LoadCommandByNameRepository, CommandModel } from './db-save-command-protocols';
+import {
+  SaveCommandRepository,
+  LoadCommandByNameRepository,
+  CommandModel,
+  ApplicationCommandType
+} from './db-save-command-protocols';
 import { AmqpClient } from '@/infra/queue/amqp-client';
 
 export class DbSaveCommand implements SaveCommand {
@@ -20,7 +25,9 @@ export class DbSaveCommand implements SaveCommand {
           await this.amqpClient.send('command', {
             name: savedCommand.command,
             type: savedCommand.discordType,
-            description: savedCommand.description,
+            ...(savedCommand.discordType === ApplicationCommandType.CHAT_INPUT && {
+              description: savedCommand.description
+            }),
             ...(savedCommand.options && { options: savedCommand.options })
           });
         } catch (err) {
