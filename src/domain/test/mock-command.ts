@@ -33,7 +33,7 @@ export const mockCommandModel = (override?: Partial<CommandModel>): CommandModel
     description: faker.lorem.words(3),
     response: faker.lorem.words(2),
     message: faker.lorem.words(2),
-    discordType: mockApplicationCommandDiscordType(),
+    discordType: override?.discordType ?? mockApplicationCommandDiscordType(),
     discordStatus: override?.discordStatus ?? faker.helpers.arrayElement(['SENT', 'RECEIVED', 'FAILED']),
     options: [
       {
@@ -81,14 +81,17 @@ export const mockCommandsData = (): CommandModel[] => {
   ];
 };
 
-export const mockSaveCommandParams = (params?: { withOptions?: boolean }): SaveCommandParams => ({
+export const mockSaveCommandParams = (params?: {
+  withOptions?: boolean;
+  discordType: ApplicationCommandType;
+}): SaveCommandParams => ({
   command: faker.word.verb(),
   dispatcher: faker.helpers.arrayElement(['client', 'message']),
   type: faker.helpers.arrayElement(['music', 'action', 'message']),
   description: faker.lorem.words(3),
   response: faker.lorem.words(2),
   message: faker.lorem.words(2),
-  discordType: mockApplicationCommandDiscordType(),
+  discordType: params?.discordType ?? mockApplicationCommandDiscordType(),
   ...(params?.withOptions && {
     options: [
       {
