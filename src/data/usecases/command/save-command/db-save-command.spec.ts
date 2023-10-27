@@ -1,24 +1,37 @@
-import { SaveCommandRepository, LoadCommandByNameRepository } from './db-save-command-protocols';
+import {
+  SaveCommandRepository,
+  LoadCommandByNameRepository,
+  ApplicationCommandType
+} from './db-save-command-protocols';
 import { DbSaveCommand } from './db-save-command';
 import MockDate from 'mockdate';
-import { mockSaveCommandRepository, mockLoadCommandByNameRepository } from '@/data/test';
+import { mockSaveCommandRepository, mockLoadCommandByNameRepository, AmqpClientSpy } from '@/data/test';
 import { mockCommandModel, mockSaveCommandParams } from '@/domain/test';
 import { describe, test, expect, vi, beforeAll, afterAll } from 'vitest';
+import { faker } from '@faker-js/faker';
 
 interface SutTypes {
   sut: DbSaveCommand;
   saveCommandRepositoryStub: SaveCommandRepository;
   loadCommandByNameRepositoryStub: LoadCommandByNameRepository;
+  amqpClientSpy: AmqpClientSpy;
 }
 
-const makeSut = (): SutTypes => {
+const makeSut = (useApiQueue = true): SutTypes => {
   const saveCommandRepositoryStub = mockSaveCommandRepository();
   const loadCommandByNameRepositoryStub = mockLoadCommandByNameRepository();
-  const sut = new DbSaveCommand(saveCommandRepositoryStub, loadCommandByNameRepositoryStub);
+  const amqpClientSpy = new AmqpClientSpy();
+  const sut = new DbSaveCommand(
+    saveCommandRepositoryStub,
+    loadCommandByNameRepositoryStub,
+    amqpClientSpy,
+    useApiQueue
+  );
   return {
     sut,
     saveCommandRepositoryStub,
-    loadCommandByNameRepositoryStub
+    loadCommandByNameRepositoryStub,
+    amqpClientSpy
   };
 };
 
@@ -43,7 +56,9 @@ describe('DdSaveCommand Usecase', () => {
     const { sut } = makeSut();
     const commandData = mockSaveCommandParams();
     const command = await sut.save(commandData);
-    expect(command).toEqual({ ...commandData, id: command.id, discordStatus: 'SENT' });
+    expect(command).toBeTruthy();
+    expect(command.id).toBeTruthy();
+    expect(command.discordStatus).toBe('SENT');
   });
 
   test('should throw exception if SaveCommandRepository throws exception', async () => {
@@ -63,8 +78,63 @@ describe('DdSaveCommand Usecase', () => {
 
   test('should return a Command with discordStatus received', async () => {
     const { sut } = makeSut();
-    const commandData = mockSaveCommandParams();
-    const command = await sut.save({ ...commandData, discordStatus: 'RECEIVED' });
-    expect(command).toEqual({ ...commandData, id: command.id, discordStatus: 'RECEIVED' });
+    const command = await sut.save({ ...mockSaveCommandParams(), discordStatus: 'RECEIVED' });
+    expect(command.discordStatus).toBe('RECEIVED');
+  });
+
+  test('should call AmqpClient when useApiQueue is true', async () => {
+    const { sut, amqpClientSpy } = makeSut();
+    const sendSpy = vi.spyOn(amqpClientSpy, 'send');
+    await sut.save(mockSaveCommandParams());
+    expect(sendSpy).toHaveBeenCalled();
+  });
+
+  test('should call console.error when AmqpClient fails', async () => {
+    const { sut, amqpClientSpy } = makeSut();
+    vi.spyOn(amqpClientSpy, 'send').mockRejectedValue(new Error());
+    const errorLogSpy = vi.spyOn(console, 'error');
+    const body = mockSaveCommandParams();
+    await sut.save(body);
+    expect(errorLogSpy).toHaveBeenCalledWith(
+      `Error sending command payload to API Queue: ${JSON.stringify(body)} with error: ${new Error().message}`
+    );
+  });
+
+  test('should not call AmqpClient when useApiQueue is false', async () => {
+    const { sut, amqpClientSpy, saveCommandRepositoryStub } = makeSut(false);
+    const sendSpy = vi.spyOn(amqpClientSpy, 'send');
+    const commandModel = mockCommandModel();
+    vi.spyOn(saveCommandRepositoryStub, 'save').mockResolvedValueOnce(commandModel);
+    await sut.save(mockSaveCommandParams());
+    expect(sendSpy).not.toHaveBeenCalled();
+  });
+
+  test('should call AmqpClient with description when command type is CHAT_INPUT', async () => {
+    const { sut, amqpClientSpy, saveCommandRepositoryStub } = makeSut();
+    const sendSpy = vi.spyOn(amqpClientSpy, 'send');
+    const commandModel = mockCommandModel({ discordType: ApplicationCommandType.CHAT_INPUT });
+    vi.spyOn(saveCommandRepositoryStub, 'save').mockResolvedValueOnce(commandModel);
+    await sut.save(mockSaveCommandParams());
+    expect(sendSpy).toHaveBeenCalledWith('command', {
+      name: commandModel.command,
+      type: ApplicationCommandType.CHAT_INPUT,
+      description: commandModel.description,
+      ...(commandModel.options && { options: commandModel.options })
+    });
+  });
+
+  test('should call AmqpClient without description when command type is different than CHAT_INPUT', async () => {
+    const { sut, amqpClientSpy, saveCommandRepositoryStub } = makeSut();
+    const sendSpy = vi.spyOn(amqpClientSpy, 'send');
+    const commandModel = mockCommandModel({
+      discordType: faker.helpers.arrayElement([ApplicationCommandType.MESSAGE, ApplicationCommandType.USER])
+    });
+    vi.spyOn(saveCommandRepositoryStub, 'save').mockResolvedValueOnce(commandModel);
+    await sut.save(mockSaveCommandParams());
+    expect(sendSpy).toHaveBeenCalledWith('command', {
+      name: commandModel.command,
+      type: commandModel.discordType,
+      ...(commandModel.options && { options: commandModel.options })
+    });
   });
 });

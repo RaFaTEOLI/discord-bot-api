@@ -9,7 +9,7 @@ describe('SaveCommand Validation Factory', () => {
   test('should call ValidationComposite with all validations', () => {
     makeSaveCommandValidation();
     const validations: Validation[] = [];
-    for (const field of ['command', 'dispatcher', 'type', 'description']) {
+    for (const field of ['command', 'dispatcher', 'type', 'description', 'discordType']) {
       validations.push(new RequiredFieldValidation(field));
     }
     expect(ValidationComposite).toHaveBeenCalledWith(validations);

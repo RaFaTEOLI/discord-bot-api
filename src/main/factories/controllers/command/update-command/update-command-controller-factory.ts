@@ -3,7 +3,10 @@ import { makeLogControllerDecorator } from '@/main/factories/decorators/log-cont
 import { SaveCommandController } from '@/presentation/controllers/command/save-command/save-command-controller';
 import { makeUpdateCommandValidation } from './update-command-validation-factory';
 import { makeDbSaveCommand } from '@/main/factories/usecases/command/save-command/db-save-command-factory';
+import { makeSocketClient } from '@/main/factories/http';
 
 export const makeUpdateCommandController = (): Controller => {
-  return makeLogControllerDecorator(new SaveCommandController(makeUpdateCommandValidation(), makeDbSaveCommand()));
+  return makeLogControllerDecorator(
+    new SaveCommandController(makeUpdateCommandValidation(), makeDbSaveCommand(), makeSocketClient())
+  );
 };

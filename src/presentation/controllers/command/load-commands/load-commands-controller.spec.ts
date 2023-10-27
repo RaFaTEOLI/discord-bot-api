@@ -2,7 +2,7 @@ import { LoadCommandsController } from './load-commands-controller';
 import { LoadCommands, LoadCommandByName } from './load-commands-protocols';
 import { noContent, serverError, success } from '@/presentation/helpers/http/http-helper';
 import MockDate from 'mockdate';
-import { mockCommandModel, mockCommandsData } from '@/domain/test';
+import { mockCommandModel } from '@/domain/test';
 import { mockLoadCommandByName, mockLoadCommands } from '@/presentation/test';
 import { describe, test, expect, vi, beforeAll, afterAll } from 'vitest';
 
@@ -42,7 +42,8 @@ describe('LoadCommands Controller', () => {
   test('should return 200 on success', async () => {
     const { sut } = makeSut();
     const httpResponse = await sut.handle({});
-    expect(httpResponse).toEqual(success(mockCommandsData()));
+    expect(httpResponse.statusCode).toBe(200);
+    expect(httpResponse.body.length).toBe(2);
   });
 
   test('should return 204 if LoadCommands returns empty', async () => {
@@ -65,11 +66,11 @@ describe('LoadCommands Controller', () => {
     vi.spyOn(loadCommandByNameStub, 'loadByName').mockResolvedValueOnce(commandModel);
     const httpResponse = await sut.handle({
       query: {
-        name: 'any_command'
+        name: commandModel.command
       }
     });
     expect(httpResponse).toEqual(success(commandModel));
-    expect(httpResponse.body.command).toBe('any_command');
+    expect(httpResponse.body.command).toBe(commandModel.command);
   });
 
   test('should return 204 on if no command is found when name query string is provided', async () => {

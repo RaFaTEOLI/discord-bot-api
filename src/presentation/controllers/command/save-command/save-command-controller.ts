@@ -7,9 +7,14 @@ import {
   Validation,
   SaveCommand
 } from './save-command-controller-protocols';
+import { Socket } from 'socket.io-client';
 
 export class SaveCommandController implements Controller {
-  constructor(private readonly validation: Validation, private readonly saveCommand: SaveCommand) {}
+  constructor(
+    private readonly validation: Validation,
+    private readonly saveCommand: SaveCommand,
+    private readonly socketClient: Socket
+  ) {}
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
@@ -33,6 +38,12 @@ export class SaveCommandController implements Controller {
       if (!command) {
         return badRequest(new InvalidParamError('command'));
       }
+
+      this.socketClient.emit('command', {
+        id: command.id,
+        discordStatus: command.discordStatus
+      });
+
       return noContent();
     } catch (error) {
       return serverError(error);

@@ -5,6 +5,7 @@ import app from '@/main/config/app';
 import { sign } from 'jsonwebtoken';
 import env from '@/main/config/env';
 import { describe, test, beforeAll, beforeEach, afterAll } from 'vitest';
+import { mockSaveCommandParams } from '@/domain/test';
 
 let commandCollection: Collection;
 let accountCollection: Collection;
@@ -50,17 +51,7 @@ describe('Command Routes', () => {
 
   describe('POST /commands', () => {
     test('should return 403 on command creation without accessToken', async () => {
-      await request(app)
-        .post('/api/commands')
-        .send({
-          command: 'any_command',
-          dispatcher: 'message',
-          type: 'message',
-          description: 'any_description',
-          response: 'any_response',
-          message: 'any_message'
-        })
-        .expect(403);
+      await request(app).post('/api/commands').send(mockSaveCommandParams()).expect(403);
     });
 
     test('should return 204 on command creation with a valid admin accessToken', async () => {
@@ -68,39 +59,15 @@ describe('Command Routes', () => {
       await request(app)
         .post('/api/commands')
         .set('x-access-token', accessToken)
-        .send({
-          command: 'any_command',
-          dispatcher: 'message',
-          type: 'message',
-          description: 'any_description',
-          response: 'any_response',
-          message: 'any_message'
-        })
+        .send(mockSaveCommandParams())
         .expect(204);
     });
 
     test('should return 400 on duplicate command creation with admin accessToken', async () => {
       const accessToken = await makeAccessToken();
-      await commandCollection.insertOne({
-        command: 'any_command',
-        dispatcher: 'message',
-        type: 'message',
-        description: 'any_description',
-        response: 'any_response',
-        message: 'any_message'
-      });
-      await request(app)
-        .post('/api/commands')
-        .set('x-access-token', accessToken)
-        .send({
-          command: 'any_command',
-          dispatcher: 'message',
-          type: 'message',
-          description: 'any_description',
-          response: 'any_response',
-          message: 'any_message'
-        })
-        .expect(400);
+      const command = mockSaveCommandParams();
+      await commandCollection.insertOne(command);
+      await request(app).post('/api/commands').set('x-access-token', accessToken).send(command).expect(400);
     });
   });
 
@@ -112,24 +79,7 @@ describe('Command Routes', () => {
     test('should return 200 on load commands with valid accessToken', async () => {
       const accessToken = await makeAccessToken();
 
-      await commandCollection.insertMany([
-        {
-          command: 'any_command',
-          dispatcher: 'message',
-          type: 'message',
-          description: 'any_description',
-          response: 'any_response',
-          message: 'any_message'
-        },
-        {
-          command: 'any_command_2',
-          dispatcher: 'message_2',
-          type: 'any_type_2',
-          description: 'any_description_2',
-          response: 'any_response_2',
-          message: 'any_message_2'
-        }
-      ]);
+      await commandCollection.insertMany([mockSaveCommandParams(), mockSaveCommandParams()]);
 
       await request(app).get('/api/commands').set('x-access-token', accessToken).expect(200);
     });
@@ -148,30 +98,15 @@ describe('Command Routes', () => {
     test('should return 200 on load command by name with valid accessToken', async () => {
       const accessToken = await makeAccessToken();
 
-      await commandCollection.insertMany([
-        {
-          command: 'any_command',
-          dispatcher: 'message',
-          type: 'message',
-          description: 'any_description',
-          response: 'any_response',
-          message: 'any_message'
-        },
-        {
-          command: 'any_command_2',
-          dispatcher: 'message_2',
-          type: 'any_type_2',
-          description: 'any_description_2',
-          response: 'any_response_2',
-          message: 'any_message_2'
-        }
-      ]);
+      const commands = [mockSaveCommandParams(), mockSaveCommandParams()];
+
+      await commandCollection.insertMany(commands);
 
       const response = await request(app)
-        .get('/api/commands?name=any_command')
+        .get(`/api/commands?name=${commands[0].command}`)
         .set('x-access-token', accessToken)
         .expect(200);
-      response.body.command = 'any_command';
+      response.body.command = commands[0].command;
     });
 
     test('should return 204 on empty load command by name with valid accessToken', async () => {
@@ -182,42 +117,15 @@ describe('Command Routes', () => {
 
   describe('PUT /commands/{commandId}', () => {
     test('should return 403 on command update without accessToken', async () => {
-      await request(app)
-        .put('/api/commands/any_id')
-        .send({
-          command: 'any_command',
-          dispatcher: 'message',
-          type: 'message',
-          description: 'any_description',
-          response: 'any_response',
-          message: 'any_message'
-        })
-        .expect(403);
+      await request(app).put('/api/commands/any_id').send(mockSaveCommandParams()).expect(403);
     });
 
     test('should return 204 on command update with a valid admin accessToken', async () => {
       const accessToken = await makeAccessToken();
-      const result = await commandCollection.insertOne({
-        command: 'any_command',
-        dispatcher: 'message',
-        type: 'message',
-        description: 'any_description',
-        response: 'any_response',
-        message: 'any_message'
-      });
+      const command = mockSaveCommandParams();
+      const result = await commandCollection.insertOne(command);
       const id = result.insertedId.toString();
-      await request(app)
-        .put(`/api/commands/${id}`)
-        .set('x-access-token', accessToken)
-        .send({
-          command: 'any_command',
-          dispatcher: 'message',
-          type: 'message',
-          description: 'any_description',
-          response: 'any_response',
-          message: 'any_message'
-        })
-        .expect(204);
+      await request(app).put(`/api/commands/${id}`).set('x-access-token', accessToken).send(command).expect(204);
     });
   });
 
@@ -229,14 +137,7 @@ describe('Command Routes', () => {
     test('should return 200 on load command with valid accessToken', async () => {
       const accessToken = await makeAccessToken();
 
-      const result = await commandCollection.insertOne({
-        command: 'any_command',
-        dispatcher: 'message',
-        type: 'message',
-        description: 'any_description',
-        response: 'any_response',
-        message: 'any_message'
-      });
+      const result = await commandCollection.insertOne(mockSaveCommandParams());
       const id = result.insertedId.toString();
 
       await request(app).get(`/api/commands/${id}`).set('x-access-token', accessToken).expect(200);
@@ -258,28 +159,14 @@ describe('Command Routes', () => {
 
     test('should return 204 on command delete with a valid admin accessToken', async () => {
       const accessToken = await makeAccessToken();
-      const result = await commandCollection.insertOne({
-        command: 'any_command',
-        dispatcher: 'message',
-        type: 'message',
-        description: 'any_description',
-        response: 'any_response',
-        message: 'any_message'
-      });
+      const result = await commandCollection.insertOne(mockSaveCommandParams());
       const id = result.insertedId.toString();
       await request(app).delete(`/api/commands/${id}`).set('x-access-token', accessToken).expect(204);
     });
 
     test('should return 400 on command delete with invalid id', async () => {
       const accessToken = await makeAccessToken();
-      const result = await commandCollection.insertOne({
-        command: 'any_command',
-        dispatcher: 'message',
-        type: 'message',
-        description: 'any_description',
-        response: 'any_response',
-        message: 'any_message'
-      });
+      const result = await commandCollection.insertOne(mockSaveCommandParams());
       const id = result.insertedId.toString();
       await commandCollection.deleteMany({});
       await request(app).delete(`/api/commands/${id}`).set('x-access-token', accessToken).expect(400);
