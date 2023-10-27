@@ -83,7 +83,7 @@ export const mockCommandsData = (): CommandModel[] => {
 
 export const mockSaveCommandParams = (params?: {
   withOptions?: boolean;
-  discordType: ApplicationCommandType;
+  discordType?: ApplicationCommandType;
 }): SaveCommandParams => ({
   command: faker.word.verb(),
   dispatcher: faker.helpers.arrayElement(['client', 'message']),

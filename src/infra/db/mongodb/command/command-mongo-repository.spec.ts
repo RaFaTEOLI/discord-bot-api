@@ -47,6 +47,18 @@ describe('Command Mongo Repository', () => {
       });
       expect(command).toBeTruthy();
     });
+
+    test('should create a command on success with options', async () => {
+      const sut = makeSut();
+      const commandParams = mockSaveCommandParams({ withOptions: true });
+      const createdCommand = await sut.save(commandParams);
+      const command = await commandCollection.findOne({
+        command: createdCommand.command
+      });
+      expect(command).toBeTruthy();
+      expect(createdCommand.command).toBe(commandParams.command);
+      expect(createdCommand.options).toEqual(commandParams.options);
+    });
   });
 
   describe('loadAll()', () => {
