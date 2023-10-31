@@ -71,5 +71,67 @@ export const commandPath = {
         $ref: '#/components/serverError'
       }
     }
+  },
+  put: {
+    security: [
+      {
+        apiKeyAuth: []
+      }
+    ],
+    tags: ['Command'],
+    summary: 'API to save a command',
+    description: 'This route is only for **admins**',
+    requestBody: {
+      required: true,
+      content: {
+        'application/json': {
+          schema: {
+            $ref: '#/schemas/SaveCommandParams'
+          }
+        }
+      }
+    },
+    responses: {
+      204: {
+        description: 'Success, No Content'
+      },
+      403: {
+        $ref: '#/components/forbidden'
+      },
+      500: {
+        $ref: '#/components/serverError'
+      }
+    }
+  },
+  patch: {
+    security: [
+      {
+        apiKeyAuth: []
+      }
+    ],
+    tags: ['Command'],
+    summary: 'API to save a command',
+    description: 'This route is only for **admins**',
+    requestBody: {
+      required: true,
+      content: {
+        'application/json': {
+          schema: {
+            $ref: '#/schemas/SaveCommandParams'
+          }
+        }
+      }
+    },
+    responses: {
+      204: {
+        description: 'Success, No Content'
+      },
+      403: {
+        $ref: '#/components/forbidden'
+      },
+      500: {
+        $ref: '#/components/serverError'
+      }
+    }
   }
 };

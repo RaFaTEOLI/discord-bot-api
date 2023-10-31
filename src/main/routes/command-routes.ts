@@ -7,6 +7,7 @@ import { makeLoadCommandByIdController } from '@/main/factories/controllers/comm
 import { makeDeleteCommandByIdController } from '@/main/factories/controllers/command/delete-command-by-id/delete-command-by-id-controller-factory';
 import { adminAuth } from '@/main/middlewares/auth/admin-auth';
 import { auth } from '@/main/middlewares/auth/auth';
+import { makePatchUpdateCommandController } from '@/main/factories/controllers/command/patch-update-command/update-command-controller-factory';
 
 export default (router: Router): void => {
   router.post('/commands', adminAuth, adaptRoute(makeSaveCommandController()));
@@ -14,4 +15,5 @@ export default (router: Router): void => {
   router.get('/commands', auth, adaptRoute(makeLoadCommandsController()));
   router.get('/commands/:commandId', auth, adaptRoute(makeLoadCommandByIdController()));
   router.delete('/commands/:commandId', adminAuth, adaptRoute(makeDeleteCommandByIdController()));
+  router.patch('/commands/:commandId', adminAuth, adaptRoute(makePatchUpdateCommandController()));
 };
