@@ -4,6 +4,7 @@ type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
 export type SaveCommandParams = Optional<CommandModel, 'id' | 'discordStatus'>;
 
 export type QueueSaveCommandParams = {
+  id: string;
   name: string;
   type: ApplicationCommandType;
   description?: string;

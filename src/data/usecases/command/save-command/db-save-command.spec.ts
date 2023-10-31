@@ -116,6 +116,7 @@ describe('DdSaveCommand Usecase', () => {
     vi.spyOn(saveCommandRepositoryStub, 'save').mockResolvedValueOnce(commandModel);
     await sut.save(mockSaveCommandParams());
     expect(sendSpy).toHaveBeenCalledWith('command', {
+      id: commandModel.id,
       name: commandModel.command,
       type: ApplicationCommandType.CHAT_INPUT,
       description: commandModel.description,
@@ -132,6 +133,7 @@ describe('DdSaveCommand Usecase', () => {
     vi.spyOn(saveCommandRepositoryStub, 'save').mockResolvedValueOnce(commandModel);
     await sut.save(mockSaveCommandParams());
     expect(sendSpy).toHaveBeenCalledWith('command', {
+      id: commandModel.id,
       name: commandModel.command,
       type: commandModel.discordType,
       ...(commandModel.options && { options: commandModel.options })

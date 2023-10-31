@@ -23,6 +23,7 @@ export class DbSaveCommand implements SaveCommand {
       if (this.useApiQueue) {
         try {
           await this.amqpClient.send('command', {
+            id: savedCommand.id,
             name: savedCommand.command,
             type: savedCommand.discordType,
             ...(savedCommand.discordType === ApplicationCommandType.CHAT_INPUT && {
