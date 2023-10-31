@@ -4,7 +4,7 @@ import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper';
 import app from '@/main/config/app';
 import { sign } from 'jsonwebtoken';
 import env from '@/main/config/env';
-import { describe, test, beforeAll, beforeEach, afterAll } from 'vitest';
+import { describe, test, beforeAll, beforeEach, afterAll, expect } from 'vitest';
 import { mockSaveCommandParams } from '@/domain/test';
 
 let commandCollection: Collection;
@@ -170,6 +170,26 @@ describe('Command Routes', () => {
       const id = result.insertedId.toString();
       await commandCollection.deleteMany({});
       await request(app).delete(`/api/commands/${id}`).set('x-access-token', accessToken).expect(400);
+    });
+  });
+
+  describe('PATCH /commands/{commandId}', () => {
+    test('should return 403 on command update without accessToken', async () => {
+      await request(app).put('/api/commands/any_id').send(mockSaveCommandParams()).expect(403);
+    });
+
+    test('should return 204 on command update with a valid admin accessToken', async () => {
+      const accessToken = await makeAccessToken();
+      const command = mockSaveCommandParams();
+      const result = await commandCollection.insertOne(command);
+      const id = result.insertedId.toString();
+      await request(app)
+        .patch(`/api/commands/${id}`)
+        .set('x-access-token', accessToken)
+        .send({ discordStatus: 'SENT' })
+        .expect(204);
+      const updated = await commandCollection.findOne({ _id: new ObjectId(id) });
+      expect(updated.discordStatus).toBe('SENT');
     });
   });
 });
