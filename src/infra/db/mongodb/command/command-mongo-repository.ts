@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/indent */
 /* eslint-disable @typescript-eslint/brace-style */
 
-import { SaveCommandRepository } from '@/data/protocols/db/command/save-command-repository';
-import { SaveCommandParams } from '@/domain/usecases/command/save-command';
+import { SaveCommandRepository, SaveCommandParams } from '@/data/protocols/db/command/save-command-repository';
 import { LoadCommandByIdRepository } from '@/data/usecases/command/load-command-by-id/db-load-command-by-id-protocols';
 import { CommandModel } from '@/domain/models/command';
 import { LoadCommandsRepository } from '@/data/protocols/db/command/load-commands-repository';
@@ -10,7 +9,6 @@ import { ObjectId } from 'mongodb';
 import { MongoHelper } from '../helpers/mongo-helper';
 import { LoadCommandByNameRepository } from '@/data/protocols/db/command/load-command-by-name-repository';
 import { DeleteCommandByIdRepository } from '@/data/protocols/db/command/delete-command-by-id-repository';
-
 export class CommandMongoRepository
   implements
     SaveCommandRepository,
@@ -27,14 +25,14 @@ export class CommandMongoRepository
       },
       {
         $set: {
-          command: commandData.command,
-          dispatcher: commandData.dispatcher,
-          type: commandData.type,
-          description: commandData.description,
-          response: commandData.response,
-          message: commandData.message,
-          discordType: commandData.discordType,
-          discordStatus: commandData.discordStatus || 'SENT',
+          ...(commandData.command && { command: commandData.command }),
+          ...(commandData.dispatcher && { dispatcher: commandData.dispatcher }),
+          ...(commandData.type && { type: commandData.type }),
+          ...(commandData.description && { description: commandData.description }),
+          ...(commandData.response && { response: commandData.response }),
+          ...(commandData.message && { message: commandData.message }),
+          ...(commandData.discordType && { discordType: commandData.discordType }),
+          ...(commandData.discordStatus && { discordStatus: commandData.discordStatus || 'SENT' }),
           ...(commandData.options && { options: commandData.options })
         }
       },

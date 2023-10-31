@@ -59,6 +59,19 @@ describe('Command Mongo Repository', () => {
       expect(createdCommand.command).toBe(commandParams.command);
       expect(createdCommand.options).toEqual(commandParams.options);
     });
+
+    test('should update a command discord status on success', async () => {
+      const sut = makeSut();
+      const commandParams = mockSaveCommandParams();
+      const result = await commandCollection.insertOne(commandParams);
+      const createdCommand = await sut.save({ id: result.insertedId.toString(), discordStatus: 'SENT' });
+      const command = await commandCollection.findOne({
+        command: commandParams.command
+      });
+      expect(command).toBeTruthy();
+      expect(createdCommand.discordStatus).toBe('SENT');
+      expect(createdCommand.description).toBe(commandParams.description);
+    });
   });
 
   describe('loadAll()', () => {
