@@ -5,3 +5,4 @@ export * from './mock-music';
 export * from './mock-queue';
 export * from './mock-spotify';
 export * from './mock-socket';
+export * from './mock-amqp';
