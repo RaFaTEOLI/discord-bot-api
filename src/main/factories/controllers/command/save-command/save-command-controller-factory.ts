@@ -4,9 +4,16 @@ import { SaveCommandController } from '@/presentation/controllers/command/save-c
 import { makeSaveCommandValidation } from './save-command-validation-factory';
 import { makeDbSaveCommand } from '@/main/factories/usecases/command/save-command/db-save-command-factory';
 import { makeSocketClient } from '@/main/factories/http';
+import { makeAmqpClient, useApiQueueFactory } from '@/main/factories/queue';
 
 export const makeSaveCommandController = (): Controller => {
   return makeLogControllerDecorator(
-    new SaveCommandController(makeSaveCommandValidation(), makeDbSaveCommand(), makeSocketClient())
+    new SaveCommandController(
+      makeSaveCommandValidation(),
+      makeDbSaveCommand(),
+      makeSocketClient(),
+      makeAmqpClient(),
+      useApiQueueFactory()
+    )
   );
 };
