@@ -41,7 +41,7 @@
     "mockdate": "^3.0.5",
     "rimraf": "^3.0.2",
     "supertest": "^6.3.3",
-    "tsx": "^3.14.0",
+    "tsx": "^4.7.0",
     "typescript": "^4.7.4",
     "vitest": "^0.34.6",
     "vitest-mongodb": "^0.0.5"
