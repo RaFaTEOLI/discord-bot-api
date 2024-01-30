@@ -190,4 +190,20 @@ describe('SaveCommand Controller', () => {
       ...(commandModel.options && { options: commandModel.options })
     });
   });
+
+  test('should call AmqpClient with first word of command', async () => {
+    const { sut, amqpClientStub, saveCommandStub } = makeSut();
+    const sendSpy = vi.spyOn(amqpClientStub, 'send');
+    const commandModel = mockCommandModel();
+    const command = commandModel.command;
+    commandModel.command = `${commandModel.command} ${faker.random.word()}`;
+    vi.spyOn(saveCommandStub, 'save').mockResolvedValueOnce(commandModel);
+    await sut.handle(mockRequest());
+    expect(sendSpy).toHaveBeenCalledWith('command', {
+      id: commandModel.id,
+      name: command,
+      type: commandModel.discordType,
+      ...(commandModel.options && { options: commandModel.options })
+    });
+  });
 });
