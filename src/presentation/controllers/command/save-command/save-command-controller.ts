@@ -48,7 +48,7 @@ export class SaveCommandController implements Controller {
         try {
           await this.amqpClient.send('command', {
             id: command.id,
-            name: command.command,
+            name: command.command.split(' ')[0],
             type: Number(command.discordType),
             ...(Number(command.discordType) === ApplicationCommandType.CHAT_INPUT && {
               description: command.description
