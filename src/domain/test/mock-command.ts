@@ -105,6 +105,7 @@ export const mockSaveCommandParams = (params?: {
 });
 
 export const mockQueueSaveCommandParams = (params?: { withOptions?: boolean }): QueueSaveCommandParams => ({
+  id: faker.datatype.uuid(),
   name: faker.word.verb(),
   type: mockApplicationCommandDiscordType(),
   description: faker.lorem.words(3),
