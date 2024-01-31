@@ -26,10 +26,7 @@ export default defineConfig({
         'src/domain/usecases/*',
         'src/**/index.ts',
         'src/presentation/test/**/*',
-        'src/data/test/**/*',
-        'src/main/routes/**/*',
-        'src/main/adapters/**/*',
-        'src/main/middlewares/**/*'
+        'src/data/test/**/*'
       ],
       provider: 'istanbul',
       reporter: ['text', 'json', 'html'],
@@ -41,8 +38,7 @@ export default defineConfig({
     },
     setupFiles: ['./src/main/config/vitest-mongodb-config.ts'],
     mockReset: false,
-    testTimeout: 30000,
-    include: ['**/*.spec.ts']
+    testTimeout: 30000
   },
   resolve: {
     alias: {
