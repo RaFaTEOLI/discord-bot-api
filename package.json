@@ -17,7 +17,7 @@
     "test": "vitest --run --passWithNoTests --silent",
     "test:staged": "yarn test related",
     "test:ci": "yarn test --coverage",
-    "test:integration": "yarn test --config ./vitest-integration.config.ts"
+    "test:integration": "yarn test --threads=false --single-thread --config ./vitest-integration.config.ts"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",
