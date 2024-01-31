@@ -7,8 +7,12 @@ export const loadRoutes = async (): Promise<string[]> => {
   return await new Promise((resolve, reject) => {
     readFile(filePath, 'utf8', (err, data) => {
       if (err) reject(err);
-      const parsedData = JSON.parse(data ?? '[]');
-      resolve(parsedData);
+      try {
+        const parsedData = JSON.parse(data ?? '[]');
+        resolve(parsedData);
+      } catch (err) {
+        console.error(err);
+      }
     });
   });
 };
