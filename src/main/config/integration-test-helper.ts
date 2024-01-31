@@ -7,7 +7,7 @@ export const cleanUpLoadedRoutes = async (): Promise<void> => {
   return await new Promise((resolve, reject) => {
     unlink(filePath, err => {
       if (err) {
-        console.error(`Error deleting loaded_routes.json: ${err.message}`);
+        console.error(`Error deleting loaded_routes.json: ${err?.message}`);
         reject(err);
       }
       resolve();
