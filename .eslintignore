@@ -5,3 +5,5 @@ coverage
 Docker
 .husky
 *.json
+vitest-integration.config.ts
+vitest-unit.config.ts
