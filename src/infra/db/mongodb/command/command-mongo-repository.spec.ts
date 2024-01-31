@@ -1,5 +1,5 @@
 import { mockSaveCommandParams } from '@/domain/test';
-import { Collection } from 'mongodb';
+import { Collection, ObjectId } from 'mongodb';
 import { MongoHelper } from '../helpers/mongo-helper';
 import { CommandMongoRepository } from './command-mongo-repository';
 import { describe, test, expect, beforeAll, beforeEach, afterAll } from 'vitest';
@@ -131,6 +131,12 @@ describe('Command Mongo Repository', () => {
       });
       expect(deleted).toBeTruthy();
       expect(command).toBeFalsy();
+    });
+
+    test('should return false when no command is deleted', async () => {
+      const sut = makeSut();
+      const deleted = await sut.deleteById(new ObjectId().toString());
+      expect(deleted).toBeFalsy();
     });
   });
 });
