@@ -6,6 +6,7 @@ import { sign } from 'jsonwebtoken';
 import env from '@/main/config/env';
 import { mockSaveQueueParams } from '@/domain/test';
 import { describe, test, beforeAll, beforeEach, afterAll } from 'vitest';
+import { cleanUpLoadedRoutes, waitForRouteToLoad } from '@/main/config/integration-test-helper';
 
 let queueCollection: Collection;
 let accountCollection: Collection;
@@ -32,62 +33,68 @@ const makeAccessToken = async (admin = true): Promise<string> => {
   return accessToken;
 };
 
-describe('Queue Routes', () => {
-  beforeAll(async () => {
-    await MongoHelper.connect(globalThis.__MONGO_URI__ ?? '');
-  });
-
-  beforeEach(async () => {
-    queueCollection = await MongoHelper.getCollection('queue');
-    await queueCollection.deleteMany({});
-
-    accountCollection = await MongoHelper.getCollection('accounts');
-    await accountCollection.deleteMany({});
-  });
-
-  afterAll(async () => {
-    await MongoHelper.disconnect();
-  });
-
-  describe('POST /queue', () => {
-    test('should return 403 on queue creation without accessToken', async () => {
-      await request(app).post('/api/queue').send({ songs: mockSaveQueueParams() }).expect(403);
+describe(
+  'Queue Routes',
+  () => {
+    beforeAll(async () => {
+      await waitForRouteToLoad('queue-routes.ts');
+      await MongoHelper.connect(globalThis.__MONGO_URI__ ?? '');
     });
 
-    test('should return 204 on queue creation with a valid admin accessToken', async () => {
-      const accessToken = await makeAccessToken();
-      await request(app)
-        .post('/api/queue')
-        .set('x-access-token', accessToken)
-        .send({ songs: mockSaveQueueParams() })
-        .expect(204);
-    });
-  });
+    beforeEach(async () => {
+      queueCollection = await MongoHelper.getCollection('queue');
+      await queueCollection.deleteMany({});
 
-  describe('GET /queue', () => {
-    test('should return 403 on load queue without accessToken', async () => {
-      await request(app).get('/api/queue').expect(403);
+      accountCollection = await MongoHelper.getCollection('accounts');
+      await accountCollection.deleteMany({});
     });
 
-    test('should return 200 on load queue with valid admin accessToken', async () => {
-      const accessToken = await makeAccessToken();
-
-      await queueCollection.insertMany(mockSaveQueueParams());
-
-      await request(app).get('/api/queue').set('x-access-token', accessToken).expect(200);
+    afterAll(async () => {
+      await MongoHelper.disconnect();
+      await cleanUpLoadedRoutes();
     });
 
-    test('should return 200 on load queue with valid normal accessToken', async () => {
-      const accessToken = await makeAccessToken(false);
+    describe('POST /queue', () => {
+      test('should return 403 on queue creation without accessToken', async () => {
+        await request(app).post('/api/queue').send({ songs: mockSaveQueueParams() }).expect(403);
+      });
 
-      await queueCollection.insertMany(mockSaveQueueParams());
-
-      await request(app).get('/api/queue').set('x-access-token', accessToken).expect(200);
+      test('should return 204 on queue creation with a valid admin accessToken', async () => {
+        const accessToken = await makeAccessToken();
+        await request(app)
+          .post('/api/queue')
+          .set('x-access-token', accessToken)
+          .send({ songs: mockSaveQueueParams() })
+          .expect(204);
+      });
     });
 
-    test('should return 200 on load empty queue with valid accessToken', async () => {
-      const accessToken = await makeAccessToken();
-      await request(app).get('/api/queue').set('x-access-token', accessToken).expect(204);
+    describe('GET /queue', () => {
+      test('should return 403 on load queue without accessToken', async () => {
+        await request(app).get('/api/queue').expect(403);
+      });
+
+      test('should return 200 on load queue with valid admin accessToken', async () => {
+        const accessToken = await makeAccessToken();
+
+        await queueCollection.insertMany(mockSaveQueueParams());
+
+        await request(app).get('/api/queue').set('x-access-token', accessToken).expect(200);
+      });
+
+      test('should return 200 on load queue with valid normal accessToken', async () => {
+        const accessToken = await makeAccessToken(false);
+
+        await queueCollection.insertMany(mockSaveQueueParams());
+
+        await request(app).get('/api/queue').set('x-access-token', accessToken).expect(200);
+      });
+
+      test('should return 200 on load empty queue with valid accessToken', async () => {
+        const accessToken = await makeAccessToken();
+        await request(app).get('/api/queue').set('x-access-token', accessToken).expect(204);
+      });
     });
-  });
-});
+  },
+  { timeout: 10000 }
+);
