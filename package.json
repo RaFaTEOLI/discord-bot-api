@@ -17,6 +17,7 @@
     "test": "vitest --run --passWithNoTests --silent",
     "test:staged": "yarn test related",
     "test:ci": "yarn test --coverage",
+    "test:unit": "yarn test --config ./vitest-unit.config.ts",
     "test:integration": "yarn test --threads=false --single-thread --config ./vitest-integration.config.ts"
   },
   "devDependencies": {
