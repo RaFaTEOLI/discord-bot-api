@@ -4,6 +4,7 @@ import MockDate from 'mockdate';
 import { mockSaveCommandRepository, mockLoadCommandByNameRepository } from '@/data/test';
 import { mockCommandModel, mockSaveCommandParams } from '@/domain/test';
 import { describe, test, expect, vi, beforeAll, afterAll } from 'vitest';
+import { faker } from '@faker-js/faker';
 
 interface SutTypes {
   sut: DbSaveCommand;
@@ -67,5 +68,15 @@ describe('DdSaveCommand Usecase', () => {
     const { sut } = makeSut();
     const command = await sut.save({ ...mockSaveCommandParams(), discordStatus: 'RECEIVED' });
     expect(command.discordStatus).toBe('RECEIVED');
+  });
+
+  test('should call SaveCommandRepository with existing command', async () => {
+    const { sut, saveCommandRepositoryStub } = makeSut();
+    const saveSpy = vi.spyOn(saveCommandRepositoryStub, 'save');
+    const commandData = mockSaveCommandParams();
+    commandData.id = faker.datatype.uuid();
+    commandData.discordStatus = 'SENT';
+    await sut.save(commandData);
+    expect(saveSpy).toHaveBeenCalledWith(commandData);
   });
 });
