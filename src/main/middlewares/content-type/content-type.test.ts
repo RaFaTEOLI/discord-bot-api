@@ -1,13 +1,8 @@
 import request from 'supertest';
 import { expressApp as app } from '@/main/config/app';
-import { afterAll, describe, test } from 'vitest';
-import { cleanUpLoadedRoutes } from '@/main/config/integration-test-helper';
+import { describe, test } from 'vitest';
 
 describe('Content Type Middleware', () => {
-  afterAll(async () => {
-    await cleanUpLoadedRoutes();
-  });
-
   test('should return default content type as json', async () => {
     app.get('/test-content-type', (req, res) => {
       res.send('');

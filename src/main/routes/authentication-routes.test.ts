@@ -4,7 +4,7 @@ import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper';
 import app from '@/main/config/app';
 import { hash } from 'bcrypt';
 import { describe, test, beforeAll, beforeEach, afterAll } from 'vitest';
-import { cleanUpLoadedRoutes, waitForRouteToLoad } from '@/main/config/integration-test-helper';
+import { waitForRouteToLoad } from '@/main/config/integration-test-helper';
 
 let accountCollection: Collection;
 describe(
@@ -22,7 +22,6 @@ describe(
 
     afterAll(async () => {
       await MongoHelper.disconnect();
-      await cleanUpLoadedRoutes();
     });
 
     describe('POST /signup', () => {

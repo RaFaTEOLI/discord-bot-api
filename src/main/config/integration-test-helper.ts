@@ -1,19 +1,7 @@
-import { unlink, readFile } from 'fs';
+import { readFile } from 'fs';
 import path from 'path';
 
 const filePath = path.join(__dirname, 'loaded_routes.json');
-
-export const cleanUpLoadedRoutes = async (): Promise<void> => {
-  return await new Promise((resolve, reject) => {
-    unlink(filePath, err => {
-      if (err) {
-        console.error(`Error deleting loaded_routes.json: ${err?.message}`);
-        reject(err);
-      }
-      resolve();
-    });
-  });
-};
 
 export const loadRoutes = async (): Promise<string[]> => {
   return await new Promise((resolve, reject) => {

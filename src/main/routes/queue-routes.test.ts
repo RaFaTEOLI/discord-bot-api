@@ -6,7 +6,7 @@ import { sign } from 'jsonwebtoken';
 import env from '@/main/config/env';
 import { mockSaveQueueParams } from '@/domain/test';
 import { describe, test, beforeAll, beforeEach, afterAll } from 'vitest';
-import { cleanUpLoadedRoutes, waitForRouteToLoad } from '@/main/config/integration-test-helper';
+import { waitForRouteToLoad } from '@/main/config/integration-test-helper';
 
 let queueCollection: Collection;
 let accountCollection: Collection;
@@ -51,7 +51,6 @@ describe(
 
     afterAll(async () => {
       await MongoHelper.disconnect();
-      await cleanUpLoadedRoutes();
     });
 
     describe('POST /queue', () => {

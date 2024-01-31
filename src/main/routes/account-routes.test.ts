@@ -6,7 +6,7 @@ import { sign } from 'jsonwebtoken';
 import env from '@/main/config/env';
 import { mockAccountModelWithSpotifyAndDiscord } from '@/domain/test';
 import { describe, test, beforeAll, beforeEach, afterAll } from 'vitest';
-import { cleanUpLoadedRoutes, waitForRouteToLoad } from '@/main/config/integration-test-helper';
+import { waitForRouteToLoad } from '@/main/config/integration-test-helper';
 
 let accountCollection: Collection;
 
@@ -47,7 +47,6 @@ describe(
 
     afterAll(async () => {
       await MongoHelper.disconnect();
-      await cleanUpLoadedRoutes();
     });
 
     describe('PATCH /account', () => {

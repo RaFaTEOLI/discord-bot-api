@@ -6,7 +6,7 @@ import { sign } from 'jsonwebtoken';
 import env from '@/main/config/env';
 import { describe, test, beforeAll, beforeEach, afterAll, expect } from 'vitest';
 import { mockSaveCommandParams } from '@/domain/test';
-import { cleanUpLoadedRoutes, waitForRouteToLoad } from '@/main/config/integration-test-helper';
+import { waitForRouteToLoad } from '@/main/config/integration-test-helper';
 
 let commandCollection: Collection;
 let accountCollection: Collection;
@@ -51,7 +51,6 @@ describe(
 
     afterAll(async () => {
       await MongoHelper.disconnect();
-      await cleanUpLoadedRoutes();
     });
 
     describe('POST /commands', () => {

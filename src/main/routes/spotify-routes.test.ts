@@ -3,7 +3,7 @@ import app from '@/main/config/app';
 import { mockSpotifyRequestTokenParams, mockSpotifyRefreshTokenParams } from '@/domain/test';
 import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper';
 import { describe, test, beforeAll, afterAll } from 'vitest';
-import { cleanUpLoadedRoutes, waitForRouteToLoad } from '@/main/config/integration-test-helper';
+import { waitForRouteToLoad } from '@/main/config/integration-test-helper';
 
 describe(
   'Spotify Routes',
@@ -15,7 +15,6 @@ describe(
 
     afterAll(async () => {
       await MongoHelper.disconnect();
-      await cleanUpLoadedRoutes();
     });
 
     describe('POST /spotify/auth', () => {

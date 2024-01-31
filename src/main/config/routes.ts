@@ -9,10 +9,12 @@ if (env.nodeEnv === 'test') {
   readFile(filePath, 'utf8', (err, data) => {
     if (err) {
       writeFile(filePath, JSON.stringify(loadedRoutes), err => {
-        console.error(`Error writing loaded_routes.json: ${err?.message}`);
+        console.error(err);
       });
     }
-    loadedRoutes = JSON.parse(data ?? '[]');
+    writeFile(filePath, JSON.stringify(loadedRoutes), err => {
+      console.error(err);
+    });
   });
 }
 
@@ -26,7 +28,7 @@ export default (app: Express): void => {
       if (env.nodeEnv === 'test') {
         loadedRoutes.push(file);
         writeFile(path.join(__dirname, 'loaded_routes.json'), JSON.stringify(loadedRoutes), err => {
-          console.error(`Error writing loaded_routes.json: ${err?.message}`);
+          console.error(err);
         });
       }
     }
