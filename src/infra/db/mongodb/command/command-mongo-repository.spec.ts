@@ -3,6 +3,7 @@ import { Collection } from 'mongodb';
 import { MongoHelper } from '../helpers/mongo-helper';
 import { CommandMongoRepository } from './command-mongo-repository';
 import { describe, test, expect, beforeAll, beforeEach, afterAll } from 'vitest';
+import { faker } from '@faker-js/faker';
 
 const makeSut = (): CommandMongoRepository => {
   return new CommandMongoRepository();
@@ -71,6 +72,19 @@ describe('Command Mongo Repository', () => {
       expect(command).toBeTruthy();
       expect(createdCommand.discordStatus).toBe('SENT');
       expect(createdCommand.description).toBe(commandParams.description);
+    });
+
+    test('should update a command discord id on success', async () => {
+      const sut = makeSut();
+      const commandParams = mockSaveCommandParams();
+      const result = await commandCollection.insertOne(commandParams);
+      const discordId = faker.datatype.uuid();
+      const createdCommand = await sut.save({ id: result.insertedId.toString(), discordId });
+      const command = await commandCollection.findOne({
+        command: commandParams.command
+      });
+      expect(command).toBeTruthy();
+      expect(createdCommand.discordId).toBe(discordId);
     });
   });
 

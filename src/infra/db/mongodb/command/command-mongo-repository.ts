@@ -33,7 +33,8 @@ export class CommandMongoRepository
           ...(commandData.message && { message: commandData.message }),
           ...(commandData.discordType && { discordType: commandData.discordType }),
           ...(commandData.discordStatus && { discordStatus: commandData.discordStatus || 'SENT' }),
-          ...(commandData.options && { options: commandData.options })
+          ...(commandData.options && { options: commandData.options }),
+          ...(commandData.discordId && { discordId: commandData.discordId })
         }
       },
       {
