@@ -1,5 +1,11 @@
 import { SpotifyAuthenticateController } from './spotify-authenticate-controller';
-import { forbidden, serverError, success, unauthorized } from '@/presentation/helpers/http/http-helper';
+import {
+  badRequest,
+  forbidden,
+  serverError,
+  success,
+  unauthorized
+} from '@/presentation/helpers/http/http-helper';
 import {
   mockAccountModel,
   mockAccountModelWithToken,
@@ -23,8 +29,9 @@ import {
 } from './spotify-authenticate-controller-protocols';
 import { SpotifyAccessModel } from '@/domain/models/spotify';
 import { AccountModel } from '@/domain/models/account';
-import { EmailInUseError } from '@/presentation/errors';
+import { EmailInUseError, InvalidParamError } from '@/presentation/errors';
 import { describe, test, expect, vi } from 'vitest';
+import { faker } from '@faker-js/faker';
 
 const mockRequest = (): HttpRequest => ({
   body: mockSpotifyRequestTokenParams()
@@ -256,5 +263,15 @@ describe('SpotifyAuthenticate Controller', () => {
     expect(saveSpy).toHaveBeenCalledWith(fakeAccountWithToken.id, {
       spotify: fakeAccountWithToken.spotify
     });
+  });
+
+  test('should return 400 if InvalidParamError is thrown within an usecase', async () => {
+    const fakeAccountWithToken = mockAccountModelWithToken();
+    const { sut, spotifyLoadUserStub } = makeSut(fakeAccountWithToken);
+    const field = faker.database.column();
+    vi.spyOn(spotifyLoadUserStub, 'load').mockRejectedValueOnce(new InvalidParamError(field));
+    const httpRequest = mockRequestSignUp();
+    const httpResponse = await sut.handle(httpRequest);
+    expect(httpResponse).toEqual(badRequest(new InvalidParamError(field)));
   });
 });

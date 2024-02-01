@@ -14,9 +14,11 @@
     "debug": "tsx watch --inspect=0.0.0.0:9222 --nolazy src/main/server.ts",
     "up": "yarn build && docker compose up -d",
     "down": "docker compose down",
-    "test": "vitest --threads=false --single-thread --sequence.shuffle --sequence.seed 1698238251980 --run --passWithNoTests --silent",
+    "test": "vitest --run --passWithNoTests --silent",
     "test:staged": "yarn test related",
-    "test:ci": "yarn test --coverage --retry=1"
+    "test:ci": "yarn test --coverage",
+    "test:unit": "yarn test --config ./vitest-unit.config.ts",
+    "test:integration": "yarn test --threads=false --single-thread --config ./vitest-integration.config.ts"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",

@@ -76,8 +76,8 @@ export class SpotifyAuthenticateController implements Controller {
         }
       });
     } catch (error) {
-      if (error.message.includes('Invalid param')) {
-        return badRequest(new InvalidParamError(error.message.replace('Invalid ', '')));
+      if (error.message.includes('Invalid param:')) {
+        return badRequest(new InvalidParamError(error.message.replace('Invalid param: ', '')));
       }
       return serverError(error);
     }

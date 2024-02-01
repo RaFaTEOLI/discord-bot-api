@@ -10,5 +10,6 @@ export default {
   apiQueuePassword: process.env.API_QUEUE_PASSWORD || 'password',
   apiQueuePort: process.env.API_QUEUE_PORT || 5672,
   apiQueueAdress: process.env.API_QUEUE_ADRESS || 'localhost',
-  useApiQueue: process.env.USE_API_QUEUE || false
+  useApiQueue: process.env.USE_API_QUEUE || false,
+  nodeEnv: process.env.NODE_ENV || 'development'
 };

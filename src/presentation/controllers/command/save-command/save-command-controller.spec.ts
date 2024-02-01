@@ -197,12 +197,15 @@ describe('SaveCommand Controller', () => {
     const commandModel = mockCommandModel();
     const command = commandModel.command;
     commandModel.command = `${commandModel.command} ${faker.random.word()}`;
+    commandModel.type = 'message';
+    commandModel.discordType = ApplicationCommandType.CHAT_INPUT;
     vi.spyOn(saveCommandStub, 'save').mockResolvedValueOnce(commandModel);
     await sut.handle(mockRequest());
     expect(sendSpy).toHaveBeenCalledWith('command', {
       id: commandModel.id,
       name: command,
       type: commandModel.discordType,
+      description: commandModel.description,
       ...(commandModel.options && { options: commandModel.options })
     });
   });
