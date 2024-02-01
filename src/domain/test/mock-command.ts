@@ -35,6 +35,7 @@ export const mockCommandModel = (override?: Partial<CommandModel>): CommandModel
     message: faker.lorem.words(2),
     discordType: override?.discordType ?? mockApplicationCommandDiscordType(),
     discordStatus: override?.discordStatus ?? faker.helpers.arrayElement(['SENT', 'RECEIVED', 'FAILED']),
+    ...(override?.discordId && { discordId: override.discordId }),
     options: [
       {
         name: faker.word.verb(),
@@ -104,10 +105,15 @@ export const mockSaveCommandParams = (params?: {
   })
 });
 
-export const mockQueueSaveCommandParams = (params?: { withOptions?: boolean }): QueueSaveCommandParams => ({
+export const mockQueueSaveCommandParams = (params?: {
+  withOptions?: boolean;
+  withDiscordId?: boolean;
+}): QueueSaveCommandParams => ({
+  id: faker.datatype.uuid(),
   name: faker.word.verb(),
   type: mockApplicationCommandDiscordType(),
   description: faker.lorem.words(3),
+  ...(params?.withDiscordId && { discordId: faker.datatype.uuid() }),
   ...(params?.withOptions && {
     options: [
       {

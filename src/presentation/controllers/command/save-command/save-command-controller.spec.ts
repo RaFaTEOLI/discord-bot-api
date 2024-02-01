@@ -206,4 +206,21 @@ describe('SaveCommand Controller', () => {
       ...(commandModel.options && { options: commandModel.options })
     });
   });
+
+  test('should call AmqpClient with discordId', async () => {
+    const { sut, amqpClientStub, saveCommandStub } = makeSut();
+    const sendSpy = vi.spyOn(amqpClientStub, 'send');
+    const discordId = faker.datatype.uuid();
+    const commandModel = mockCommandModel({ discordType: ApplicationCommandType.CHAT_INPUT, discordId });
+    vi.spyOn(saveCommandStub, 'save').mockResolvedValueOnce(commandModel);
+    await sut.handle(mockRequest());
+    expect(sendSpy).toHaveBeenCalledWith('command', {
+      id: commandModel.id,
+      name: commandModel.command,
+      type: ApplicationCommandType.CHAT_INPUT,
+      description: commandModel.description,
+      discordId,
+      ...(commandModel.options && { options: commandModel.options })
+    });
+  });
 });

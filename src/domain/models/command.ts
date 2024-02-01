@@ -28,6 +28,7 @@ export type CommandModel = {
   message?: any;
   discordType: ApplicationCommandType;
   discordStatus: 'SENT' | 'RECEIVED' | 'FAILED';
+  discordId?: string;
   options?: Array<{
     name: string;
     description: string;

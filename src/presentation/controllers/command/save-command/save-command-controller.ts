@@ -53,6 +53,7 @@ export class SaveCommandController implements Controller {
             ...(Number(command.discordType) === ApplicationCommandType.CHAT_INPUT && {
               description: command.description
             }),
+            ...(command.discordId && { discordId: command.discordId }),
             ...(command.options && { options: command.options })
           });
         } catch (err) {
