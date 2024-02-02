@@ -59,4 +59,11 @@ describe('DeleteCommandById Controller', () => {
     const httpResponse = await sut.handle({});
     expect(httpResponse).toEqual(serverError(new Error()));
   });
+
+  test('should return 400 if LoadCommandById returns null', async () => {
+    const { sut, loadCommandByIdStub } = makeSut();
+    vi.spyOn(loadCommandByIdStub, 'loadById').mockResolvedValue(null);
+    const httpResponse = await sut.handle(mockRequest());
+    expect(httpResponse).toEqual(badRequest(new InvalidParamError('commandId')));
+  });
 });
