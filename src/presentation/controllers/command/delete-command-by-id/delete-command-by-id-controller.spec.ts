@@ -1,13 +1,14 @@
 import { DeleteCommandByIdController } from './delete-command-by-id-controller';
-import { DeleteCommandById, HttpRequest } from './delete-command-by-id-protocols';
+import { DeleteCommandById, LoadCommandById, HttpRequest } from './delete-command-by-id-protocols';
 import { badRequest, noContent, serverError } from '@/presentation/helpers/http/http-helper';
-import { mockDeleteCommandById } from '@/presentation/test';
+import { mockDeleteCommandById, mockLoadCommandById } from '@/presentation/test';
 import { faker } from '@faker-js/faker';
 import { InvalidParamError } from '@/presentation/errors';
 import { describe, test, expect, vi } from 'vitest';
 
 interface SutTypes {
   sut: DeleteCommandByIdController;
+  loadCommandByIdStub: LoadCommandById;
   deleteCommandByIdStub: DeleteCommandById;
 }
 
@@ -18,20 +19,25 @@ const mockRequest = (): HttpRequest => ({
 });
 
 const makeSut = (): SutTypes => {
+  const loadCommandByIdStub = mockLoadCommandById();
   const deleteCommandByIdStub = mockDeleteCommandById();
-  const sut = new DeleteCommandByIdController(deleteCommandByIdStub);
+  const sut = new DeleteCommandByIdController(loadCommandByIdStub, deleteCommandByIdStub);
   return {
     sut,
+    loadCommandByIdStub,
     deleteCommandByIdStub
   };
 };
 
 describe('DeleteCommandById Controller', () => {
-  test('should call DeleteCommandById', async () => {
-    const { sut, deleteCommandByIdStub } = makeSut();
-    const loadSpy = vi.spyOn(deleteCommandByIdStub, 'deleteById');
-    await sut.handle(mockRequest());
-    expect(loadSpy).toHaveBeenCalled();
+  test('should call LoadCommandById and DeleteCommandById with correct id', async () => {
+    const { sut, loadCommandByIdStub, deleteCommandByIdStub } = makeSut();
+    const loadSpy = vi.spyOn(loadCommandByIdStub, 'loadById');
+    const deleteSpy = vi.spyOn(deleteCommandByIdStub, 'deleteById');
+    const request = mockRequest();
+    await sut.handle(request);
+    expect(loadSpy).toHaveBeenCalledWith(request.params.commandId);
+    expect(deleteSpy).toHaveBeenCalledWith(request.params.commandId);
   });
 
   test('should return 204 on success', async () => {
