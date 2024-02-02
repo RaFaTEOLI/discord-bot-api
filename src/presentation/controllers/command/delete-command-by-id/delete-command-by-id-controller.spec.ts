@@ -1,15 +1,23 @@
 import { DeleteCommandByIdController } from './delete-command-by-id-controller';
-import { DeleteCommandById, LoadCommandById, HttpRequest } from './delete-command-by-id-protocols';
+import {
+  DeleteCommandById,
+  LoadCommandById,
+  HttpRequest,
+  QueueDeleteCommandParams
+} from './delete-command-by-id-protocols';
 import { badRequest, noContent, serverError } from '@/presentation/helpers/http/http-helper';
-import { mockDeleteCommandById, mockLoadCommandById } from '@/presentation/test';
+import { mockAmqpClient, mockDeleteCommandById, mockLoadCommandById } from '@/presentation/test';
 import { faker } from '@faker-js/faker';
 import { InvalidParamError } from '@/presentation/errors';
 import { describe, test, expect, vi } from 'vitest';
+import { AmqpClientSpy } from '@/data/test';
+import { mockCommandModel } from '@/domain/test';
 
 interface SutTypes {
   sut: DeleteCommandByIdController;
   loadCommandByIdStub: LoadCommandById;
   deleteCommandByIdStub: DeleteCommandById;
+  amqpClientStub: AmqpClientSpy<QueueDeleteCommandParams>;
 }
 
 const mockRequest = (): HttpRequest => ({
@@ -21,11 +29,13 @@ const mockRequest = (): HttpRequest => ({
 const makeSut = (): SutTypes => {
   const loadCommandByIdStub = mockLoadCommandById();
   const deleteCommandByIdStub = mockDeleteCommandById();
-  const sut = new DeleteCommandByIdController(loadCommandByIdStub, deleteCommandByIdStub);
+  const amqpClientStub = mockAmqpClient<QueueDeleteCommandParams>();
+  const sut = new DeleteCommandByIdController(loadCommandByIdStub, deleteCommandByIdStub, amqpClientStub);
   return {
     sut,
     loadCommandByIdStub,
-    deleteCommandByIdStub
+    deleteCommandByIdStub,
+    amqpClientStub
   };
 };
 
@@ -65,5 +75,16 @@ describe('DeleteCommandById Controller', () => {
     vi.spyOn(loadCommandByIdStub, 'loadById').mockResolvedValue(null);
     const httpResponse = await sut.handle(mockRequest());
     expect(httpResponse).toEqual(badRequest(new InvalidParamError('commandId')));
+  });
+
+  test('should call AmqpClient with discordId', async () => {
+    const { sut, loadCommandByIdStub, amqpClientStub } = makeSut();
+    const commandModel = mockCommandModel();
+    vi.spyOn(loadCommandByIdStub, 'loadById').mockResolvedValue(commandModel);
+    const sendSpy = vi.spyOn(amqpClientStub, 'send');
+    await sut.handle(mockRequest());
+    expect(sendSpy).toHaveBeenCalledWith('delete-command', {
+      discordId: commandModel.discordId
+    });
   });
 });
