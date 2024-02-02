@@ -11,6 +11,7 @@ import {
 import { Socket } from 'socket.io-client';
 import { AmqpClient } from '@/infra/queue/amqp-client';
 import { ApplicationCommandType } from '../load-commands/load-commands-protocols';
+import { Queue } from '@/data/protocols/queue';
 
 export class SaveCommandController implements Controller {
   constructor(
@@ -46,7 +47,7 @@ export class SaveCommandController implements Controller {
 
       if (this.useApiQueue) {
         try {
-          await this.amqpClient.send('command', {
+          await this.amqpClient.send(Queue.COMMAND, {
             id: command.id,
             name: command.command.split(' ')[0],
             type: Number(command.discordType),

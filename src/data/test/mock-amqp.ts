@@ -1,8 +1,7 @@
-import { QueueClient } from '@/data/protocols/queue';
-import { QueueSaveCommandParams } from '@/domain/usecases/command/save-command';
+import { Queue, QueueClient } from '@/data/protocols/queue';
 
-export class AmqpClientSpy<R = QueueSaveCommandParams> implements QueueClient<R> {
-  async send(queue: 'command', data: R): Promise<void> {
+export class AmqpClientSpy<DataParams> implements QueueClient<DataParams> {
+  async send(queue: Queue, data: DataParams): Promise<void> {
     return await Promise.resolve();
   }
 }

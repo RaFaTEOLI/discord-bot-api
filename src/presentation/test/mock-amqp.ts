@@ -1,5 +1,5 @@
 import { AmqpClientSpy } from '@/data/test';
 
-export const mockAmqpClient = (): AmqpClientSpy => {
-  return new AmqpClientSpy();
+export const mockAmqpClient = <DataParams>(): AmqpClientSpy<DataParams> => {
+  return new AmqpClientSpy<DataParams>();
 };
