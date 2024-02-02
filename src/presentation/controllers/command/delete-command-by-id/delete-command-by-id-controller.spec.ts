@@ -84,7 +84,8 @@ describe('DeleteCommandById Controller', () => {
 
   test('should call AmqpClient with discordId', async () => {
     const { sut, loadCommandByIdStub, amqpClientStub } = makeSut(true);
-    const commandModel = mockCommandModel();
+    const discordId = faker.datatype.uuid();
+    const commandModel = mockCommandModel({ discordId });
     vi.spyOn(loadCommandByIdStub, 'loadById').mockResolvedValue(commandModel);
     const sendSpy = vi.spyOn(amqpClientStub, 'send');
     await sut.handle(mockRequest());
@@ -95,6 +96,16 @@ describe('DeleteCommandById Controller', () => {
 
   test('should not call AmqpClient when useApiQueue is false', async () => {
     const { sut, amqpClientStub } = makeSut();
+    const sendSpy = vi.spyOn(amqpClientStub, 'send');
+    await sut.handle(mockRequest());
+    expect(sendSpy).not.toHaveBeenCalled();
+  });
+
+  test('should not call AmqpClient when command does not have a discordId', async () => {
+    const { sut, loadCommandByIdStub, amqpClientStub } = makeSut(true);
+    const commandModel = mockCommandModel();
+    delete commandModel.discordId;
+    vi.spyOn(loadCommandByIdStub, 'loadById').mockResolvedValue(commandModel);
     const sendSpy = vi.spyOn(amqpClientStub, 'send');
     await sut.handle(mockRequest());
     expect(sendSpy).not.toHaveBeenCalled();
