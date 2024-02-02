@@ -15,7 +15,8 @@ export class DeleteCommandByIdController implements Controller {
   constructor(
     private readonly loadCommandById: LoadCommandById,
     private readonly deleteCommandById: DeleteCommandById,
-    private readonly amqpClient: AmqpClient<QueueDeleteCommandParams>
+    private readonly amqpClient: AmqpClient<QueueDeleteCommandParams>,
+    private readonly useApiQueue: boolean
   ) {}
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
@@ -27,9 +28,11 @@ export class DeleteCommandByIdController implements Controller {
       const deleted = await this.deleteCommandById.deleteById(httpRequest.params.commandId);
 
       if (deleted) {
-        await this.amqpClient.send(Queue.DELETE_COMMAND, {
-          discordId: command.discordId
-        });
+        if (this.useApiQueue) {
+          await this.amqpClient.send(Queue.DELETE_COMMAND, {
+            discordId: command.discordId
+          });
+        }
 
         return noContent();
       }
