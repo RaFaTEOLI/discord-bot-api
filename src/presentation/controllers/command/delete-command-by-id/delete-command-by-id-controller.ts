@@ -16,7 +16,10 @@ export class DeleteCommandByIdController implements Controller {
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      await this.loadCommandById.loadById(httpRequest.params.commandId);
+      const command = await this.loadCommandById.loadById(httpRequest.params.commandId);
+      if (!command) {
+        return badRequest(new InvalidParamError('commandId'));
+      }
       const deleted = await this.deleteCommandById.deleteById(httpRequest.params.commandId);
       return deleted ? noContent() : badRequest(new InvalidParamError('commandId'));
     } catch (err) {
