@@ -10,6 +10,7 @@ import { describe, test, expect, vi, beforeAll, afterAll } from 'vitest';
 import { faker } from '@faker-js/faker';
 import { ApplicationCommandType } from '../load-commands/load-commands-protocols';
 import { AmqpClientSpy } from '@/data/test';
+import { Queue } from '@/data/protocols/queue';
 
 const mockRequest = (): HttpRequest => ({
   body: mockSaveCommandParams()
@@ -34,7 +35,7 @@ const makeSut = (useApiQueue = true): SutTypes => {
   const validationStub = mockValidation();
   const saveCommandStub = mockSaveCommand();
   const socketClientStub = mockSocketClient();
-  const amqpClientStub = mockAmqpClient();
+  const amqpClientStub = mockAmqpClient<QueueSaveCommandParams>();
   const sut = new SaveCommandController(
     validationStub,
     saveCommandStub,
@@ -166,7 +167,7 @@ describe('SaveCommand Controller', () => {
     const commandModel = mockCommandModel({ discordType: ApplicationCommandType.CHAT_INPUT });
     vi.spyOn(saveCommandStub, 'save').mockResolvedValueOnce(commandModel);
     await sut.handle(mockRequest());
-    expect(sendSpy).toHaveBeenCalledWith('command', {
+    expect(sendSpy).toHaveBeenCalledWith(Queue.COMMAND, {
       id: commandModel.id,
       name: commandModel.command,
       type: ApplicationCommandType.CHAT_INPUT,
@@ -183,7 +184,7 @@ describe('SaveCommand Controller', () => {
     });
     vi.spyOn(saveCommandStub, 'save').mockResolvedValueOnce(commandModel);
     await sut.handle(mockRequest());
-    expect(sendSpy).toHaveBeenCalledWith('command', {
+    expect(sendSpy).toHaveBeenCalledWith(Queue.COMMAND, {
       id: commandModel.id,
       name: commandModel.command,
       type: commandModel.discordType,
@@ -201,7 +202,7 @@ describe('SaveCommand Controller', () => {
     commandModel.discordType = ApplicationCommandType.CHAT_INPUT;
     vi.spyOn(saveCommandStub, 'save').mockResolvedValueOnce(commandModel);
     await sut.handle(mockRequest());
-    expect(sendSpy).toHaveBeenCalledWith('command', {
+    expect(sendSpy).toHaveBeenCalledWith(Queue.COMMAND, {
       id: commandModel.id,
       name: command,
       type: commandModel.discordType,
@@ -217,7 +218,7 @@ describe('SaveCommand Controller', () => {
     const commandModel = mockCommandModel({ discordType: ApplicationCommandType.CHAT_INPUT, discordId });
     vi.spyOn(saveCommandStub, 'save').mockResolvedValueOnce(commandModel);
     await sut.handle(mockRequest());
-    expect(sendSpy).toHaveBeenCalledWith('command', {
+    expect(sendSpy).toHaveBeenCalledWith(Queue.COMMAND, {
       id: commandModel.id,
       name: commandModel.command,
       type: ApplicationCommandType.CHAT_INPUT,

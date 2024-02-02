@@ -1,10 +1,9 @@
-import { QueueClient } from '@/data/protocols/queue';
+import { Queue, QueueClient } from '@/data/protocols/queue';
 import { connect } from 'amqplib';
 import env from '@/main/config/env';
-import { QueueSaveCommandParams } from '@/domain/usecases/command/save-command';
 
-export class AmqpClient<R = QueueSaveCommandParams> implements QueueClient<R> {
-  async send(queue: 'command', data: R): Promise<void> {
+export class AmqpClient<DataParams> implements QueueClient<DataParams> {
+  async send(queue: Queue, data: DataParams): Promise<void> {
     const connection = await connect(
       `amqp://${env.apiQueueUsername}:${env.apiQueuePassword}@${env.apiQueueAdress}:${env.apiQueuePort}`
     );
