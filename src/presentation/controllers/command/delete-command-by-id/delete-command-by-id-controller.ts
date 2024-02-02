@@ -28,7 +28,7 @@ export class DeleteCommandByIdController implements Controller {
       const deleted = await this.deleteCommandById.deleteById(httpRequest.params.commandId);
 
       if (deleted) {
-        if (this.useApiQueue) {
+        if (this.useApiQueue && command.discordId) {
           await this.amqpClient.send(Queue.DELETE_COMMAND, {
             discordId: command.discordId
           });
