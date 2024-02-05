@@ -1,4 +1,4 @@
-import { InvalidParamError } from '@/presentation/errors';
+import { CommandAlreadyCreatedError } from '@/presentation/errors';
 import { badRequest, noContent, serverError } from '@/presentation/helpers/http/http-helper';
 import {
   Controller,
@@ -42,7 +42,7 @@ export class SaveCommandController implements Controller {
 
       const command = await this.saveCommand.save(saveParams);
       if (!command) {
-        return badRequest(new InvalidParamError('command'));
+        return badRequest(new CommandAlreadyCreatedError(saveParams.command));
       }
 
       if (this.useApiQueue) {
