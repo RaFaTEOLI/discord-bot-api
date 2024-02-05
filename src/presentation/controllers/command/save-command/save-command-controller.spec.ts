@@ -4,7 +4,7 @@ import { badRequest, noContent, serverError } from '@/presentation/helpers/http/
 import MockDate from 'mockdate';
 import { mockValidation, mockSaveCommand, mockSocketClient, mockAmqpClient } from '@/presentation/test';
 import { mockCommandModel, mockSaveCommandParams } from '@/domain/test';
-import { InvalidParamError } from '@/presentation/errors';
+import { CommandAlreadyCreatedError } from '@/presentation/errors';
 import { Socket } from 'socket.io-client';
 import { describe, test, expect, vi, beforeAll, afterAll } from 'vitest';
 import { faker } from '@faker-js/faker';
@@ -82,7 +82,7 @@ describe('SaveCommand Controller', () => {
     vi.spyOn(saveCommandStub, 'save').mockResolvedValueOnce(null);
     const httpRequest = mockRequest();
     const httpResponse = await sut.handle(httpRequest);
-    expect(httpResponse).toEqual(badRequest(new InvalidParamError('command')));
+    expect(httpResponse).toEqual(badRequest(new CommandAlreadyCreatedError(httpRequest.body.command)));
   });
 
   test('should call SaveCommand with correct values', async () => {
