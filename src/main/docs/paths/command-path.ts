@@ -33,6 +33,9 @@ export const commandPath = {
       204: {
         description: 'Success, No Content'
       },
+      400: {
+        $ref: '#/components/badRequest'
+      },
       403: {
         $ref: '#/components/forbidden'
       },
