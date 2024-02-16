@@ -33,7 +33,7 @@ services:
     image: node:18
     working_dir: ${PROJECT_PATH}/Docker/discord-bot-api
     restart: always
-    command: bash -c "npm install --force && npm run debug"
+    command: bash -c "npm install --force && npm run debug:docker"
     environment:
       - MONGO_URL=mongodb://root:1234@mongo:27017/
     volumes:
