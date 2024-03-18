@@ -36,17 +36,20 @@ export const discordCommandSchema = {
     options: {
       type: 'array',
       items: {
-        type: {
-          type: 'number'
-        },
-        name: {
-          type: 'string'
-        },
-        description: {
-          type: 'string'
-        },
-        required: {
-          type: 'boolean'
+        type: 'object',
+        properties: {
+          type: {
+            type: 'number'
+          },
+          name: {
+            type: 'string'
+          },
+          description: {
+            type: 'string'
+          },
+          required: {
+            type: 'boolean'
+          }
         }
       }
     },
