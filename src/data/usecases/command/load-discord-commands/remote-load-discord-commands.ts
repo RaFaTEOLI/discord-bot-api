@@ -4,12 +4,19 @@ import { DiscordCommandModel } from '@/domain/models/discord-command-model';
 import { LoadDiscordCommands } from '@/domain/usecases/command/load-discord-commands';
 
 export class RemoteLoadDiscordCommands implements LoadDiscordCommands {
-  constructor(private readonly url: string, private readonly httpClient: HttpClient<DiscordCommandModel[]>) {}
+  constructor(
+    private readonly url: string,
+    private readonly httpClient: HttpClient<DiscordCommandModel[]>,
+    private readonly botToken: string
+  ) {}
 
   async all(): Promise<DiscordCommandModel[]> {
     const httpResponse = await this.httpClient.request({
       url: this.url,
-      method: 'get'
+      method: 'get',
+      headers: {
+        Authorization: `Bot ${this.botToken}`
+      }
     });
     const remoteCommands = httpResponse.body ?? [];
     switch (httpResponse.statusCode) {
