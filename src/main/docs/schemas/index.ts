@@ -14,3 +14,5 @@ export * from './song-params-schema';
 export * from './queue-schema';
 export * from './spotify-params-schema';
 export * from './save-account-params-schema';
+export * from './discord-command-schema';
+export * from './discord-commands-schema';
