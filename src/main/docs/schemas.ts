@@ -15,7 +15,9 @@ import {
   spotifyParamsSchema,
   saveAccountParamsSchema,
   spotifyRefreshTokenParamsSchema,
-  spotifyAccessTokenSchema
+  spotifyAccessTokenSchema,
+  discordCommandSchema,
+  discordCommandsSchema
 } from './schemas/';
 
 export default {
@@ -35,5 +37,7 @@ export default {
   spotifyParams: spotifyParamsSchema,
   saveAccountParams: saveAccountParamsSchema,
   spotifyRefreshTokenParams: spotifyRefreshTokenParamsSchema,
-  spotifyAccessToken: spotifyAccessTokenSchema
+  spotifyAccessToken: spotifyAccessTokenSchema,
+  discordCommand: discordCommandSchema,
+  discordCommands: discordCommandsSchema
 };
