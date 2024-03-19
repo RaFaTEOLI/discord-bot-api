@@ -7,3 +7,4 @@ export * from './music-path';
 export * from './queue-path';
 export * from './spotify-path';
 export * from './account-path';
+export * from './discord-command-path';

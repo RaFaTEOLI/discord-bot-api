@@ -11,5 +11,7 @@ export default {
   apiQueuePort: process.env.API_QUEUE_PORT || 5672,
   apiQueueAdress: process.env.API_QUEUE_ADRESS || 'localhost',
   useApiQueue: process.env.USE_API_QUEUE || false,
-  nodeEnv: process.env.NODE_ENV || 'development'
+  nodeEnv: process.env.NODE_ENV || 'development',
+  discordApplicationId: process.env.DISCORD_APPLICATION_ID || '1234',
+  discordBotToken: process.env.DISCORD_BOT_TOKEN || ''
 };
