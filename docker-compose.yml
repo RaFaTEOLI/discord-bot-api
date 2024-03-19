@@ -36,6 +36,8 @@ services:
     command: bash -c "npm install --force && npm run debug:docker"
     environment:
       - MONGO_URL=mongodb://root:1234@mongo:27017/
+    env_file:
+      - .env
     volumes:
       - ./dist/:${PROJECT_PATH}/Docker/discord-bot-api/dist
       - ./package.json:${PROJECT_PATH}/Docker/discord-bot-api/package.json
