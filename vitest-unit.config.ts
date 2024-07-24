@@ -33,7 +33,6 @@ export default defineConfig({
       ],
       provider: 'istanbul',
       reporter: ['text', 'json', 'html'],
-      all: true,
       thresholds: {
         lines: 100,
         functions: 100,

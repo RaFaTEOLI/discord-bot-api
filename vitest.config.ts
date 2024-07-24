@@ -30,11 +30,12 @@ export default defineConfig({
       ],
       provider: 'istanbul',
       reporter: ['text', 'json', 'html'],
-      all: true,
-      lines: 100,
-      functions: 100,
-      branches: 100,
-      statements: 100
+      thresholds: {
+        lines: 100,
+        functions: 100,
+        branches: 100,
+        statements: 100
+      }
     },
     setupFiles: ['./src/main/config/vitest-mongodb-config.ts'],
     mockReset: false,

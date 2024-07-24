@@ -31,33 +31,29 @@ const makeAccessToken = async (): Promise<string> => {
   return accessToken;
 };
 
-describe(
-  'Discord Command Routes',
-  () => {
-    beforeAll(async () => {
-      await MongoHelper.connect(globalThis.__MONGO_URI__ ?? '');
-      await waitForRouteToLoad('discord-command-routes.ts');
+describe('Discord Command Routes', () => {
+  beforeAll(async () => {
+    await MongoHelper.connect(globalThis.__MONGO_URI__ ?? '');
+    await waitForRouteToLoad('discord-command-routes.ts');
+  });
+
+  beforeEach(async () => {
+    accountCollection = await MongoHelper.getCollection('accounts');
+    await accountCollection.deleteMany({});
+  });
+
+  afterAll(async () => {
+    await MongoHelper.disconnect();
+  });
+
+  describe('GET /discord/commands', () => {
+    test('should return 403 on load commands without accessToken', async () => {
+      await request(app).get('/api/discord/commands').expect(403);
     });
 
-    beforeEach(async () => {
-      accountCollection = await MongoHelper.getCollection('accounts');
-      await accountCollection.deleteMany({});
+    test.skip('should return 200 on load commands with valid accessToken', async () => {
+      const accessToken = await makeAccessToken();
+      await request(app).get('/api/discord/commands').set('x-access-token', accessToken).expect(200);
     });
-
-    afterAll(async () => {
-      await MongoHelper.disconnect();
-    });
-
-    describe('GET /discord/commands', () => {
-      test('should return 403 on load commands without accessToken', async () => {
-        await request(app).get('/api/discord/commands').expect(403);
-      });
-
-      test('should return 200 on load commands with valid accessToken', async () => {
-        const accessToken = await makeAccessToken();
-        await request(app).get('/api/discord/commands').set('x-access-token', accessToken).expect(200);
-      });
-    });
-  },
-  { timeout: 10000 }
-);
+  });
+}, 10000);

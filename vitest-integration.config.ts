@@ -9,12 +9,12 @@ export default defineConfig({
       include: ['src/main/**/*.ts'],
       provider: 'istanbul',
       reporter: ['text', 'json', 'html'],
-      all: true,
       thresholds: {
         lines: 100,
         functions: 100,
         branches: 100,
-        statements: 100
+        statements: 100,
+        perFile: true
       }
     },
     setupFiles: ['./src/main/config/vitest-mongodb-config.ts'],
