@@ -58,11 +58,11 @@ describe('Spotify Routes', () => {
     });
   });
   describe('POST /spotify/guest-token', () => {
-    test('should return 200 on token retrievel', async () => {
+    test('should return 200 on token retrieval', async () => {
       const accessToken = await makeAccessToken();
       await request(app).get('/api/spotify/guest-token').set('x-access-token', accessToken).send().expect(200);
     });
-    test('should return 403 on token retrievel without being authenticated', async () => {
+    test('should return 403 on token retrieval without being authenticated', async () => {
       await request(app).get('/api/spotify/guest-token').send().expect(403);
     });
   });
