@@ -7,12 +7,16 @@ import { SpotifyGetGuestToken } from '@/domain/usecases/spotify/spotify-get-gues
 export class RemoteSpotifyGetGuestToken implements SpotifyGetGuestToken {
   constructor(
     private readonly url: string,
-    private readonly cacheGet: CacheGet,
+    private readonly cacheGet: CacheGet<SpotifyGuestTokenModel>,
     private readonly httpClient: HttpClient<SpotifyGuestTokenModel>
   ) {}
 
   async get(): Promise<SpotifyGuestTokenModel> {
-    this.cacheGet.get('spotify-guest-token');
+    const spotifyGuestToken = this.cacheGet.get('spotify-guest-token');
+
+    if (spotifyGuestToken) {
+      return spotifyGuestToken;
+    }
 
     const httpResponse = await this.httpClient.request({
       url: this.url,

@@ -1,3 +1,3 @@
-export interface CacheGet {
-  get: (key: string) => any;
+export interface CacheGet<T = any> {
+  get: (key: string) => T;
 }
