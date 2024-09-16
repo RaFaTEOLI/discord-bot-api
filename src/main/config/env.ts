@@ -13,5 +13,8 @@ export default {
   useApiQueue: process.env.USE_API_QUEUE || false,
   nodeEnv: process.env.NODE_ENV || 'development',
   discordApplicationId: process.env.DISCORD_APPLICATION_ID || '1234',
-  discordBotToken: process.env.DISCORD_BOT_TOKEN || ''
+  discordBotToken: process.env.DISCORD_BOT_TOKEN || '',
+  spotifyGuestTokenUrl:
+    process.env.SPOTIFY_GUEST_TOKEN_URL ||
+    'https://open.spotify.com/get_access_token?reason=transport&productType=web_player'
 };

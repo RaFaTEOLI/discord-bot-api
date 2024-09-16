@@ -19,3 +19,10 @@ export type SpotifyUserModel = {
     }
   ];
 };
+
+export type SpotifyGuestTokenModel = {
+  clientId: string;
+  accessToken: string;
+  accessTokenExpirationTimestampMs: number;
+  isAnonymous: boolean;
+};
