@@ -15,18 +15,20 @@ const makeSut = (): SutTypes => {
 };
 
 describe('NodeCacheAdapter', () => {
-  test('should call get with correct key', () => {
-    const { sut, cache } = makeSut();
-    const key = faker.database.column();
-    sut.get(key);
-    expect(cache.get).toHaveBeenCalledWith(key);
-  });
+  describe('get', () => {
+    test('should call get with correct key', () => {
+      const { sut, cache } = makeSut();
+      const key = faker.database.column();
+      sut.get(key);
+      expect(cache.get).toHaveBeenCalledWith(key);
+    });
 
-  test('should return value on get success', () => {
-    const { sut, cache } = makeSut();
-    const returnValue = faker.datatype.json();
-    (cache.get as MockedFunction<any>).mockReturnValueOnce(returnValue);
-    const value = sut.get(faker.database.column());
-    expect(value).toEqual(returnValue);
+    test('should return value on get success', () => {
+      const { sut, cache } = makeSut();
+      const returnValue = faker.datatype.json();
+      (cache.get as MockedFunction<any>).mockReturnValueOnce(returnValue);
+      const value = sut.get(faker.database.column());
+      expect(value).toEqual(returnValue);
+    });
   });
 });
