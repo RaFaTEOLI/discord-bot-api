@@ -9,6 +9,6 @@ export class NodeCacheAdapter implements CacheGet {
   }
 
   set(key: string, value: any, ttl: number): boolean {
-    this.cache.set(key, value, ttl);
+    return this.cache.set(key, value, ttl);
   }
 }
