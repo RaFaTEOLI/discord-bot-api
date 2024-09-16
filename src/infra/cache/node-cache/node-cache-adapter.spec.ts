@@ -31,4 +31,15 @@ describe('NodeCacheAdapter', () => {
       expect(value).toEqual(returnValue);
     });
   });
+
+  describe('set', () => {
+    test('should call set with the correct key, value and ttl', () => {
+      const { sut, cache } = makeSut();
+      const key = faker.database.column();
+      const value = faker.datatype.json();
+      const ttl = faker.datatype.number();
+      sut.set(key, value, ttl);
+      expect(cache.set).toHaveBeenCalledWith(key, value, ttl);
+    });
+  });
 });
