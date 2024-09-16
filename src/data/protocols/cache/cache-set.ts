@@ -1,3 +1,3 @@
-export interface CacheSet {
-  set: (key: string, value: any, ttl: number) => boolean;
+export interface CacheSet<T = any> {
+  set: (key: string, value: T, ttl: number) => boolean;
 }
