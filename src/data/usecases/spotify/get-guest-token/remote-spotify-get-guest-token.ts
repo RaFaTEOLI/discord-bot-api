@@ -1,14 +1,19 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-/* eslint-disable no-case-declarations */
+import { CacheGet } from '@/data/protocols/cache/cache-get';
 import { HttpClient, HttpStatusCode } from '@/data/protocols/http';
 import { AccessDeniedError, InvalidCredentialsError, UnexpectedError } from '@/domain/errors';
 import { SpotifyGuestTokenModel } from '@/domain/models/spotify';
 import { SpotifyGetGuestToken } from '@/domain/usecases/spotify/spotify-get-guest-token';
 
 export class RemoteSpotifyGetGuestToken implements SpotifyGetGuestToken {
-  constructor(private readonly url: string, private readonly httpClient: HttpClient<SpotifyGuestTokenModel>) {}
+  constructor(
+    private readonly url: string,
+    private readonly cacheGet: CacheGet,
+    private readonly httpClient: HttpClient<SpotifyGuestTokenModel>
+  ) {}
 
   async get(): Promise<SpotifyGuestTokenModel> {
+    this.cacheGet.get('spotify-guest-token');
+
     const httpResponse = await this.httpClient.request({
       url: this.url,
       method: 'get'
