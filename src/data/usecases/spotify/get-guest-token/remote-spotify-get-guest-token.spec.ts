@@ -6,18 +6,22 @@ import { faker } from '@faker-js/faker';
 import { SpotifyGuestTokenModel } from '@/domain/models/spotify';
 import { describe, test, expect } from 'vitest';
 import { mockSpotifyGuestTokenModel } from '@/domain/test/mock-spotify-get-guest-token';
+import { CacheGetSpy } from '@/data/test/mock-cache';
 
 type SutTypes = {
   sut: RemoteSpotifyGetGuestToken;
   httpClientSpy: HttpClientSpy<SpotifyGuestTokenModel>;
+  cacheGetSpy: CacheGetSpy;
 };
 
 const makeSut = (url: string = faker.internet.url()): SutTypes => {
   const httpClientSpy = new HttpClientSpy<SpotifyGuestTokenModel>();
-  const sut = new RemoteSpotifyGetGuestToken(url, httpClientSpy);
+  const cacheGetSpy = new CacheGetSpy();
+  const sut = new RemoteSpotifyGetGuestToken(url, cacheGetSpy, httpClientSpy);
   return {
     sut,
-    httpClientSpy
+    httpClientSpy,
+    cacheGetSpy
   };
 };
 
@@ -93,5 +97,11 @@ describe('RemoteSpotifyGetGuestToken', () => {
     const accessModel = await sut.get();
     expect(accessModel.accessToken).toBeTruthy();
     expect(accessModel.accessTokenExpirationTimestampMs).toBeTruthy();
+  });
+
+  test('should call CacheGet with the correct key', async () => {
+    const { sut, cacheGetSpy } = makeSut();
+    await sut.get();
+    expect(cacheGetSpy.key).toBe('spotify-guest-token');
   });
 });
