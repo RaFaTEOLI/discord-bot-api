@@ -6,27 +6,36 @@ import { faker } from '@faker-js/faker';
 import { SpotifyGuestTokenModel } from '@/domain/models/spotify';
 import { describe, test, expect } from 'vitest';
 import { mockSpotifyGuestTokenModel } from '@/domain/test/mock-spotify-get-guest-token';
-import { CacheGetSpy } from '@/data/test/mock-cache';
+import { CacheGetSpy, CacheSetSpy } from '@/data/test/mock-cache';
 
 type SutTypes = {
   sut: RemoteSpotifyGetGuestToken;
   httpClientSpy: HttpClientSpy<SpotifyGuestTokenModel>;
   cacheGetSpy: CacheGetSpy;
+  cacheSetSpy: CacheSetSpy;
 };
 
 type Overrides = {
   url?: string;
   cacheGetSpy?: CacheGetSpy;
+  cacheSetSpy?: CacheSetSpy;
 };
 
 const makeSut = (overrides?: Overrides): SutTypes => {
   const httpClientSpy = new HttpClientSpy<SpotifyGuestTokenModel>();
   const cacheGetSpy = overrides?.cacheGetSpy ?? new CacheGetSpy();
-  const sut = new RemoteSpotifyGetGuestToken(overrides?.url ?? faker.internet.url(), cacheGetSpy, httpClientSpy);
+  const cacheSetSpy = overrides?.cacheSetSpy ?? new CacheSetSpy();
+  const sut = new RemoteSpotifyGetGuestToken(
+    overrides?.url ?? faker.internet.url(),
+    cacheGetSpy,
+    cacheSetSpy,
+    httpClientSpy
+  );
   return {
     sut,
     httpClientSpy,
-    cacheGetSpy
+    cacheGetSpy,
+    cacheSetSpy
   };
 };
 
@@ -80,8 +89,8 @@ describe('RemoteSpotifyGetGuestToken', () => {
     await expect(promise).rejects.toThrow(new UnexpectedError());
   });
 
-  test('should return an GuestTokenModel if HttpClient returns 200', async () => {
-    const { sut, httpClientSpy } = makeSut();
+  test('should return an GuestTokenModel if HttpClient returns 200 and store TokenModel in cache', async () => {
+    const { sut, httpClientSpy, cacheSetSpy } = makeSut();
     const httpResult = mockSpotifyGuestTokenModel();
     httpClientSpy.response = {
       statusCode: HttpStatusCode.success,
@@ -90,6 +99,10 @@ describe('RemoteSpotifyGetGuestToken', () => {
     const accessModel = await sut.get();
     expect(accessModel.accessTokenExpirationTimestampMs).toBeTruthy();
     expect(accessModel.accessToken).toBeTruthy();
+    expect(cacheSetSpy.callsCount).toBe(1);
+    expect(cacheSetSpy.key).toBe('spotify-guest-token');
+    expect(cacheSetSpy.value).toEqual(accessModel);
+    expect(cacheSetSpy.ttl).toBe(3600);
   });
 
   test('should return an GuestTokenModel when state is not provided', async () => {
