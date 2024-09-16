@@ -14,10 +14,15 @@ type SutTypes = {
   cacheGetSpy: CacheGetSpy;
 };
 
-const makeSut = (url: string = faker.internet.url()): SutTypes => {
+type Overrides = {
+  url?: string;
+  cacheGetSpy?: CacheGetSpy;
+};
+
+const makeSut = (overrides?: Overrides): SutTypes => {
   const httpClientSpy = new HttpClientSpy<SpotifyGuestTokenModel>();
-  const cacheGetSpy = new CacheGetSpy();
-  const sut = new RemoteSpotifyGetGuestToken(url, cacheGetSpy, httpClientSpy);
+  const cacheGetSpy = overrides?.cacheGetSpy ?? new CacheGetSpy();
+  const sut = new RemoteSpotifyGetGuestToken(overrides?.url ?? faker.internet.url(), cacheGetSpy, httpClientSpy);
   return {
     sut,
     httpClientSpy,
@@ -28,7 +33,7 @@ const makeSut = (url: string = faker.internet.url()): SutTypes => {
 describe('RemoteSpotifyGetGuestToken', () => {
   test('should call HttpClient with correct values', async () => {
     const url = faker.internet.url();
-    const { sut, httpClientSpy } = makeSut(url);
+    const { sut, httpClientSpy } = makeSut({ url });
     const httpResult = mockSpotifyGuestTokenModel();
     httpClientSpy.response = {
       statusCode: HttpStatusCode.success,
@@ -99,9 +104,13 @@ describe('RemoteSpotifyGetGuestToken', () => {
     expect(accessModel.accessTokenExpirationTimestampMs).toBeTruthy();
   });
 
-  test('should call CacheGet with the correct key', async () => {
-    const { sut, cacheGetSpy } = makeSut();
-    await sut.get();
+  test('should call CacheGet with the correct key and return value if it exists', async () => {
+    const spotifyGuestToken = mockSpotifyGuestTokenModel();
+    const cacheGetSpy = new CacheGetSpy(spotifyGuestToken);
+    const { sut } = makeSut({ cacheGetSpy });
+    const response = await sut.get();
+    expect(cacheGetSpy.callsCount).toBe(1);
     expect(cacheGetSpy.key).toBe('spotify-guest-token');
+    expect(response).toEqual(cacheGetSpy.value);
   });
 });
