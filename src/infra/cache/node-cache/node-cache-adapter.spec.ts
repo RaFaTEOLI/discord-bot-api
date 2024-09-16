@@ -41,5 +41,12 @@ describe('NodeCacheAdapter', () => {
       sut.set(key, value, ttl);
       expect(cache.set).toHaveBeenCalledWith(key, value, ttl);
     });
+
+    test('should call return true on set success', () => {
+      const { sut, cache } = makeSut();
+      (cache.set as MockedFunction<any>).mockReturnValueOnce(true);
+      const value = sut.set(faker.database.column(), faker.datatype.json(), faker.datatype.number());
+      expect(value).toBeTruthy();
+    });
   });
 });
