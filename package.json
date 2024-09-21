@@ -55,7 +55,7 @@
     "axios": "^1.7.4",
     "bcrypt": "^5.0.1",
     "dotenv": "^16.3.1",
-    "express": "^4.19.2",
+    "express": "^4.20.0",
     "jsonwebtoken": "^9.0.0",
     "module-alias": "^2.2.2",
     "mongodb": "^4.8.1",
